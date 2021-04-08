@@ -1,0 +1,77 @@
+---
+title: "R Notebook"
+output:
+  html_document:
+    df_print: paged
+---
+
+# Creando el ambiente
+
+```{r}
+library(tidyverse)
+library(here)
+library(gt)
+```
+
+
+```{r}
+source("data_getting.R")
+```
+
+
+En esta parte vamos a analizar los datos de los grupos de investigación de la categoría Artículos publicados.
+
+```{r}
+grupo_df_articulos %>% 
+  dim
+```
+
+De acuerdo a los datos extraidos del gruplac de cada grupo, existen 1192 publicaciones en total.
+
+Dentro de la categoría artículos hay tipos de productos (tipo_producto).
+
+```{r}
+grupo_df_articulos %>% 
+  count(tipo_producto, sort = TRUE) 
+```
+
+La mayoría de productos por tipo de producto se encuentran en revista especializada.
+
+También podemos analizar los países en los que más se tienen publicaciones
+
+```{r}
+grupo_df_articulos %>% 
+  count(pais_revista, sort = TRUE) 
+```
+Colombia aparece como el país donde más se han realizado publicaciones. 
+
+También tenemos las revistas 
+
+```{r}
+grupo_df_articulos %>% 
+  count(revista, sort = TRUE)
+```
+
+Espacios es donde se ha publicado más artículos. En total aparecen 398 revistas. 
+
+También podemos ver la productividad por año. 
+
+```{r}
+grupo_df_articulos %>% 
+  count(ano, sort = TRUE) %>% 
+  ggplot(aes(x = ano, y = n, group = 1)) +
+  geom_line() + 
+  geom_point() +
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.5, hjust = 0.5))
+```
+
+Quiénes son los investigadores más productivos?
+
+```{r}
+grupo_df_articulos %>% 
+  select(autores) %>% 
+  separate_rows(autores, sep = ",") %>% 
+  count(autores, sort = TRUE)
+```
+
+Nota: Se pueden repetir artículos porque aparecen en diferentes grupos. 
