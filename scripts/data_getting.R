@@ -1,12 +1,13 @@
 
 library(tidyverse)
 library(rvest)
+library(here)
 
 
 # data getting
 
-grupos <- 
-  read_csv("data/grupos.csv")
+source(here("scripts",
+            "data_grupos.R"))
 
 
 grupo_df <- 
@@ -57,6 +58,8 @@ for (i in 1:length(grupos$url)) {
     
   }
 }
+
+rm(df_1, df_2, grupo, i, j)
 
 # data cleaning
 
