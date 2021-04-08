@@ -57,3 +57,49 @@ for (i in 1:length(grupos$url)) {
     
   }
 }
+
+# data cleaning
+
+grupo_df_articulos <- 
+  grupo_df %>%
+  filter(categoria == "Artículos publicados") %>% 
+  separate(producto ,
+           c("info_1", "info_2", "info_3", "info_4"), 
+           sep = "\r\n" ) %>% 
+  select(-info_3) %>% 
+  mutate(info_2 = str_trim(info_2),
+         info_4 = str_trim(info_4),
+         tipo_producto = str_remove(info_1, ":.*"),
+         tipo_producto = str_remove(tipo_producto, ".*-"),
+         tipo_producto = str_trim(tipo_producto),
+         titulo = str_extract(info_1, ":.*"),
+         titulo = str_remove(titulo, "^:"),
+         titulo = str_trim(titulo)) %>% 
+  select(-info_1) %>% 
+  mutate(pais_revista = str_remove(info_2, ",.*"),
+         info_2 = str_extract(info_2, ",.*"),
+         info_2 = str_remove(info_2, "^,"),
+         info_2 = str_trim(info_2),
+         revista = str_remove(info_2, "ISSN.*"),
+         info_2 = str_extract(info_2, "ISSN.*"),
+         info_2 = str_trim(info_2),
+         ISSN = str_remove(info_2, ",.*"),
+         info_2 = str_extract(info_2, ",.*"),
+         info_2 = str_remove(info_2, "^,"),
+         info_2 = str_trim(info_2),
+         ano = str_remove(info_2, "\\s.*"),
+         info_2 = str_extract(info_2, "\\s.*"),
+         info_2 = str_trim(info_2),
+         vol = str_remove(info_2, "\\s.*"),
+         vol = str_remove(vol, "vol:"),
+         info_2 = str_extract(info_2, "\\s.*"),
+         info_2 = str_trim(info_2),
+         fasc = str_remove(info_2, "págs.*"),
+         fasc = str_remove(fasc, "fasc: "),
+         info_2 = str_extract(info_2, "págs.*"),
+         info_2 = str_trim(info_2),
+         pags = str_remove(info_2, ", DOI.*"),
+         pags = str_remove(pags, "págs: "),
+         DOI = str_extract(info_2, "DOI.*"),
+         DOI = str_remove(DOI, "DOI:")) %>% 
+  select(-info_2)
