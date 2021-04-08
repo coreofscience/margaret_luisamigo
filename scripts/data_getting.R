@@ -102,4 +102,7 @@ grupo_df_articulos <-
          pags = str_remove(pags, "págs: "),
          DOI = str_extract(info_2, "DOI.*"),
          DOI = str_remove(DOI, "DOI:")) %>% 
-  select(-info_2)
+  select(-info_2) %>% 
+  mutate(autores = str_remove(info_4, "Autores: "),
+         autores = str_remove(autores, ",$")) %>% 
+  select(-info_4)
