@@ -140,10 +140,11 @@ grupo_df_EventosCientificos <-
          Nombre_Institución= str_remove(info_4, ".*Nombre de la institución:")) %>% 
   select(-info_4) %>% 
   mutate(Tipo_vinculación = str_remove(info_5,"Nombre.*"),
-         Tipo_vinculación = str_remove(Tipo_vinculación,"Ámbito.*")) %>% 
+         Tipo_vinculación = str_remove(Tipo_vinculación,"Ámbito.*"),
+         Tipo_vinculación = str_trim(Tipo_vinculación)) %>% 
   select(-info_5)
 
-
+ prueba<- grupo_df %>% count(categoria , sort = TRUE)
 
 
 
