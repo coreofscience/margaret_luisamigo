@@ -109,3 +109,39 @@ grupo_df_articulos <-
   mutate(autores = str_remove(info_4, "Autores: "),
          autores = str_remove(autores, ",$")) %>% 
   select(-info_4)
+
+
+grupo_df_EventosCientificos <- 
+  grupo_df %>%
+  filter(categoria == "Eventos Científicos") %>% 
+  separate(producto ,
+           c("info_1", "info_2","info_3","info_4","info_5"), 
+           sep = "\r\n" )%>% 
+  mutate(info_2 = str_trim(info_2),
+         info_4 = str_trim(info_4),
+         Tipo_evento = str_remove(info_1, ":.*"),
+         Tipo_evento = str_remove(Tipo_evento, ".*-"),
+         Tipo_evento = str_trim(Tipo_evento),
+         Titulo = str_extract(info_1, ":.*"),
+         Titulo = str_remove(Titulo, "^:"),
+         Titulo = str_trim(Titulo)) %>% 
+  select(-info_1) %>% 
+  mutate(Ciudad_evento= str_remove(info_2, ",.*"),
+         info_2 = str_remove(info_2, ".*desde*"),
+         Fecha_inicio = str_remove(info_2, "-$"),
+         Fecha_Fin = str_remove(info_3, ".*hasta")) %>% 
+  select(-info_2,-info_3) %>% 
+  mutate(info_4 = str_remove(info_4, "Ámbito:"),
+         Ámbito = str_remove(info_4, ",.*"),
+         info_4= str_extract(info_4, "Tipos de participación:.*"),
+         info_4= str_remove(info_4, ".*Tipos de participación:"),
+         Tipo_participacion=str_remove(info_4,"Nombre de la institución.*"),
+         info_4= str_extract(info_4, "Nombre de la institución.*"),
+         Nombre_Institución= str_remove(info_4, ".*Nombre de la institución:")) %>% 
+  select(-info_4) %>% 
+  mutate(Tipo_vinculación = str_remove(info_5,"Nombre.*"),
+         Tipo_vinculación = str_remove(Tipo_vinculación,"Ámbito.*")) %>% 
+  select(-info_5)
+  
+
+
