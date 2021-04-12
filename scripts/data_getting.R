@@ -143,6 +143,7 @@ grupo_df_EventosCientificos <-
          Tipo_vinculación = str_remove(Tipo_vinculación,"Ámbito.*")) %>% 
   select(-info_5)
 
+
   
 
 
