@@ -144,6 +144,9 @@ grupo_df_EventosCientificos <-
   select(-info_5)
 
 
+
+
+
   
 
 
