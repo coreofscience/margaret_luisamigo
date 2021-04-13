@@ -172,11 +172,9 @@ grupo_df_articulos_lost_1 <-
              sep = "\r\n" ) %>% 
     filter(!is.na(info_5)) %>% 
     slice(2) %>% 
-    select(-info_4) %>% 
-    rename(info_4 = "info_3",
-           info_4)
+    select(-info_4) %>%
   mutate(info_2 = str_trim(info_2),
-         info_4 = str_trim(info_4),
+         info_5 = str_trim(info_5),
          tipo_producto = str_remove(info_1, ":.*"),
          tipo_producto = str_remove(tipo_producto, ".*-"),
          tipo_producto = str_trim(tipo_producto),
@@ -185,34 +183,38 @@ grupo_df_articulos_lost_1 <-
          titulo = str_trim(titulo)) %>% 
     select(-info_1) %>% 
     mutate(pais_revista = str_remove(info_2, ",.*"),
-           info_2 = str_extract(info_2, ",.*"),
-           info_2 = str_remove(info_2, "^,"),
-           info_2 = str_trim(info_2),
-           revista = str_remove(info_2, "ISSN.*"),
-           info_2 = str_extract(info_2, "ISSN.*"),
-           info_2 = str_trim(info_2),
-           ISSN = str_remove(info_2, ",.*"),
-           info_2 = str_extract(info_2, ",.*"),
-           info_2 = str_remove(info_2, "^,"),
-           info_2 = str_trim(info_2),
-           ano = str_remove(info_2, "\\s.*"),
-           info_2 = str_extract(info_2, "\\s.*"),
-           info_2 = str_trim(info_2),
-           vol = str_remove(info_2, "\\s.*"),
+           pais_revista = str_remove(pais_revista, ".*,"),
+           # info_2 = str_extract(info_3, ",.*"),
+           # info_3 = str_remove(info_2, "^,"),
+           # info_3 = str_trim(info_3),
+           revista = str_remove(info_3, "ISSN.*"),
+           info_3 = str_extract(info_3, "ISSN.*"),
+           info_3 = str_trim(info_3),
+           ISSN = str_remove(info_3, ",.*"),
+           info_3 = str_extract(info_3, ",.*"),
+           info_3 = str_remove(info_3, "^,"),
+           info_3 = str_trim(info_3),
+           ano = str_remove(info_3, "\\s.*"),
+           info_3 = str_extract(info_3, "\\s.*"),
+           info_3 = str_trim(info_3),
+           vol = str_remove(info_3, "\\s.*"),
            vol = str_remove(vol, "vol:"),
-           info_2 = str_extract(info_2, "\\s.*"),
-           info_2 = str_trim(info_2),
-           fasc = str_remove(info_2, "págs.*"),
+           info_3 = str_extract(info_3, "\\s.*"),
+           info_3 = str_trim(info_3),
+           fasc = str_remove(info_3, "págs.*"),
            fasc = str_remove(fasc, "fasc: "),
-           info_2 = str_extract(info_2, "págs.*"),
-           info_2 = str_trim(info_2),
-           pags = str_remove(info_2, ", DOI.*"),
+           info_3 = str_extract(info_3, "págs.*"),
+           info_3 = str_trim(info_3),
+           pags = str_remove(info_3, ", DOI.*"),
            pags = str_remove(pags, "págs: "),
-           DOI = str_extract(info_2, "DOI.*"),
+           DOI = str_extract(info_3, "DOI.*"),
            DOI = str_remove(DOI, "DOI:")) %>% 
-    select(-info_2) %>% 
-    mutate(autores = str_remove(info_4, "Autores: "),
-           autores = str_remove(autores, ",$")) %>% 
-    select(-info_4)
+    select(-info_2,
+           -info_3) %>% 
+    mutate(autores = str_remove(info_5, "Autores: "),
+           autores = str_remove(autores, ",$"),
+           autores = str_trim(autores)) %>% 
+    select(-info_5) %>% 
+    mutate(DOI = str_remove(DOI, "http://dx.doi.org/"))
   
   
