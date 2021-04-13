@@ -67,9 +67,11 @@ grupo_df_articulos <-
   grupo_df %>%
   filter(categoria == "Artículos publicados") %>% 
   separate(producto ,
-           c("info_1", "info_2", "info_3", "info_4"), 
+           c("info_1", "info_2", "info_3", "info_4", "info_5"), 
            sep = "\r\n" ) %>% 
-  select(-info_3) %>% 
+  filter(is.na(info_5)) %>% 
+  select(-info_3,
+         -info_5) %>% 
   mutate(info_2 = str_trim(info_2),
          info_4 = str_trim(info_4),
          tipo_producto = str_remove(info_1, ":.*"),
