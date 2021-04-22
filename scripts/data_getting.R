@@ -1,14 +1,11 @@
-
 library(tidyverse)
 library(rvest)
 library(here)
-
 
 # data getting
 
 source(here("scripts",
             "data_grupos.R"))
-
 
 grupo_df <- 
   tibble(grupo = character(),
@@ -63,13 +60,117 @@ rm(df_1, df_2, grupo, i, j)
 
 # data cleaning
 
+grupo_df_articulos_lost_1 <- 
+  grupo_df %>%
+  filter(categoria == "Artículos publicados") %>% 
+  separate(producto,
+           c("info_1", "info_2", "info_3", "info_4", "info_5"), 
+           sep = "\r\n" ) %>% 
+  filter(!is.na(info_5)) %>% 
+  slice(1) %>% 
+  select(-info_4) %>% 
+  mutate(info_2 = str_trim(info_2),
+         info_4 = str_trim(info_3),
+         tipo_producto = str_remove(info_1, ":.*"),
+         tipo_producto = str_remove(tipo_producto, ".*-"),
+         tipo_producto = str_trim(tipo_producto),
+         titulo = str_extract(info_1, ":.*"),
+         titulo = str_remove(titulo, "^:"),
+         titulo = str_trim(titulo)) %>% 
+  select(-info_1) %>% 
+  mutate(pais_revista = str_remove(info_2, ",.*"),
+         info_2 = str_extract(info_2, ",.*"),
+         info_2 = str_remove(info_2, "^,"),
+         info_2 = str_trim(info_2),
+         revista = info_2,
+         info_2 = str_extract(info_4, "ISSN.*"),
+         info_2 = str_trim(info_4),
+         ISSN = str_remove(info_4, ",.*"),
+         info_2 = str_extract(info_4, ",.*"),
+         info_2 = str_remove(info_4, "^,"),
+         info_2 = str_trim(info_4),
+         ano = str_remove(info_4, "\\s.*"),
+         info_2 = str_extract(info_4, "\\s.*"),
+         info_2 = str_trim(info_4),
+         vol = str_remove(info_4, "\\s.*"),
+         vol = str_remove(vol, "vol:"),
+         info_2 = str_extract(info_4, "\\s.*"),
+         info_2 = str_trim(info_4),
+         fasc = str_remove(info_4, "págs.*"),
+         fasc = str_remove(fasc, "fasc: "),
+         info_2 = str_extract(info_4, "págs.*"),
+         info_2 = str_trim(info_4),
+         pags = str_remove(info_4, ", DOI.*"),
+         pags = str_remove(pags, "págs: "),
+         DOI = str_extract(info_4, "DOI.*"),
+         DOI = str_remove(DOI, "DOI:")) %>% 
+  select(-info_4,
+         -info_2) %>% 
+  mutate(autores = str_remove(info_5, "Autores: "),
+         autores = str_remove(autores, ",$"),
+         autores = str_trim(autores)) %>% 
+  select(-info_5,
+         -info_3)
+
+grupo_df_articulos_lost_2 <- 
+  grupo_df %>%
+  filter(categoria == "Artículos publicados") %>% 
+  separate(producto,
+           c("info_1", "info_2", "info_3", "info_4", "info_5"), 
+           sep = "\r\n" ) %>% 
+  filter(!is.na(info_5)) %>% 
+  slice(2) %>% 
+  select(-info_4) %>%
+  mutate(info_2 = str_trim(info_2),
+         info_5 = str_trim(info_5),
+         tipo_producto = str_remove(info_1, ":.*"),
+         tipo_producto = str_remove(tipo_producto, ".*-"),
+         tipo_producto = str_trim(tipo_producto),
+         titulo = str_extract(info_1, ":.*"),
+         titulo = str_remove(titulo, "^:"),
+         titulo = str_trim(titulo)) %>% 
+  select(-info_1) %>% 
+  mutate(pais_revista = str_remove(info_2, ",.*"),
+         pais_revista = str_remove(pais_revista, ".*,"),
+         revista = str_remove(info_3, "ISSN.*"),
+         info_3 = str_extract(info_3, "ISSN.*"),
+         info_3 = str_trim(info_3),
+         ISSN = str_remove(info_3, ",.*"),
+         info_3 = str_extract(info_3, ",.*"),
+         info_3 = str_remove(info_3, "^,"),
+         info_3 = str_trim(info_3),
+         ano = str_remove(info_3, "\\s.*"),
+         info_3 = str_extract(info_3, "\\s.*"),
+         info_3 = str_trim(info_3),
+         vol = str_remove(info_3, "\\s.*"),
+         vol = str_remove(vol, "vol:"),
+         info_3 = str_extract(info_3, "\\s.*"),
+         info_3 = str_trim(info_3),
+         fasc = str_remove(info_3, "págs.*"),
+         fasc = str_remove(fasc, "fasc: "),
+         info_3 = str_extract(info_3, "págs.*"),
+         info_3 = str_trim(info_3),
+         pags = str_remove(info_3, ", DOI.*"),
+         pags = str_remove(pags, "págs: "),
+         DOI = str_extract(info_3, "DOI.*"),
+         DOI = str_remove(DOI, "DOI:")) %>% 
+  select(-info_2,
+         -info_3) %>% 
+  mutate(autores = str_remove(info_5, "Autores: "),
+         autores = str_remove(autores, ",$"),
+         autores = str_trim(autores)) %>% 
+  select(-info_5) %>% 
+  mutate(DOI = str_remove(DOI, "http://dx.doi.org/"))
+
 grupo_df_articulos <- 
   grupo_df %>%
   filter(categoria == "Artículos publicados") %>% 
   separate(producto ,
-           c("info_1", "info_2", "info_3", "info_4"), 
+           c("info_1", "info_2", "info_3", "info_4", "info_5"), 
            sep = "\r\n" ) %>% 
-  select(-info_3) %>% 
+  filter(is.na(info_5)) %>% 
+  select(-info_3,
+         -info_5) %>% 
   mutate(info_2 = str_trim(info_2),
          info_4 = str_trim(info_4),
          tipo_producto = str_remove(info_1, ":.*"),
@@ -153,10 +254,89 @@ grupo_df_Jurado <-
          Autores=str_remove(info_7,".*:"),
          Autores=str_trim(Autores)) %>% 
   select(-info_1,-info_3,-info_4,-info_5,-info_7,-pais,-anno)
-        
 
+grupo_df_EventosCientificos <- 
+  grupo_df %>%
+  filter(categoria == "Eventos Científicos") %>% 
+  separate(producto ,
+           c("info_1", "info_2","info_3","info_4","info_5"), 
+           sep = "\r\n" )%>% 
+  mutate(info_2 = str_trim(info_2),
+         info_4 = str_trim(info_4),
+         Tipo_evento = str_remove(info_1, ":.*"),
+         Tipo_evento = str_remove(Tipo_evento, ".*-"),
+         Tipo_evento = str_trim(Tipo_evento),
+         Titulo = str_extract(info_1, ":.*"),
+         Titulo = str_remove(Titulo, "^:"),
+         Titulo = str_trim(Titulo)) %>% 
+  select(-info_1) %>% 
+  mutate(Ciudad_evento= str_remove(info_2, ",.*"),
+         info_2 = str_remove(info_2, ".*desde*"),
+         Fecha_inicio = str_remove(info_2, "-$"),
+         Fecha_Fin = str_remove(info_3, ".*hasta")) %>% 
+  select(-info_2,-info_3) %>% 
+  mutate(info_4 = str_remove(info_4, "Ámbito:"),
+         Ámbito = str_remove(info_4, ",.*"),
+         info_4= str_extract(info_4, "Tipos de participación:.*"),
+         info_4= str_remove(info_4, ".*Tipos de participación:"),
+         Tipo_participacion=str_remove(info_4,"Nombre de la institución.*"),
+         info_4= str_extract(info_4, "Nombre de la institución.*"),
+         Nombre_Institución= str_remove(info_4, ".*Nombre de la institución:")) %>% 
+  select(-info_4) %>% 
+  mutate(Tipo_vinculación = str_remove(info_5,"Nombre.*"),
+         Tipo_vinculación = str_remove(Tipo_vinculación,"Ámbito.*"),
+         Tipo_vinculación = str_trim(Tipo_vinculación)) %>% 
+  select(-info_5)
 
-
-
-
-
+grupo_df_CursosCortaDuracion <- 
+  grupo_df %>%
+  filter(categoria == "Curso de Corta Duración Dictados") %>% 
+  separate(producto ,
+           c("info_1", "info_2","info_3","info_4","info_5","info_6","info_7","info_8"), 
+           sep = "\r\n" )%>% 
+  mutate(info_1 = str_trim(info_1),
+         Tipo_Curso = str_remove(info_1, ":.*"),
+         Tipo_Curso = str_remove(Tipo_Curso, ".*-" ),
+         Nombre_curso = str_remove(info_1, ".*:"),
+         Nombre_curso = str_trim(Nombre_curso)) %>% 
+  select(-info_1) %>% 
+  mutate(info_2 = str_trim(info_2),
+         Pais = str_remove(info_2,",.*"),
+         Año = str_extract(info_2, ",.*"),
+         Año = str_remove(Año, ","),
+         Año = str_trim(Año),
+         Año = str_remove(Año, ",")) %>% 
+  select(-info_2) %>% 
+  mutate(info_3=str_trim(info_3),
+         Idioma=str_extract(info_3, ".*,"),
+         Idioma=str_remove(Idioma, ","),
+         Idioma=str_remove(Idioma, ".*: "),
+         Medio_divulgacion= str_remove(info_3, ".*: ")) %>% 
+  select(-info_3) %>% 
+  mutate(info_4= str_trim(info_4),
+         sitio_web= str_remove(info_4, ",.*"),
+         sitio_web=str_remove(sitio_web, ".*:"),
+         Participacion=str_remove(info_4, ".*, "),
+         Participacion=str_remove(Participacion, ","),
+         Participacion=str_remove(Participacion, "Participación como"),
+         Participacion=str_trim(Participacion)
+         ) %>% 
+  select(-info_4) %>% 
+  mutate(info_5= str_trim(info_5),
+         Duracion_semanas= str_remove(info_5, ",.*"),
+         Duracion_semanas=str_remove(Duracion_semanas, ".*:"),
+         Duracion_semanas= str_trim(Duracion_semanas),
+         Finalidad= str_remove(info_5,".*Finalidad:"),
+         Finalidad= str_trim(Finalidad)) %>%
+  select(-info_5) %>% 
+  mutate(info_6= str_trim(info_6),
+         lugar= str_remove(info_6, ",.*"),
+         lugar= str_remove(lugar, ".*:"),
+         lugar= str_trim(lugar),
+         Institucion_Financiadora= str_extract(info_6, "Institución financiadora:.*"),
+         Institucion_Financiadora= str_remove(Institucion_Financiadora, "Institución financiadora:"),
+         Institucion_Financiadora= str_trim(Institucion_Financiadora)) %>% 
+  select(-info_6,-info_7) %>% 
+  mutate(info_8 = str_trim(info_8),
+         Autores = str_remove(info_8,".*:")) %>% 
+  select(-info_8)
