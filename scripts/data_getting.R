@@ -50,7 +50,6 @@ for (i in 1:length(grupos$url)) {
     grupo_df <- 
       bind_rows(df_2,
                 grupo_df) 
-    
   }
 }
 
