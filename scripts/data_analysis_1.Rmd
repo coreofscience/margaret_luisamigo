@@ -1,0 +1,63 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+# Análisis de producción de los grupos - cateogría: "Artículos publicados"
+
+# Cargando los datos 
+
+```{r}
+grupos_produccion <- grupo_df_articulos_no_duplicados_sin_sim
+```
+
+Producción de artículos por grupo
+
+```{r}
+grupos_produccion %>% 
+  count(grupo, sort = TRUE)
+```
+
+El grupo "Jurídicas y sociales" son los que más producen (173) y el que menos es "Familia desarrollo y calidad de vida" (13)
+
+Cuál es el tipo de producción por tipo de producto
+
+```{r}
+grupos_produccion %>%
+  group_by(grupo, tipo_producto) %>% 
+  count(tipo_producto, sort = TRUE) %>% 
+  arrange(grupo)
+```
+
+"Jurídicas y sociales" tiene su mayor producción en publicaciones en revistas especializadas (175)."Familia desarrollo y calidad de vida" tiene distribuida su producción entre publicaciones en revistas especializadas y revisiones (6 y 6).
+
+¿cuál es la producción de acuerdo a los países de publicación de las revistas?
+
+```{r}
+grupos_produccion %>%
+  filter(!is.na(pais_revista)) %>% 
+  count(pais_revista, sort = TRUE)
+```
+En Colombia se encuentra la mayor producción de la UCLA
+
+¿Cuál es la producción total a través del tiempo?
+
+```{r}
+grupos_produccion %>% 
+  filter(!is.na(ano)) %>% 
+  count(ano) %>% 
+  ggplot(aes(x = ano, y = n)) +
+  geom_line()
+```
+¿Cuál es la producción total a través del tiempo por cada grupo?
+
+```{r}
+grupos_produccion %>% 
+  filter(!is.na(ano)) %>%
+  group_by(grupo) %>% 
+  count(ano) %>% 
+  ggplot(aes(x = ano, y = n)) +
+  geom_line() +
+  facet_wrap(~grupo)
+```
+      
