@@ -49,3 +49,4 @@
            autores = str_remove(info_4, "Autores: "),
            autores = str_trim(autores)) %>% 
     select(-info_1,-info_2,-info_4) 
+  
