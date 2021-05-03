@@ -7,6 +7,9 @@ source(here("scripts",
             "data_grupos.R"))
 source(here("scripts",
             "data_getting.R"))
+source(here("scripts",
+            "data_cleaning.R"))
+
 
 grupo_df <- data_getting_ucla(grupos)
 produccion_grupos <- data_cleaning_ucla(grupo_df)
