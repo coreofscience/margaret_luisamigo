@@ -2,7 +2,7 @@
 
 grupo_df_capitulos_libros_publicados <- 
   grupo_df %>%
-  filter(categoria == "Capítulos de libro publicados") %>% 
+  filter(categoria == "CapÃ­tulos de libro publicados") %>% 
   separate(producto ,
            c("info_1", "info_2", "info_3", "info_4"), 
            sep = "\r\n" ) %>% 
@@ -26,8 +26,8 @@ grupo_df_capitulos_libros_publicados <-
          ISBN = str_remove(info_2, ".*ISBN: "),
          ISBN = str_remove(ISBN, ", Vol.*"), 
          vol = str_remove(info_2, ".*Vol."),
-         vol = str_remove(vol, ", pág.*"),
-         pags = str_remove(info_2, ".*págs:"),
+         vol = str_remove(vol, ", p?g.*"),
+         pags = str_remove(info_2, ".*p?gs:"),
          pags = str_remove(pags, ",.*"),
          editorial = str_remove(info_2, ".*Ed. "),
          auotres = str_remove(info_4, ".*Autores: ")) %>% 
