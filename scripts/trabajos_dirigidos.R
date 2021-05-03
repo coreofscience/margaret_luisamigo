@@ -38,4 +38,6 @@ trabajos_dirigidos_ucla <- function(grupos_df) {
                "tipo_orientacion"),
              sep = ", ")
   
+  return(trabajosdirigidos)
+  
 }
