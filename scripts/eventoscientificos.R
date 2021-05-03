@@ -1,0 +1,85 @@
+grupo_df_EventosCientificos <- 
+  grupo_df %>%
+  filter(categoria == "Eventos Científicos") %>% 
+  separate(producto ,
+           c("info_1", "info_2","info_3","info_4","info_5"), 
+           sep = "\r\n" )%>% 
+  mutate(info_2 = str_trim(info_2),
+         info_4 = str_trim(info_4),
+         Tipo_evento = str_remove(info_1, ":.*"),
+         Tipo_evento = str_remove(Tipo_evento, ".*-"),
+         Tipo_evento = str_trim(Tipo_evento),
+         Titulo = str_extract(info_1, ":.*"),
+         Titulo = str_remove(Titulo, "^:"),
+         Titulo = str_trim(Titulo)) %>% 
+  select(-info_1) %>% 
+  mutate(Ciudad_evento= str_remove(info_2, ",.*"),
+         info_2 = str_remove(info_2, ".*desde*"),
+         Fecha_inicio = str_remove(info_2, "-$"),
+         Fecha_Fin = str_remove(info_3, ".*hasta")) %>% 
+  select(-info_2,-info_3) %>% 
+  mutate(info_4 = str_remove(info_4, "Ámbito:"),
+         Ámbito = str_remove(info_4, ",.*"),
+         info_4= str_extract(info_4, "Tipos de participación:.*"),
+         info_4= str_remove(info_4, ".*Tipos de participación:"),
+         Tipo_participacion=str_remove(info_4,"Nombre de la institución.*"),
+         info_4= str_extract(info_4, "Nombre de la institución.*"),
+         Nombre_Institución= str_remove(info_4, ".*Nombre de la institución:")) %>% 
+  select(-info_4) %>% 
+  mutate(Tipo_vinculación = str_remove(info_5,"Nombre.*"),
+         Tipo_vinculación = str_remove(Tipo_vinculación,"Ámbito.*"),
+         Tipo_vinculación = str_trim(Tipo_vinculación)) %>% 
+  select(-info_5)
+
+grupo_df_CursosCortaDuracion <- 
+  grupo_df %>%
+  filter(categoria == "Curso de Corta Duración Dictados") %>% 
+  separate(producto ,
+           c("info_1", "info_2","info_3","info_4","info_5","info_6","info_7","info_8"), 
+           sep = "\r\n" )%>% 
+  mutate(info_1 = str_trim(info_1),
+         Tipo_Curso = str_remove(info_1, ":.*"),
+         Tipo_Curso = str_remove(Tipo_Curso, ".*-" ),
+         Nombre_curso = str_remove(info_1, ".*:"),
+         Nombre_curso = str_trim(Nombre_curso)) %>% 
+  select(-info_1) %>% 
+  mutate(info_2 = str_trim(info_2),
+         Pais = str_remove(info_2,",.*"),
+         Año = str_extract(info_2, ",.*"),
+         Año = str_remove(Año, ","),
+         Año = str_trim(Año),
+         Año = str_remove(Año, ",")) %>% 
+  select(-info_2) %>% 
+  mutate(info_3=str_trim(info_3),
+         Idioma=str_extract(info_3, ".*,"),
+         Idioma=str_remove(Idioma, ","),
+         Idioma=str_remove(Idioma, ".*: "),
+         Medio_divulgacion= str_remove(info_3, ".*: ")) %>% 
+  select(-info_3) %>% 
+  mutate(info_4= str_trim(info_4),
+         sitio_web= str_remove(info_4, ",.*"),
+         sitio_web=str_remove(sitio_web, ".*:"),
+         Participacion=str_remove(info_4, ".*, "),
+         Participacion=str_remove(Participacion, ","),
+         Participacion=str_remove(Participacion, "Participación como"),
+         Participacion=str_trim(Participacion)
+  ) %>% 
+  select(-info_4) %>% 
+  mutate(info_5= str_trim(info_5),
+         Duracion_semanas= str_remove(info_5, ",.*"),
+         Duracion_semanas=str_remove(Duracion_semanas, ".*:"),
+         Duracion_semanas= str_trim(Duracion_semanas),
+         Finalidad= str_remove(info_5,".*Finalidad:"),
+         Finalidad= str_trim(Finalidad)) %>%
+  select(-info_5) %>% 
+  mutate(info_6= str_trim(info_6),
+         lugar= str_remove(info_6, ",.*"),
+         lugar= str_remove(lugar, ".*:"),
+         lugar= str_trim(lugar),
+         Institucion_Financiadora= str_extract(info_6, "Institución financiadora:.*"),
+         Institucion_Financiadora= str_remove(Institucion_Financiadora, "Institución financiadora:"),
+         Institucion_Financiadora= str_trim(Institucion_Financiadora)) %>% 
+  select(-info_6,-info_7) %>% 
+  mutate(info_8 = str_trim(info_8),
+         Autores = str_remove(info_8,".*:")) %>% 
+  select(-info_8)
