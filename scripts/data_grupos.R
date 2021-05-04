@@ -15,12 +15,12 @@ grupos <-
                    "CONTAS",
                    "LUES"),
          url = c("https://scienti.minciencias.gov.co/gruplac/jsp/visualiza/visualizagr.jsp?nro=00000000008639", # SISCO
-                 "https://scienti.minciencias.gov.co/gruplac/jsp/visualiza/visualizagr.jsp?nro=00000000001658", # JURIDICAS Y SOCIALES
+                 "https://scienti.minciencias.gov.co/gruplac/jsp/visualiza/visualizagr.jsp?nro=00000000002703", # JURIDICAS Y SOCIALES
                  "https://scienti.minciencias.gov.co/gruplac/jsp/visualiza/visualizagr.jsp?nro=00000000002701", # GORAS
                  "https://scienti.minciencias.gov.co/gruplac/jsp/visualiza/visualizagr.jsp?nro=00000000008267", # ECOSOL
                  "https://scienti.minciencias.gov.co/gruplac/jsp/visualiza/visualizagr.jsp?nro=00000000011901", # NEUROCIENCIAS BASICAS Y APLICADAS
                  "https://scienti.minciencias.gov.co/gruplac/jsp/visualiza/visualizagr.jsp?nro=00000000002700", # EDUCACIÓN, INFANCIA Y LENGUAS EXTRANJERAS
-                 "https://scienti.minciencias.gov.co/gruplac/jsp/visualiza/visualizagr.jsp?nro=00000000010166", # FAMILIA DESARROLLO Y CALIDAD DE VIDA
+                 "https://scienti.minciencias.gov.co/gruplac/jsp/visualiza/visualizagr.jsp?nro=00000000002698", # FAMILIA DESARROLLO Y CALIDAD DE VIDA
                  "https://scienti.minciencias.gov.co/gruplac/jsp/visualiza/visualizagr.jsp?nro=00000000002630", # ESTUDIOS DE FENÓMENOS PSICOSOCIALES
                  "https://scienti.minciencias.gov.co/gruplac/jsp/visualiza/visualizagr.jsp?nro=00000000003174", # CALIDAD DE VIDA
                  "https://scienti.minciencias.gov.co/gruplac/jsp/visualiza/visualizagr.jsp?nro=00000000011499", # AYELEN
