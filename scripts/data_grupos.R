@@ -22,7 +22,7 @@ grupos <-
                  "https://scienti.minciencias.gov.co/gruplac/jsp/visualiza/visualizagr.jsp?nro=00000000002700", # EDUCACIÓN, INFANCIA Y LENGUAS EXTRANJERAS
                  "https://scienti.minciencias.gov.co/gruplac/jsp/visualiza/visualizagr.jsp?nro=00000000010166", # FAMILIA DESARROLLO Y CALIDAD DE VIDA
                  "https://scienti.minciencias.gov.co/gruplac/jsp/visualiza/visualizagr.jsp?nro=00000000002630", # ESTUDIOS DE FENÓMENOS PSICOSOCIALES
-                 "https://scienti.minciencias.gov.co/gruplac/jsp/visualiza/visualizagr.jsp?nro=00000000003000", # CALIDAD DE VIDA
+                 "https://scienti.minciencias.gov.co/gruplac/jsp/visualiza/visualizagr.jsp?nro=00000000003174", # CALIDAD DE VIDA
                  "https://scienti.minciencias.gov.co/gruplac/jsp/visualiza/visualizagr.jsp?nro=00000000011499", # AYELEN
                  "https://scienti.minciencias.gov.co/gruplac/jsp/visualiza/visualizagr.jsp?nro=00000000008266", # FARMACODEPENDENCIA Y OTRAS ADICCIONES
                  "https://scienti.minciencias.gov.co/gruplac/jsp/visualiza/visualizagr.jsp?nro=00000000002699", # URBANITAS
