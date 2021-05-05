@@ -346,7 +346,7 @@ capitulos_ucla <- function(grupo_df) {
            pags = str_remove(info_2, ".*p?gs:"),
            pags = str_remove(pags, ",.*"),
            editorial = str_remove(info_2, ".*Ed. "),
-           auotres = str_remove(info_4, ".*Autores: ")) %>% 
+           autores = str_remove(info_4, ".*Autores: ")) %>% 
     select(-info_1, -info_2, -info_4)
 }
 
@@ -1202,7 +1202,7 @@ estrategias_comunicacion_ucla <- function(grupo_df) {
 
   grupo_df_estreategias_comunicacion <- 
     grupo_df %>%
-    filter(categoria == "Estrategias de Comunicaci?n del Conocimiento") %>% 
+    filter(categoria == "Estrategias de Comunicación del Conocimiento") %>% 
     separate(producto ,
              c("info_1", "info_2", "info_3", "info_4", "info_5", "info_6", 
                "info_7", "info_8", "info_9", "info_10", "info_11", "info_12", 
@@ -1219,7 +1219,7 @@ estrategias_comunicacion_ucla <- function(grupo_df) {
            desde = str_remove(desde, " hasta.*"),
            hata = str_trim(info_2),
            info_3 = str_remove(info_3, "NA.*"),
-           descripcion = str_remove(info_3, ".*Descripci?n: "),
+           descripcion = str_remove(info_3, ".*Descripción: "),
            descripcion = str_trim(descripcion)) %>% 
     select(-info_1, -info_2, -info_3)
   
@@ -1313,7 +1313,7 @@ participacion_ciudadana_cti_ucla <- function(grupo_df) {
   
   grupo_df_participacion_cti <- 
     grupo_df %>%
-    filter(categoria == "Participaci?n Ciudadana en Proyectos de CTI") %>% 
+    filter(categoria == "Participación Ciudadana en Proyectos de CTI") %>% 
     separate(producto ,
              c("info_1", "info_2", "info_3", "info_4", "info_5", "info_6","info_7", "info_8", "info_9"), 
              sep = "\r\n" ) %>% 
@@ -1375,7 +1375,7 @@ actividades_formacion_ucla <- function(grupo_df) {
   
   grupo_df_actividades_formacion <- 
     grupo_df %>%
-    filter(categoria == "ACTIVIDADES DE FORMACI?N")
+    filter(categoria == "ACTIVIDADES DE FORMACIÓN")
   
 }
 
@@ -1399,7 +1399,7 @@ generacion_contenido_audio_ucla <- function(grupo_df) {
   
   grupo_df_generacion_audio <- 
     grupo_df %>%
-    filter(categoria == "Generaci?nes de contenido de audio") %>% 
+    filter(categoria == "Generaciónes de contenido de audio") %>% 
     separate(producto ,
              c("info_1", "info_2", "info_3", "info_4", "info_5"), 
              sep = "\r\n" ) %>% 
@@ -1517,10 +1517,10 @@ traducciones_ucla <- function(grupo_df) {
            libro = str_remove(libro, " ISBN.*"),
            ISBN = str_remove(info_4, ", Medio.*"),
            ISBN = str_trim(ISBN),
-           medio_divulgacion = str_remove(info_4, ".*ci?n: "),
+           medio_divulgacion = str_remove(info_4, ".*ción: "),
            idioma_documento_original = str_remove(info_5, ",.*"),
            idioma_documento_original = str_remove(idioma_documento_original, ".*: "),
-           idioma_traduccion = str_remove(info_5, ".*ci?n: "),
+           idioma_traduccion = str_remove(info_5, ".*ción: "),
            edicion = str_remove(info_6, ", Serie.*"),
            edicion = str_remove(edicion, ".*: "),
            serie = str_remove(info_6, ".*Serie: "),
