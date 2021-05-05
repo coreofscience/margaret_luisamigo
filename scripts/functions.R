@@ -22,21 +22,26 @@ trabajos_dirigidos_ucla <- function(grupo_df) {
            titulo = str_trim(titulo)) %>% 
     select(-info_1) %>% 
     mutate(desde = str_trim(info_2),
+           desde = str_remove(desde, "Desde"),
+           desde = str_remove(desde, " hasta"),
+           desde = str_trim(desde),
            hasta = str_trim(info_3),
+           hasta = str_remove(hasta, ",.*"),
+           tipo_orientacion =str_remove(info_3, ".*: "),
            estudiante = str_trim(info_4),
-           paginas = str_trim(info_5), 
+           estudiante = str_remove(estudiante, ".*estudiante: "),
+           paginas = str_trim(info_5),
+           paginas = str_remove(paginas, ".*páginas: "),
            institucion = str_trim(info_6),
-           autor = str_trim(info_8)) %>% 
+           institucion = str_remove(institucion, ".*Institución: "),
+           autor = str_trim(info_8),
+           autor = str_remove(autor, ".*Autor: ")) %>% 
     select(-info_2,
            -info_3,
            -info_4,
            -info_5,
            -info_6,
-           -info_8) %>% 
-    separate(hasta, 
-             c("hasta",
-               "tipo_orientacion"),
-             sep = ", ")
+           -info_8)
   
   return(trabajosdirigidos)
   
@@ -342,7 +347,7 @@ capitulos_ucla <- function(grupo_df) {
            ISBN = str_remove(info_2, ".*ISBN: "),
            ISBN = str_remove(ISBN, ", Vol.*"), 
            vol = str_remove(info_2, ".*Vol."),
-           vol = str_remove(vol, ", p?g.*"),
+           vol = str_remove(vol, ", pág.*"),
            pags = str_remove(info_2, ".*p?gs:"),
            pags = str_remove(pags, ",.*"),
            editorial = str_remove(info_2, ".*Ed. "),
