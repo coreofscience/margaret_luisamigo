@@ -39,6 +39,7 @@ data_cleaning_ucla <- function(grupo_df) {
   produccion_tecnica_tecnologica <- produccion_tecnica_tecnologica_ucla(grupo_df)
   generacion_contenido_audio <- generacion_contenido_audio_ucla(grupo_df)
   conceptos_tecnicos <- conceptos_tecnicos_ucla(grupo_df)
+  reglamentos_tecnicos<- reglamentos_tecnicos_ucla(grupo_df)
   otros_productos_tencologicos <- otros_productos_tencologicos_ucla(grupo_df)
   traducciones <- traducciones_ucla(grupo_df)
   signos_distintivos <- signos_distintivos_ucla(grupo_df)
@@ -80,6 +81,7 @@ data_cleaning_ucla <- function(grupo_df) {
               produccion_tecnica_tecnologica = produccion_tecnica_tecnologica,
               generacion_contenido_audio = generacion_contenido_audio,
               conceptos_tecnicos = conceptos_tecnicos,
+              reglamentos_tecnicos=reglamentos_tecnicos,
               otros_productos_tencologicos = otros_productos_tencologicos,
               traducciones = traducciones,
               signos_distintivos = signos_distintivos,
