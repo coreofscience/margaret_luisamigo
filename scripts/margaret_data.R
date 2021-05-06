@@ -24,12 +24,11 @@ lapply(seq_along(produccion_grupos),
                       sheetName = names(produccion_grupos[i]))
          writeData(wb, 
                    sheet = i, 
-                   produccion_grupos[[i]])
+                   produccion_grupos[[i]][-length(produccion_grupos[[i]])])
        })
 
 #Save Workbook
 
-
 saveWorkbook(wb, 
-             "produccion_grupos.xlsx", 
+             "output/grupos_produccion.xlsx", 
              overwrite = TRUE)
