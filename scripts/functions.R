@@ -22,21 +22,26 @@ trabajos_dirigidos_ucla <- function(grupo_df) {
            titulo = str_trim(titulo)) %>% 
     select(-info_1) %>% 
     mutate(desde = str_trim(info_2),
+           desde = str_remove(desde, "Desde"),
+           desde = str_remove(desde, " hasta"),
+           desde = str_trim(desde),
            hasta = str_trim(info_3),
+           hasta = str_remove(hasta, ",.*"),
+           tipo_orientacion =str_remove(info_3, ".*: "),
            estudiante = str_trim(info_4),
-           paginas = str_trim(info_5), 
+           estudiante = str_remove(estudiante, ".*estudiante: "),
+           paginas = str_trim(info_5),
+           paginas = str_remove(paginas, ".*páginas: "),
            institucion = str_trim(info_6),
-           autor = str_trim(info_8)) %>% 
+           institucion = str_remove(institucion, ".*Institución: "),
+           autor = str_trim(info_8),
+           autor = str_remove(autor, ".*Autor: ")) %>% 
     select(-info_2,
            -info_3,
            -info_4,
            -info_5,
            -info_6,
-           -info_8) %>% 
-    separate(hasta, 
-             c("hasta",
-               "tipo_orientacion"),
-             sep = ", ")
+           -info_8)
   
   return(trabajosdirigidos)
   
@@ -342,11 +347,11 @@ capitulos_ucla <- function(grupo_df) {
            ISBN = str_remove(info_2, ".*ISBN: "),
            ISBN = str_remove(ISBN, ", Vol.*"), 
            vol = str_remove(info_2, ".*Vol."),
-           vol = str_remove(vol, ", p?g.*"),
+           vol = str_remove(vol, ", pág.*"),
            pags = str_remove(info_2, ".*p?gs:"),
            pags = str_remove(pags, ",.*"),
            editorial = str_remove(info_2, ".*Ed. "),
-           auotres = str_remove(info_4, ".*Autores: ")) %>% 
+           autores = str_remove(info_4, ".*Autores: ")) %>% 
     select(-info_1, -info_2, -info_4)
 }
 
@@ -1202,7 +1207,7 @@ estrategias_comunicacion_ucla <- function(grupo_df) {
 
   grupo_df_estreategias_comunicacion <- 
     grupo_df %>%
-    filter(categoria == "Estrategias de Comunicaci?n del Conocimiento") %>% 
+    filter(categoria == "Estrategias de Comunicación del Conocimiento") %>% 
     separate(producto ,
              c("info_1", "info_2", "info_3", "info_4", "info_5", "info_6", 
                "info_7", "info_8", "info_9", "info_10", "info_11", "info_12", 
@@ -1219,7 +1224,7 @@ estrategias_comunicacion_ucla <- function(grupo_df) {
            desde = str_remove(desde, " hasta.*"),
            hata = str_trim(info_2),
            info_3 = str_remove(info_3, "NA.*"),
-           descripcion = str_remove(info_3, ".*Descripci?n: "),
+           descripcion = str_remove(info_3, ".*Descripción: "),
            descripcion = str_trim(descripcion)) %>% 
     select(-info_1, -info_2, -info_3)
   
@@ -1313,7 +1318,7 @@ participacion_ciudadana_cti_ucla <- function(grupo_df) {
   
   grupo_df_participacion_cti <- 
     grupo_df %>%
-    filter(categoria == "Participaci?n Ciudadana en Proyectos de CTI") %>% 
+    filter(categoria == "Participación Ciudadana en Proyectos de CTI") %>% 
     separate(producto ,
              c("info_1", "info_2", "info_3", "info_4", "info_5", "info_6","info_7", "info_8", "info_9"), 
              sep = "\r\n" ) %>% 
@@ -1375,7 +1380,7 @@ actividades_formacion_ucla <- function(grupo_df) {
   
   grupo_df_actividades_formacion <- 
     grupo_df %>%
-    filter(categoria == "ACTIVIDADES DE FORMACI?N")
+    filter(categoria == "ACTIVIDADES DE FORMACIÓN")
   
 }
 
@@ -1399,7 +1404,7 @@ generacion_contenido_audio_ucla <- function(grupo_df) {
   
   grupo_df_generacion_audio <- 
     grupo_df %>%
-    filter(categoria == "Generaci?nes de contenido de audio") %>% 
+    filter(categoria == "Generaciónes de contenido de audio") %>% 
     separate(producto ,
              c("info_1", "info_2", "info_3", "info_4", "info_5"), 
              sep = "\r\n" ) %>% 
@@ -1517,10 +1522,10 @@ traducciones_ucla <- function(grupo_df) {
            libro = str_remove(libro, " ISBN.*"),
            ISBN = str_remove(info_4, ", Medio.*"),
            ISBN = str_trim(ISBN),
-           medio_divulgacion = str_remove(info_4, ".*ci?n: "),
+           medio_divulgacion = str_remove(info_4, ".*ción: "),
            idioma_documento_original = str_remove(info_5, ",.*"),
            idioma_documento_original = str_remove(idioma_documento_original, ".*: "),
-           idioma_traduccion = str_remove(info_5, ".*ci?n: "),
+           idioma_traduccion = str_remove(info_5, ".*ción: "),
            edicion = str_remove(info_6, ", Serie.*"),
            edicion = str_remove(edicion, ".*: "),
            serie = str_remove(info_6, ".*Serie: "),
