@@ -14,6 +14,7 @@ library(gt)
 library(treemapify)
 library(kableExtra)
 library(lessR)
+library(ggpubr)
 ```
 
 
@@ -39,15 +40,16 @@ produccion_articulos <-
 
 
 ```{r}
-produccion_articulos %>% 
+plot_articulos_total <- 
+  produccion_articulos %>% 
   count(ano) %>% 
   arrange(ano) %>% 
   ggplot(aes(x = ano, y = n, group = 1)) +
   geom_line(color = 4) +
   geom_point(color = 4) +
   xlab("año") +
-  ylab("cantidad de artículos") +
-  ggtitle("Producción de artículos") +
+  ylab("cantidad") +
+  ggtitle("Producción") +
   theme_classic()
 ```
 
@@ -57,15 +59,16 @@ Producción total por tipo de producto.
 Artículos
 
 ```{r}
-produccion_articulos %>% 
+plot_articulos_espe<- 
+  produccion_articulos %>% 
   filter(tipo_producto == "Publicado en revista especializada") %>% 
   count(ano) %>% 
   arrange(ano) %>% 
   ggplot(aes(x = ano, y = n, group = 1)) +
   geom_line(color = 4) +
   geom_point(color = 4) +
-  labs(title = "Producción artículos en revistas especializadas",
-       y = "Cantidad de artículos",
+  labs(title = "Artículos en revistas especializadas",
+       y = "Cantidad",
        x = "año") +
   theme_classic()
 ```
@@ -73,32 +76,52 @@ produccion_articulos %>%
 Artículos cortos
 
 ```{r}
-produccion_articulos %>% 
+plot_articulos_corto <- 
+  produccion_articulos %>% 
   filter(tipo_producto == "Corto (Resumen)") %>% 
   count(ano) %>% 
   arrange(ano) %>% 
   ggplot(aes(x = ano, y = n, group = 1)) +
   geom_line(color = 4) +
   geom_point(color = 4) +
-  labs(title = "Producción artículos Cortos (Resumen)",
-       y = "Cantidad de artículos",
+  labs(title = "Artículos Cortos (Resumen)",
+       y = "Cantidad",
        x = "año") +
   theme_classic()
 ```
 
 ```{r}
-produccion_articulos %>% 
+plot_articulos_revision <- 
+  produccion_articulos %>% 
   filter(tipo_producto == "Revisión (Survey)") %>% 
   count(ano) %>% 
   arrange(ano) %>% 
   ggplot(aes(x = ano, y = n, group = 1)) +
   geom_line(color = 4) +
   geom_point(color = 4) +
-  labs(title = "Producción artículos Revisión (Survey) ",
-       y = "Cantidad de artículos",
+  labs(title = "Artículos Revisión (Survey) ",
+       y = "Cantidad",
        x = "año") +
   theme_classic()
 ```
+
+Gráfico general produccion artículos
+
+```{r}
+global_scientific_production_papers <- 
+  ggarrange(plot_articulos_total,
+            plot_articulos_espe,
+        ggarrange(plot_articulos_corto, plot_articulos_revision, 
+                  ncol = 2, labels = c("c", "d"), 
+                  align = "h",widths = c(1.5,2)),  
+      nrow = 3, 
+      heights = c(1.5, 1, 1),
+      labels = c("a","b") 
+      ) 
+
+global_scientific_production_papers
+```
+
 
 Análisis por países
 
@@ -109,7 +132,7 @@ top_paises <-
   count(pais_revista, sort = T) %>%
   slice(1:6) %>% 
   mutate(porcentaje = round(n/sum(n)*100, 
-                                   2))
+                            2))
 otros_paises <- 
   produccion_articulos %>% 
   count(pais_revista, sort = T) %>%
@@ -138,7 +161,7 @@ top_revistas <-
   count(revista, sort = T) %>%
   slice(1:6) %>% 
   mutate(porcentaje = round(n/sum(n)*100, 
-                                   2))
+                            2))
 
 otras_revistas <- 
   produccion_articulos %>% 
