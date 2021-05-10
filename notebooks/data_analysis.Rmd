@@ -13,6 +13,7 @@ library(here)
 library(gt)
 library(treemapify)
 library(kableExtra)
+library(lessR)
 ```
 
 
@@ -24,20 +25,160 @@ grupo_df_articulos <-
 ```
 
 
-# Encontrado duplicados
+# Producción General
 
-La razón de los duplicados es porque dos investigadores pueden escribir un artículo para un mismo grupo pero le va a contar dos veces. Ejemplo 
+Para este análisis filtramos el periódo de tiempo de los últimos 
 
 ```{r}
-grupo_df_articulos %>% 
-  mutate(titulo = str_to_lower(titulo)) %>% 
-  group_by(grupo) %>% 
-  count(titulo) %>% 
-  filter(n > 1) %>% 
-  arrange(grupo) %>% 
-  kbl() %>%
-  kable_paper("hover", full_width = F)
+produccion_articulos <- 
+  produccion_grupos$articulos %>% 
+  filter(ano <= 2020,
+         ano >= 2014) 
+```
+
+
+
+```{r}
+produccion_articulos %>% 
+  count(ano) %>% 
+  arrange(ano) %>% 
+  ggplot(aes(x = ano, y = n, group = 1)) +
+  geom_line(color = 4) +
+  geom_point(color = 4) +
+  xlab("año") +
+  ylab("cantidad de artículos") +
+  ggtitle("Producción de artículos") +
+  theme_classic()
+```
+
+
+Producción total por tipo de producto.  
+
+Artículos
+
+```{r}
+produccion_articulos %>% 
+  filter(tipo_producto == "Publicado en revista especializada") %>% 
+  count(ano) %>% 
+  arrange(ano) %>% 
+  ggplot(aes(x = ano, y = n, group = 1)) +
+  geom_line(color = 4) +
+  geom_point(color = 4) +
+  labs(title = "Producción artículos en revistas especializadas",
+       y = "Cantidad de artículos",
+       x = "año") +
+  theme_classic()
+```
+
+Artículos cortos
+
+```{r}
+produccion_articulos %>% 
+  filter(tipo_producto == "Corto (Resumen)") %>% 
+  count(ano) %>% 
+  arrange(ano) %>% 
+  ggplot(aes(x = ano, y = n, group = 1)) +
+  geom_line(color = 4) +
+  geom_point(color = 4) +
+  labs(title = "Producción artículos Cortos (Resumen)",
+       y = "Cantidad de artículos",
+       x = "año") +
+  theme_classic()
+```
+
+```{r}
+produccion_articulos %>% 
+  filter(tipo_producto == "Revisión (Survey)") %>% 
+  count(ano) %>% 
+  arrange(ano) %>% 
+  ggplot(aes(x = ano, y = n, group = 1)) +
+  geom_line(color = 4) +
+  geom_point(color = 4) +
+  labs(title = "Producción artículos Revisión (Survey) ",
+       y = "Cantidad de artículos",
+       x = "año") +
+  theme_classic()
+```
+
+Análisis por países
+
+```{r}
+top_paises <- 
+  produccion_articulos %>% 
+  filter(pais_revista != "") %>% 
+  count(pais_revista, sort = T) %>%
+  slice(1:6) %>% 
+  mutate(porcentaje = round(n/sum(n)*100, 
+                                   2))
+otros_paises <- 
+  produccion_articulos %>% 
+  count(pais_revista, sort = T) %>%
+  filter(pais_revista != "") %>% 
+  mutate(porcentaje =round(n/sum(n)*100,2)) %>% 
+  slice(7:n) %>% 
+  summarize(n = sum(n),
+            porcentaje = sum(porcentaje)) %>% 
+  mutate(pais_revista = "Otros") %>% 
+  select(pais_revista, n, porcentaje)
+
+top_otras_paises <- 
+  top_paises %>% 
+  bind_rows(otros_paises)
+
+top_otras_paises
+```
+
+Hay 25 productos que no presenta país. 
+
+Análisis por revistas
+
+```{r}
+top_revistas <- 
+  produccion_articulos %>% 
+  count(revista, sort = T) %>%
+  slice(1:6) %>% 
+  mutate(porcentaje = round(n/sum(n)*100, 
+                                   2))
+
+otras_revistas <- 
+  produccion_articulos %>% 
+  count(revista, sort = T) %>%
+  mutate(porcentaje =round(n/sum(n)*100,2)) %>% 
+  slice(7:n) %>% 
+  summarize(n = sum(n),
+            porcentaje = sum(porcentaje)) %>% 
+  mutate(revista = "Otros") %>% 
+  select(revista, n, porcentaje)
+
+top_otras_revistas <- 
+  top_revistas %>% 
+  bind_rows(otras_revistas)
+
+top_otras_revistas
+```
+
+
+```{r}
+PieChart(Dept, data = data,
+         main = NULL)
+```
+
+
+# Producción por grupo 
+
+Producción de artículos de cada grupo 
+
+```{r}
+produccion_articulos %>% 
+  count(grupo, sort = TRUE)
+```
+
+Producción de los grupos por año
+
+```{r}
 
 ```
+
+
 
 
