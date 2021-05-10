@@ -113,7 +113,7 @@ global_scientific_production_papers <-
             plot_articulos_espe,
         ggarrange(plot_articulos_corto, plot_articulos_revision, 
                   ncol = 2, labels = c("c", "d"), 
-                  align = "h",widths = c(1.5,2)),  
+                  align = "h",widths = c(2,2)),  
       nrow = 3, 
       heights = c(1.5, 1, 1),
       labels = c("a","b") 
@@ -121,7 +121,6 @@ global_scientific_production_papers <-
 
 global_scientific_production_papers
 ```
-
 
 Análisis por países
 
@@ -181,27 +180,9 @@ top_otras_revistas
 ```
 
 
-```{r}
-PieChart(Dept, data = data,
-         main = NULL)
-```
-
 
 # Producción por grupo 
 
-Producción de artículos de cada grupo 
-
-```{r}
-produccion_articulos %>% 
-  count(grupo, sort = TRUE)
-```
-
-Producción de los grupos por año
-
-```{r}
-
-```
-
-
+# Producción por investigador
 
 
