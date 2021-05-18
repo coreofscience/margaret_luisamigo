@@ -18,17 +18,17 @@ grupo_df_articulos <-
 
 grupo_df_articulos_no_duplicados <- 
   grupo_df_articulos %>% 
-  mutate(titulo_limpio = str_to_upper(titulo),
+  mutate(titulo_limpio = str_to_upper(titulo), # Convert upper letters
          titulo_limpio = str_replace_all(titulo_limpio, 
-                                         "[[:punct:]]", " "),
+                                         "[[:punct:]]", " "), # Remove punctuation
          titulo_limpio = stri_trans_general(titulo_limpio, 
-                                            id = "Latin-ASCII"),
+                                            id = "Latin-ASCII"), # Remove special characters
          titulo_limpio = str_replace_all(titulo_limpio,
                                          "  ", 
-                                         " "),
-         titulo_limpio = str_trim(titulo_limpio),
+                                         " "),  # Remove blank spaces
+         titulo_limpio = str_trim(titulo_limpio), # Remove begin spaces
          id = 1:length(grupo_df_articulos$categoria)) %>% 
-  filter(!duplicated(titulo_limpio))
+  filter(!duplicated(titulo_limpio)) # This should be the problem
 
 grupo_df_similarity <- 
   grupo_df_articulos_no_duplicados %>% 
@@ -56,7 +56,7 @@ produccion_similar_articulos <-
 
 produccion_similar_articulos_grupos <- 
   produccion_similar_articulos %>% 
-  filter(grupo.x == grupo.y) %>% 
+  filter(grupo.x == grupo.y) %>% # Remove duplicates
   filter(similarity >= 0.80) 
 
 
