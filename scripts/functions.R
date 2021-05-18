@@ -12,7 +12,7 @@ trabajos_dirigidos_ucla <- function(grupo_df) {
                "info_6", 
                "info_7",
                "info_8"), 
-             sep = "\r\n" ) %>% 
+             sep = "\r\n" ) %>%  
     select(-info_7) %>% 
     mutate(tipo_producto = str_remove(info_1, ":.*"),
            tipo_producto = str_remove(tipo_producto, ".*-"),
@@ -85,7 +85,6 @@ eventos_cientificos_ucla <- function(grupo_df) {
     select(-info_4) %>% 
     mutate(Tipo_vinculación = str_remove(info_5,"Nombre.*"),
            Tipo_vinculación = str_remove(Tipo_vinculación,"Ámbito.*"),
-           Tipo_vinculación = str_remove(Tipo_vinculación,"Tipo de vinculación"),
            Tipo_vinculación = str_trim(Tipo_vinculación)) %>% 
     select(-info_5)
   
