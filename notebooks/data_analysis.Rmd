@@ -21,8 +21,8 @@ library(ggpubr)
 ```{r}
 #source("data_getting.R")
 grupo_df_articulos <-  
-  read_csv(here("data", 
-                "grupos_produccion.csv"))
+  read_csv(here("output", 
+                "articulos.csv"))
 ```
 
 
@@ -32,7 +32,7 @@ Para este análisis filtramos el periódo de tiempo de los últimos
 
 ```{r}
 produccion_articulos <- 
-  produccion_grupos$articulos %>% 
+  grupo_df_articulos %>% 
   filter(ano <= 2020,
          ano >= 2014) 
 ```

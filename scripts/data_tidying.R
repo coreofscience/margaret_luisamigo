@@ -14,7 +14,8 @@ grupo_df_articulos <-
   read_csv(here("data", 
                 "grupos_produccion.csv"))
 
-# La razón de los duplicados es porque dos investigadores pueden escribir un artículo para un mismo grupo pero le va a contar dos veces. Ejemplo 
+# La razón de los duplicados es porque dos investigadores pueden escribir un 
+# artículo para un mismo grupo pero le va a contar dos veces. Ejemplo 
 
 grupo_df_articulos_no_duplicados <- 
   grupo_df_articulos %>% 
