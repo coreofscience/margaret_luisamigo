@@ -85,6 +85,7 @@ eventos_cientificos_ucla <- function(grupo_df) {
     select(-info_4) %>% 
     mutate(Tipo_vinculación = str_remove(info_5,"Nombre.*"),
            Tipo_vinculación = str_remove(Tipo_vinculación,"Ámbito.*"),
+           Tipo_vinculación = str_remove(Tipo_vinculación,"Tipo de vinculación"),
            Tipo_vinculación = str_trim(Tipo_vinculación)) %>% 
     select(-info_5)
   
