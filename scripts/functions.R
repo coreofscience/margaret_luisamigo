@@ -66,9 +66,9 @@ eventos_cientificos_ucla <- function(grupo_df) {
            Tipo_evento = str_remove(info_1, ":.*"),
            Tipo_evento = str_remove(Tipo_evento, ".*-"),
            Tipo_evento = str_trim(Tipo_evento),
-           Titulo = str_extract(info_1, ":.*"),
-           Titulo = str_remove(Titulo, "^:"),
-           Titulo = str_trim(Titulo)) %>% 
+           titulo = str_extract(info_1, ":.*"),
+           titulo = str_remove(titulo, "^:"),
+           titulo = str_trim(titulo)) %>% 
     select(-info_1) %>% 
     mutate(Ciudad_evento= str_remove(info_2, ",.*"),
            info_2 = str_remove(info_2, ".*desde*"),
@@ -97,8 +97,8 @@ eventos_cientificos_ucla <- function(grupo_df) {
     mutate(info_1 = str_trim(info_1),
            Tipo_Curso = str_remove(info_1, ":.*"),
            Tipo_Curso = str_remove(Tipo_Curso, ".*-" ),
-           Nombre_curso = str_remove(info_1, ".*:"),
-           Nombre_curso = str_trim(Nombre_curso)) %>% 
+           titulo = str_remove(info_1, ".*:"),     #nombre_curso
+           titulo = str_trim(titulo)) %>%          #nombre_curso
     select(-info_1) %>% 
     mutate(info_2 = str_trim(info_2),
            Pais = str_remove(info_2,",.*"),
@@ -316,9 +316,9 @@ proyectos_ucla <- function(grupo_df) {
            Tipo_proyecto = str_remove(info_1, ":.*"),
            Tipo_proyecto = str_remove(Tipo_proyecto, ".*-"),
            Tipo_proyecto = str_trim(Tipo_proyecto),
-           Titulo = str_extract(info_1, ":.*"),
-           Titulo = str_remove(Titulo, "^:"),
-           Titulo = str_trim(Titulo)) %>% 
+           titulo = str_extract(info_1, ":.*"),
+           titulo = str_remove(titulo, "^:"),
+           titulo = str_trim(titulo)) %>% 
     select(-info_1, -info_2) %>% 
     mutate(info_3= str_trim(info_3),
            Fecha_inicio= str_remove(info_3, "-$"),
@@ -341,9 +341,9 @@ capitulos_ucla <- function(grupo_df) {
     mutate(tipo_producto = str_remove(info_1, ":.*"),
            tipo_producto = str_remove(tipo_producto, ".*-"),
            tipo_producto = str_trim(tipo_producto),
-           titulo_capitulo = str_extract(info_1, ":.*"),
-           titulo_capitulo = str_remove(titulo_capitulo, "^:"),
-           titulo_capitulo = str_trim(titulo_capitulo),
+           titulo = str_extract(info_1, ":.*"),
+           titulo = str_remove(titulo, "^:"),
+           titulo = str_trim(titulo),
            pais = str_remove(info_2, ", \\d.*"),
            pais = str_trim(pais),
            ano = str_remove(info_2, ", ISBN.*"),
@@ -377,9 +377,9 @@ jurado_ucla <- function(grupo_df) {
     mutate(Nivel_Academico = str_remove(info_1, ":.*"),
            Nivel_Academico = str_remove(Nivel_Academico, ".*-"),
            Nivel_Academico = str_trim(Nivel_Academico),
-           Titulo = str_extract(info_1, ":.*"),
-           Titulo = str_remove(Titulo, "^:"),
-           Titulo = str_trim(Titulo)) %>% 
+           titulo = str_extract(info_1, ":.*"),
+           titulo = str_remove(titulo, "^:"),
+           titulo = str_trim(titulo)) %>% 
     separate(info_2,into=c("pais","anno"), sep = ",",remove = TRUE) %>% 
     mutate(Pais=str_trim(pais),
            ano=str_trim(anno),
@@ -422,8 +422,8 @@ cursos_ucla <- function(grupo_df) {
     mutate(info_1 = str_trim(info_1),
            Tipo_Curso = str_remove(info_1, ":.*"),
            Tipo_Curso = str_remove(Tipo_Curso, ".*-" ),
-           Nombre_curso = str_remove(info_1, ".*:"),
-           Nombre_curso = str_trim(Nombre_curso)) %>% 
+           titulo = str_remove(info_1, ".*:"),      #Nombre_curso
+           titulo = str_trim(titulo)) %>%     #Nombre_curso
     select(-info_1) %>% 
     mutate(info_2 = str_trim(info_2),
            Pais = str_remove(info_2,",.*"),
@@ -537,9 +537,9 @@ consultorias_ucla <- function(grupo_df) {
            Tipo_Consultoria = str_remove(Tipo_Consultoria, ".*\\d."),
            Tipo_Consultoria = str_remove(Tipo_Consultoria, "."),
            Tipo_Consultoria = str_trim(Tipo_Consultoria),
-           Titulo = str_extract(info_1, ":.*"),
-           Titulo = str_remove(Titulo, "^:"),
-           Titulo = str_trim(Titulo)) %>% 
+           titulo = str_extract(info_1, ":.*"),
+           titulo = str_remove(titulo, "^:"),
+           titulo = str_trim(titulo)) %>% 
     select(-info_1, -info_2) %>% 
     separate(info_3,
              c("i_1","i_2","i_3","i_4"),
@@ -603,8 +603,8 @@ libros_ucla <- function(grupo_df) {
            Tipo_Libro = str_remove(info_1, ":.*"),
            Tipo_Libro = str_remove(Tipo_Libro, ".*-" ),
            Tipo_Libro = str_trim(Tipo_Libro),
-           Titulo = str_remove(info_1, ".*:"),
-           Titulo = str_trim(Titulo)) %>% 
+           titulo = str_remove(info_1, ".*:"),
+           titulo = str_trim(titulo)) %>% 
     select(-info_1) %>% 
     mutate(info_2 = str_trim(info_2),
            Pais = str_remove(info_2,",.*"),
@@ -681,9 +681,9 @@ demas_trabajos_ucla <- function(grupo_df) {
              c("info_1", "info_2","info_3","info_4","info_5"), 
              sep = "\r\n" )%>% 
     mutate(info_1 = str_trim(info_1),
-           Titulo = str_extract(info_1, ":.*"),
-           Titulo = str_remove(Titulo, "^:"),
-           Titulo = str_trim(Titulo)) %>% 
+           titulo = str_extract(info_1, ":.*"),
+           titulo = str_remove(titulo, "^:"),
+           titulo = str_trim(titulo)) %>% 
     select(-info_1) %>% 
     mutate(info_2=str_trim(info_2),
            Pais= str_remove(info_2, ",.*"),
@@ -717,9 +717,9 @@ informes_investigacion_ucla <- function(grupo_df) {
              c("info_1", "info_2","info_3","info_4"), 
              sep = "\r\n" )%>% 
     mutate(info_1 = str_trim(info_1),
-           Titulo = str_extract(info_1, ":.*"),
-           Titulo = str_remove(Titulo, "^:" ),
-           Titulo = str_trim(Titulo)) %>% 
+           titulo = str_extract(info_1, ":.*"),
+           titulo = str_remove(titulo, "^:" ),
+           titulo = str_trim(titulo)) %>% 
     select(-info_1) %>% 
     mutate(info_2 = str_trim(info_2),
            Año = str_remove(info_2, ",.*"),
@@ -782,9 +782,9 @@ generacion_multimedia_ucla <- function(grupo_df) {
            Tipo_generacion = str_trim(Tipo_generacion),
            Tipo_generacion = str_remove(Tipo_generacion, ".*-"),
            Tipo_generacion = str_trim(Tipo_generacion),
-           Titulo = str_extract(info_1, ":.*"),
-           Titulo = str_remove(Titulo, "^:"),
-           Titulo = str_trim(Titulo)) %>% 
+           titulo = str_extract(info_1, ":.*"),
+           titulo = str_remove(titulo, "^:"),
+           titulo = str_trim(titulo)) %>% 
     select(-info_1) %>%
     mutate(info_2=str_trim(info_2),
            Año= str_remove(info_2, ",.*"),
@@ -834,9 +834,9 @@ otra_publicacion_divulgativa_ucla <- function(grupo_df) {
            Tipo_Publicacion_divulgativa = str_remove(info_1, ":.*"),
            Tipo_Publicacion_divulgativa = str_remove(Tipo_Publicacion_divulgativa, ".*-" ),
            Tipo_Publicacion_divulgativa = str_trim( Tipo_Publicacion_divulgativa),
-           Titulo = str_extract(info_1, ":.*"),
-           Titulo = str_remove(Titulo, "^:" ),
-           Titulo = str_trim(Titulo)) %>% 
+           titulo = str_extract(info_1, ":.*"),
+           titulo = str_remove(titulo, "^:" ),
+           titulo = str_trim(titulo)) %>% 
     select(-info_1) %>% 
     mutate(info_2 = str_trim(info_2),
            pais= str_remove(info_2, ",.*"),
@@ -939,9 +939,9 @@ ediciones_ucla <- function(grupo_df) {
            Medio = str_remove(info_1, ":.*"),
            Medio = str_remove(Medio, ".*-"),
            Medio = str_trim(Medio),
-           Titulo = str_extract(info_1, ":.*"),
-           Titulo = str_remove(Titulo, "^:"),
-           Titulo = str_trim(Titulo)) %>% 
+           titulo = str_extract(info_1, ":.*"),
+           titulo = str_remove(titulo, "^:"),
+           titulo = str_trim(titulo)) %>% 
     select(-info_1) %>%
     mutate(info_2=str_trim(info_2),
            Pais= str_remove(info_2, ",.*"),
@@ -982,10 +982,10 @@ estrategias_pedagogicas_ucla <- function(grupo_df) {
              sep = "\r\n" ) %>% 
     unite( info_3,c(4:27),  sep = ",", remove = TRUE) %>% 
     mutate(info_1 = str_trim(info_1),
-           Titulo = str_remove(info_1, "desde.*"),
-           Titulo = str_remove(Titulo, ".*- "),
-           Titulo= str_remove(Titulo, ": $"),
-           Titulo = str_trim(Titulo),
+           titulo = str_remove(info_1, "desde.*"),
+           titulo = str_remove(titulo, ".*- "),
+           titulo= str_remove(titulo, ": $"),
+           titulo = str_trim(titulo),
            Fecha_inicio= str_extract(info_1, "desde.*"),
            Fecha_inicio= str_remove(Fecha_inicio, "desde"),
            Fecha_inicio= str_remove(Fecha_inicio, "hasta"),
@@ -1043,9 +1043,9 @@ generacion_contenido_virtual_ucla <- function(grupo_df) {
            Medio = str_remove(info_1, ":.*"),
            Medio = str_remove(Medio, ".*-"),
            Medio = str_trim(Medio),
-           Titulo = str_extract(info_1, ":.*"),
-           Titulo = str_remove(Titulo, "^:"),
-           Titulo = str_trim(Titulo)) %>% 
+           titulo = str_extract(info_1, ":.*"),
+           titulo = str_remove(titulo, "^:"),
+           titulo = str_trim(titulo)) %>% 
     select(-info_1) %>%
     mutate(info_2=str_trim(info_2),
            Fecha= str_remove(info_2, ",.*"),
@@ -1075,10 +1075,10 @@ espacios_participacion_ucla <- function(grupo_df) {
              c("info_1", "info_2","info_3"), 
              sep = "\r\n" )%>% 
     mutate(info_1 = str_trim(info_1),
-           Titulo = str_extract(info_1, ".*en"),
-           Titulo = str_remove(Titulo, " en$"),
-           Titulo = str_remove(Titulo, ".*- "),
-           Titulo = str_trim(Titulo),
+           titulo = str_extract(info_1, ".*en"),
+           titulo = str_remove(titulo, " en$"),
+           titulo = str_remove(titulo, ".*- "),
+           titulo = str_trim(titulo),
            Ciudad = str_remove(info_1,".*en"),
            Ciudad = str_trim(Ciudad)) %>% 
     select(-info_1) %>% 
@@ -1179,9 +1179,9 @@ otros_libros_ucla <- function(grupo_df) {
            Tipo_libro = str_remove(info_1, ":.*"),
            Tipo_libro = str_remove(Tipo_libro, ".*- "),
            Tipo_libro = str_trim(Tipo_libro),
-           Titulo= str_extract(info_1, ":.*"),
-           Titulo= str_remove(Titulo, "^:"),
-           Titulo= str_trim(Titulo)) %>% 
+           titulo= str_extract(info_1, ":.*"),
+           titulo= str_remove(titulo, "^:"),
+           titulo= str_trim(titulo)) %>% 
     select(-info_1) %>% 
     mutate(info_2 = str_trim(info_2),
            Pais = str_remove(info_2,",.*"),
@@ -1233,9 +1233,9 @@ estrategias_comunicacion_ucla <- function(grupo_df) {
            desde = str_remove(info_1, ".*desde "),
            desde = str_remove(desde, " hasta.*"),
            hata = str_trim(info_2),
-           info_3 = str_remove(info_3, "NA.*"),
-           descripcion = str_remove(info_3, ".*Descripción: "),
-           descripcion = str_trim(descripcion)) %>% 
+           info_3 = str_remove(info_3, "NA.*"), 
+           titulo = str_remove(info_3, ".*Descripción: "),   #descripcion
+           titulo = str_trim(titulo)) %>%                    #descripcion
     select(-info_1, -info_2, -info_3)
   
 }
@@ -1282,9 +1282,9 @@ informes_tecnicos_ucla <- function(grupo_df) {
              c("info_1", "info_2","info_3","info_4","info_5"), 
              sep = "\r\n" )%>% 
     mutate(info_1 = str_trim(info_1),
-           Titulo = str_extract(info_1, ":.*"),
-           Titulo = str_remove(Titulo, "^:"),
-           Titulo = str_trim(Titulo)) %>% 
+           titulo = str_extract(info_1, ":.*"),
+           titulo = str_remove(titulo, "^:"),
+           titulo = str_trim(titulo)) %>% 
     select(-info_1, -info_2) %>%
     separate(info_3,
              c("ano","mes","idioma","ciudad"),
@@ -1449,9 +1449,9 @@ conceptos_tecnicos_ucla <- function(grupo_df) {
     mutate(tipo_producto = str_remove(info_1, ":.*"),
            tipo_producto = str_remove(tipo_producto, ".*\\d."),
            tipo_producto = str_trim(tipo_producto),
-           Titulo = str_extract(info_1, ":.*"),
-           Titulo = str_remove(Titulo, "^:"),
-           Titulo = str_trim(Titulo),
+           titulo = str_extract(info_1, ":.*"),
+           titulo = str_remove(titulo, "^:"),
+           titulo = str_trim(titulo),
            ano_solicitud = str_remove(info_3, ", Mes.*"),
            ano_solicitud = str_remove(ano_solicitud, ".*: "),
            ano_solicitud = str_trim(ano_solicitud),
@@ -1475,9 +1475,9 @@ reglamentos_tecnicos_ucla <- function(grupo_df) {
     separate(producto ,
              c("info_1", "info_2", "info_3", "info_4", "info_5","info_6"), 
              sep = "\r\n" ) %>%
-    mutate(Titulo = str_extract(info_1, ":.*"),
-           Titulo = str_remove(Titulo, "^:"),
-           Titulo = str_trim(Titulo)) %>% 
+    mutate(titulo = str_extract(info_1, ":.*"),
+           titulo = str_remove(titulo, "^:"),
+           titulo = str_trim(titulo)) %>% 
     select(-info_1) %>% 
     mutate(info_2= str_trim(info_2),
            Pais= str_remove(info_2, ",.*"),
@@ -1516,9 +1516,9 @@ otros_productos_tencologicos_ucla <- function(grupo_df) {
              c("info_1", "info_2","info_3","info_4","info_5","info_6"), 
              sep = "\r\n" )%>% 
     mutate(info_1 = str_trim(info_1),
-           Titulo = str_extract(info_1, ":.*"),
-           Titulo = str_remove(Titulo, "^:"),
-           Titulo = str_trim(Titulo)) %>% 
+           titulo = str_extract(info_1, ":.*"),
+           titulo = str_remove(titulo, "^:"),
+           titulo = str_trim(titulo)) %>% 
     select(-info_1) %>%
     mutate(info_2= str_trim(info_2),
            Pais= str_remove(info_2, ",.*"),
@@ -1598,9 +1598,9 @@ signos_distintivos_ucla <- function(grupo_df){
     mutate(tipo_producto = str_remove(info_1, ":.*"),
            tipo_producto = str_remove(tipo_producto, ".*\\d.-"),
            tipo_producto = str_trim(tipo_producto),
-           Titulo = str_extract(info_1, ":.*"),
-           Titulo = str_remove(Titulo, "^:"),
-           Titulo = str_trim(Titulo),
+           titulo = str_extract(info_1, ":.*"),
+           titulo = str_remove(titulo, "^:"),
+           titulo = str_trim(titulo),
            pais = str_remove(info_2, ",.*"),
            pais = str_trim(pais),
            ano = str_trim(info_2),
@@ -1621,9 +1621,9 @@ nuevos_registros_cientificos_ucla <- function(grupo_df) {
              c("info_1", "info_2","info_3","info_4","info_5","info_6","info_7","info_8","info_9"), 
              sep = "\r\n" )%>% 
     mutate(info_1 = str_trim(info_1),
-           Titulo = str_extract(info_1, ":.*"),
-           Titulo = str_remove(Titulo, "^:"),
-           Titulo = str_trim(Titulo)) %>% 
+           titulo = str_extract(info_1, ":.*"),
+           titulo = str_remove(titulo, "^:"),
+           titulo = str_trim(titulo)) %>% 
     select(-info_1, -info_2) %>%
     mutate(info_3= str_trim(info_3),
            Año= str_remove(info_3, ",.*"),

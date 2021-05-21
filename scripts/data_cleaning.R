@@ -33,17 +33,17 @@ data_cleaning_ucla <- function(grupo_df) {
   informes_tecnicos <- informes_tecnicos_ucla(grupo_df)
   participacion_ciudadana_cti <- participacion_ciudadana_cti_ucla(grupo_df)
   regulaciones_normas <- regulaciones_normas_ucla(grupo_df)
-  actividades_evaluador <- actividades_evaluador_ucla(grupo_df)
-  actividades_formacion <- actividades_formacion_ucla(grupo_df)
-  apropiacion_social_conocimiento <- apropiacion_social_conocimiento_ucla(grupo_df)
-  produccion_tecnica_tecnologica <- produccion_tecnica_tecnologica_ucla(grupo_df)
   generacion_contenido_audio <- generacion_contenido_audio_ucla(grupo_df)
-  conceptos_tecnicos <- conceptos_tecnicos_ucla(grupo_df)
   reglamentos_tecnicos<- reglamentos_tecnicos_ucla(grupo_df)
   otros_productos_tencologicos <- otros_productos_tencologicos_ucla(grupo_df)
   traducciones <- traducciones_ucla(grupo_df)
   signos_distintivos <- signos_distintivos_ucla(grupo_df)
   nuevos_registros_cientificos <- nuevos_registros_cientificos_ucla(grupo_df)
+  actividades_evaluador <- actividades_evaluador_ucla(grupo_df)
+  actividades_formacion <- actividades_formacion_ucla(grupo_df)
+  apropiacion_social_conocimiento <- apropiacion_social_conocimiento_ucla(grupo_df)
+  produccion_tecnica_tecnologica <- produccion_tecnica_tecnologica_ucla(grupo_df)
+  conceptos_tecnicos <- conceptos_tecnicos_ucla(grupo_df)
   
   return(list(trabajos_dirigidos = trabajos_dirigidos,
               eventos_cientificos = eventos_cientificos,
@@ -75,16 +75,16 @@ data_cleaning_ucla <- function(grupo_df) {
               informes_tecnicos = informes_tecnicos,
               participacion_ciudadana_cti = participacion_ciudadana_cti,
               regulaciones_normas = regulaciones_normas,
-              actividades_evaluador = actividades_evaluador,
-              actividades_formacion = actividades_formacion,
-              apropiacion_social_conocimiento = apropiacion_social_conocimiento,
-              produccion_tecnica_tecnologica = produccion_tecnica_tecnologica,
               generacion_contenido_audio = generacion_contenido_audio,
-              conceptos_tecnicos = conceptos_tecnicos,
               reglamentos_tecnicos=reglamentos_tecnicos,
               otros_productos_tencologicos = otros_productos_tencologicos,
               traducciones = traducciones,
               signos_distintivos = signos_distintivos,
-              nuevos_registros_cientificos = nuevos_registros_cientificos))
+              nuevos_registros_cientificos = nuevos_registros_cientificos,
+              actividades_evaluador = actividades_evaluador,
+              actividades_formacion = actividades_formacion,
+              apropiacion_social_conocimiento = apropiacion_social_conocimiento,
+              produccion_tecnica_tecnologica = produccion_tecnica_tecnologica,
+              conceptos_tecnicos = conceptos_tecnicos))
   
 }

@@ -30,5 +30,5 @@ lapply(seq_along(produccion_grupos),
 #Save Workbook
 
 saveWorkbook(wb, 
-             "output/grupos_produccion.xlsx", 
+             "grupos_produccion.xlsx", 
              overwrite = TRUE)
