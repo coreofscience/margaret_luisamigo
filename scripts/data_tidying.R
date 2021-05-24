@@ -53,6 +53,7 @@ while (pos<=41) {
     grupo_df_titulo_limpio<-c(grupo_df_titulo_limpio,grupo_df_no_duplicados)
     pos<-pos+1
 }
+rm(categoria, grupo_df_no_duplicados, pos)
 
 #Ciclo para los item
 grupo_df_similarity<-NULL
@@ -64,6 +65,7 @@ while (y<=36) {
   grupo_df_similarity<-c(grupo_df_similarity,grupo_df_)  #
   y<-y+1
 }
+rm(grupo_similar, grupo_df_, y)
 
 
 '''
