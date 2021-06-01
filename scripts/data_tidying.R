@@ -31,62 +31,67 @@ grupo_df_articulos_no_duplicados <-
          id = 1:length(grupo_df_articulos$categoria)) %>% 
   filter(!duplicated(titulo_limpio))
 
-grupo_df_similarity <- 
-  grupo_df_articulos_no_duplicados %>% 
-  select(titulo_limpio,
-         id) %>% 
-  unnest_tokens(output = "words",
-                input = titulo_limpio, 
-                token = "words") %>% 
-  count(id, words) %>% 
-  pairwise_similarity(item = id, 
-                      feature = words, 
-                      value = n)
 
-# Listado de artículos similares
+# Finding similarities per group 
 
-produccion_similar_articulos <- 
-  grupo_df_articulos_no_duplicados %>% 
-  right_join(grupo_df_similarity %>% 
-               filter(similarity >= 0.70), 
-             by = c("id" = "item1")) %>% 
-  left_join(grupo_df_articulos_no_duplicados, 
-            by = c("item2" = "id"))
+df <- tibble(id = numeric())
 
-# Es necesario eliminar los registros que tengan distintos grupos 
+grupo_df_articulos <- # create an id 
+  grupo_df_articulos %>% 
+  mutate(id = 1:length(grupo_df_articulos$categoria))
 
-produccion_similar_articulos_grupos <- 
-  produccion_similar_articulos %>% 
-  filter(grupo.x == grupo.y) %>% 
-  filter(similarity >= 0.80) 
+grupos <- 
+  grupo_df_articulos %>% 
+  select(grupo) %>% 
+  unique
 
+for (i in grupos$grupo) {
+  
+  df_1 <-  
+    grupo_df_articulos %>% 
+    filter(grupo == i) %>% 
+    select(id, 
+           titulo)
+  
+  df_2 <- 
+    df_1 %>% 
+    unnest_tokens(output = "words",
+                  input = titulo,
+                  token = "words") %>% 
+    count(id, words) %>% 
+    pairwise_similarity(item = id, 
+                        feature = words, 
+                        value = n)
+  
+  df_3 <- 
+    df_2 %>% 
+    filter(similarity >= 0.70) %>% 
+    rename(Source = "item1",
+           Target = "item2",
+           weight = "similarity") %>% 
+    graph_from_data_frame(directed = FALSE) %>% 
+    simplify()
+  
+  df_4 <- 
+    cbind(get.edgelist(df_3),
+          E(df_3)$weight/2) %>% 
+    as.data.frame() %>% 
+    select(V2) %>% 
+    rename(id = "V2") %>% 
+    mutate(id = as.numeric(id))
+  
+  df_5 <- 
+    df_1 %>% 
+    anti_join(df_4) %>% 
+    select(-titulo)
+  
+  df <- 
+    df %>% 
+    bind_rows(df_5)
+}
 
-# Necesitamos identificar los registros unicos duplicados (igraph)
+# Select unique values from grupo_df_articulos
 
-graph_duplicados <- 
-  produccion_similar_articulos_grupos %>% 
-  select(id, item2, similarity) %>% 
-  rename(Source = "id",
-         Target = "item2",
-         weight = "similarity") %>% 
-  graph_from_data_frame(directed = FALSE) %>% 
-  simplify()
-
-duplicados_unicos <- 
-  cbind(get.edgelist(graph_duplicados),
-        E(graph_duplicados)$weight/2) %>% 
-  as.data.frame()
-
-duplicados_unicos %>% dim
-
-# Eliminamos los registros duplicados mayores al 80% de similaridad que están en un mismo grupo
-# En esta parte puede haber un error ya que pueden estar en diferentes revistas. 
-
-grupo_df_articulos_no_duplicados_sin_sim <- 
-  grupo_df_articulos_no_duplicados %>% 
-  anti_join(duplicados_unicos %>% 
-              select(V1) %>% 
-              mutate(V1 = as.numeric(V1)),
-            by = c("id" = "V1")) %>% 
-  select(-titulo_limpio, 
-         -id)
+grupo_df_articulos_unicos <- 
+  grupo_df_articulos %>% 
+  inner_join(df)
