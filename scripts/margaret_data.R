@@ -13,7 +13,7 @@ source(here("scripts",
 
 grupo_df <- data_getting_ucla(grupos)
 produccion_grupos <- data_cleaning_ucla(grupo_df)
-
+articulos_unicos <- data_tidying_ucla(produccion_grupos)
 
 # This code save produccion_grupos in an excel file
 
