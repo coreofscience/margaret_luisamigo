@@ -75,6 +75,6 @@ data_tidying_ucla <- function(produccion_grupos) {
     grupo_df_articulos %>% 
     inner_join(df)
   
-  return(produccion_grupos$articulos = grupo_df_articulos_unicos)
+  return(grupo_df_articulos_unicos)
   
 }
