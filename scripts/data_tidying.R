@@ -9,11 +9,6 @@ library(SnowballC)
 library(widyr)
 library(igraph)
 
-#source("data_getting.R")
-grupo_df_articulos <-  
-  read_csv(here("data", 
-                "grupos_produccion.csv"))
-
 # Finding similarities per group 
 
 df <- tibble(id = numeric())
