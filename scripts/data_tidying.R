@@ -14,24 +14,6 @@ grupo_df_articulos <-
   read_csv(here("data", 
                 "grupos_produccion.csv"))
 
-# La razón de los duplicados es porque dos investigadores pueden escribir un 
-# artículo para un mismo grupo pero le va a contar dos veces. Ejemplo 
-
-grupo_df_articulos_no_duplicados <- 
-  grupo_df_articulos %>% 
-  mutate(titulo_limpio = str_to_upper(titulo),
-         titulo_limpio = str_replace_all(titulo_limpio, 
-                                         "[[:punct:]]", " "),
-         titulo_limpio = stri_trans_general(titulo_limpio, 
-                                            id = "Latin-ASCII"),
-         titulo_limpio = str_replace_all(titulo_limpio,
-                                         "  ", 
-                                         " "),
-         titulo_limpio = str_trim(titulo_limpio),
-         id = 1:length(grupo_df_articulos$categoria)) %>% 
-  filter(!duplicated(titulo_limpio))
-
-
 # Finding similarities per group 
 
 df <- tibble(id = numeric())
