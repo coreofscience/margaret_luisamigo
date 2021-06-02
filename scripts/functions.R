@@ -603,7 +603,7 @@ libros_ucla <- function(grupo_df) {
            Tipo_Libro = str_remove(info_1, ":.*"),
            Tipo_Libro = str_remove(Tipo_Libro, ".*-" ),
            Tipo_Libro = str_trim(Tipo_Libro),
-           Titulo = str_remove(info_1, ".*:"),
+           Titulo = str_remove(info_1, ".*investigación :"),
            Titulo = str_trim(Titulo)) %>% 
     select(-info_1) %>% 
     mutate(info_2 = str_trim(info_2),
