@@ -74,10 +74,16 @@ for (i in grupos$grupo) {
 }
 
  
-  df_eliminados <- 
-    merge(x=df_eliminados,y=grupo_df_articulos, by.x="item1", by.y="id")
-
-  grupo_df_articulos_repetidos <- 
+  df_eliminados_grupos <-
+    df_eliminados %>% 
+    right_join(grupo_df_articulos, by=c("item1"="id")) %>% 
+    left_join(grupo_df_articulos, by=c("item2"="id"))
+  
+  df_eliminados_total<- df_eliminados_grupos[ ,c(1,4,5,6,7,8,9,10,11,12,13,
+                                                 14,15,16,3,2,17,18,19,
+                                                 20,21,22,23,24,25,26)]
+  
+   grupo_df_articulos_repetidos <- 
     grupo_df_articulos %>% 
     anti_join(df)
   
