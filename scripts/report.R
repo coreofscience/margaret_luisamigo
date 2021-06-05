@@ -17,7 +17,8 @@ df_eliminados <- tibble(item1 = numeric(),
 
 grupo_df_articulos <- # create an id 
   produccion_grupos$articulos %>% 
-  mutate(id = 1:length(produccion_grupos$articulos$grupo))
+  mutate(id = 1:length(produccion_grupos$articulos$grupo)) %>% 
+  rename(item1 = "id")
 
 grupos <- 
   grupo_df_articulos %>% 
@@ -72,11 +73,41 @@ for (i in grupos$grupo) {
     df_eliminados %>%
     bind_rows(df_2)
 }
+  
 
+df_eliminada<-
+  merge(x=df_eliminados,y=grupo_df_articulos, by="item1") %>% 
+  select(-item2,-similarity)
  
-  df_eliminados <- 
-    merge(x=df_eliminados,y=grupo_df_articulos, by.x="item1", by.y="id")
+write.xlsx(df_eliminada, "lista_enlac.xlsx")
 
+write.xlsx(df_eliminada, file="lista_enl.xlsx",
+                sheetName="punto1",row.names=FALSE)
+write.xlsx(df_eliminada2, file="lista_enl.xlsx", sheetName="Punto2",
+           append=TRUE, row.names=FALSE)
+
+
+wb = createWorkbook()
+
+sheet = createSheet(wb, "Sheet 1")
+
+addDataFrame(df_eliminada, sheet=sheet, startColumn=1, row.names=FALSE)
+addDataFrame(df_eliminada2, sheet=sheet, startColumn=1, row.names=FALSE)
+
+
+sheet = createSheet(wb, "Sheet 2")
+
+saveWorkbook(wb, "My_File.xlsx")
+
+  df_eliminadaA<-
+    merge(x=df_eliminados,y=grupo_df_articulos, by="item1") 
+  
+  df_eliminada2<-
+    merge(x=df_eliminadaA,y=df_eliminada, by="item2")
+  
+  df_eliminada3<-
+    merge(x=df_eliminada2,y=grupo_df_articulos, by.x="item2", by.y="id")
+  
   grupo_df_articulos_repetidos <- 
     grupo_df_articulos %>% 
     anti_join(df)
