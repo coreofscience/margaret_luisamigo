@@ -73,7 +73,6 @@ for (i in grupos$grupo) {
     bind_rows(df_2)
 }
 
- 
   df_eliminados <-
     df_eliminados %>% 
     right_join(grupo_df_articulos, by=c("item1"="id")) %>% 
@@ -83,8 +82,7 @@ for (i in grupos$grupo) {
                                           14,15,16,3,2,17,18,19,20,
                                           21,22,23,24,25,26,27,28,29)]
   
-  
-   grupo_df_articulos_repetidos <- 
+  grupo_df_articulos_repetidos <- 
     grupo_df_articulos %>% 
     anti_join(df)
   
@@ -146,15 +144,15 @@ for (i in grupos$grupo) {
     df_ %>% 
     bind_rows(df__5)
     
-  df_eliminados_grupos <-
+  df_similares_grupos <-
     df__2
     
-  df_eliminados_grupos <-
-    df_eliminados_grupos %>% 
+  df_similares_grupos <-
+    df_similares_grupos %>% 
     right_join(grupo_df_articulos, by=c("item1"="id")) %>% 
     left_join(grupo_df_articulos, by=c("item2"="id"))
     
-  df_eliminados_total_grupos<- df_eliminados_grupos[ ,c(1,4,5,6,7,8,9,10,
+  df_similares_total_grupos<- df_similares_grupos[ ,c(1,4,5,6,7,8,9,10,
                                           11,12,13,14,15,16,3,2,17,18,19,
                                           20,21,22,23,24,25,26,27,28,29)]
 
@@ -172,8 +170,7 @@ for (i in grupos$grupo) {
   contar_grupos_unicos <- grupo_df_articulos_unicos_grupos %>% 
     count(grupo, sort = TRUE, name = "sin_duplicados")
   
-  
   #export excel with comparison of deleted products  
   list_of_datasets <- list("eliminados_mismo_grupo" = df_eliminados_total, 
-                           "eliminados_grupos_diferentes" = df_eliminados_total_grupos)
-  write.xlsx(list_of_datasets, file = "comparacion_eliminados.xlsx")
+                           "similares_entre_grupos" = df_similares_total_grupos)
+  #write.xlsx(list_of_datasets, file = "comparacion_eliminados.xlsx")
