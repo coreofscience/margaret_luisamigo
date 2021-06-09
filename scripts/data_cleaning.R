@@ -1,7 +1,7 @@
 source(here("scripts",
             "functions.R"))
 
-data_cleaning_ucla <- function(grupo_df) {
+data_cleaning_ucla <- function(grupo_df) { 
   
   trabajos_dirigidos = trabajos_dirigidos_ucla(grupo_df)
   eventos_cientificos = eventos_cientificos_ucla(grupo_df)
