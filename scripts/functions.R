@@ -330,7 +330,7 @@ proyectos_ucla <- function(grupo_df) {
 }
 
 capitulos_ucla <- function(grupo_df) {
-    
+  
   grupo_df_capitulos_libros_publicados = 
     grupo_df %>%
     filter(categoria == "Capítulos de libro publicados") %>% 
@@ -705,7 +705,7 @@ demas_trabajos_ucla <- function(grupo_df) {
            Autores= str_remove(info_5, ".*:"),
            Autores= str_trim(Autores)) %>% 
     select(-info_5) 
-
+  
 }
 
 informes_investigacion_ucla <- function(grupo_df) {
@@ -1000,7 +1000,7 @@ estrategias_pedagogicas_ucla <- function(grupo_df) {
            Descripcion= str_remove(Descripcion, ",$"),
            Descripcion= str_trim(Descripcion)) %>% 
     select(-info_3)
-
+  
 }
 
 redes_conocimiento_ucla <- function(grupo_df) {
@@ -1105,7 +1105,7 @@ espacios_participacion_ucla <- function(grupo_df) {
 }
 
 softwares_ucla <- function(grupo_df) {
-
+  
   grupo_df_softwares <- 
     grupo_df %>%
     filter(categoria == "Softwares") %>% 
@@ -1214,7 +1214,7 @@ otros_libros_ucla <- function(grupo_df) {
 }
 
 estrategias_comunicacion_ucla <- function(grupo_df) {
-
+  
   grupo_df_estreategias_comunicacion <- 
     grupo_df %>%
     filter(categoria == "Estrategias de Comunicación del Conocimiento") %>% 
@@ -1503,7 +1503,7 @@ reglamentos_tecnicos_ucla <- function(grupo_df) {
            Autores= str_remove(info_6, ".*:"),
            Autores= str_trim(Autores)) %>% 
     select(-info_6)
-    
+  
   
 }
 
