@@ -8,7 +8,7 @@ library(tidytext)
 library(SnowballC)
 library(widyr)
 library(igraph)
-library(openxlsx)
+library(openxlsx) 
 
 df <- tibble(id = numeric())
 df_eliminados <- tibble(item1 = numeric(), 
