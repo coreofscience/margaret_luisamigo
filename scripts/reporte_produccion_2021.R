@@ -4,6 +4,9 @@ library(here)
 library(openxlsx)
 library(readxl)
 
+# Reporte 
+
+
 Reporte_proyectos_2021 <- read_excel("Reporte_proyectos_2021.xls")
 
 p1 <- data.frame(Reporte_proyectos_2021$PROGRAMA_1)
