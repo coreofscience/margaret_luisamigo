@@ -10,9 +10,14 @@ source(here("scripts",
 source(here("scripts",
             "data_cleaning.R"))
 
-
 grupo_df <- data_getting_ucla(grupos)
 produccion_grupos <- data_cleaning_ucla(grupo_df)
+
+source(here("scripts",
+            "data_tidying.R"))
+source(here("scripts",
+            "report.R"))
+
 articulos_unicos <- data_tidying_ucla(produccion_grupos)
 
 
