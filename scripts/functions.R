@@ -1670,4 +1670,7 @@ nuevos_registros_cientificos_ucla <- function(grupo_df) {
     mutate(Descripcion=str_extract(info_9, ".*"),
            Descripcion= str_trim(Descripcion)) %>% 
     select(-info_9)
+
 }
+
+

@@ -4,7 +4,11 @@ library(here)
 library(openxlsx)
 library(readxl)
 
-Reporte_proyectos_2021 <- read_excel('C:/Users/ASUS/Documents/7timo Semestre/Proyecto_margaret/margaret/scripts/Reporte_proyectos_2021.xls')
+
+# Reporte 
+
+
+Reporte_proyectos_2021 <- read_excel("Reporte_proyectos_2021.xls")
 
 p1 <- data.frame(Reporte_proyectos_2021$PROGRAMA_1)
 p2 <- data.frame(Reporte_proyectos_2021$PROGRAMA_2)
