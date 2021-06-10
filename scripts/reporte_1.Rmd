@@ -6,22 +6,24 @@ output: html_notebook
 # Creando el ambiente
 
 ```{r}
+library(tidyverse)
+library(rvest)
 library(readxl)
 library(here)
 library(gt)
 ```
 
 
-# Cartando los datos 
+# Cargando los datos 
 
 ```{r message=FALSE, warning=FALSE}
-Reporte_proyectos_2021 <- read_excel(here("data",
+Reporte_proyectos_2021 <- read_excel(here("scripts",
                                           "Reporte_proyectos_2021.xls"))
 ```
 
 # Informe 1
 
-## Programas académicos
+## Programas académicos con proyectos de investigación en ejecución
 
 ```{r}
 p1 <- data.frame(Reporte_proyectos_2021$PROGRAMA_1)
@@ -41,16 +43,82 @@ colnames(programas)<-c("Programas")
 programas <- programas %>% filter(!is.na(Programas)) %>% 
   count(Programas,sort = TRUE,name = "Cantidad")
 
-programas |> gt()
+programas<-programas %>%  gt()
+
+programas
+```
+
+## Facultades con proyectos de investigación en ejecución
+```{r}
+f1 <- data.frame(Reporte_proyectos_2021$PROGRAMA_UNIDAD...53)
+f2 <- data.frame(Reporte_proyectos_2021$PROGRAMA_UNIDAD...56)
+f3 <- data.frame(Reporte_proyectos_2021$PROGRAMA_UNIDAD...59)
+f4 <- data.frame(Reporte_proyectos_2021$PROGRAMA_UNIDAD...62)
+f5 <- data.frame(Reporte_proyectos_2021$PROGRAMA_UNIDAD...65)
+
+names(f2)<-names(f1)
+names(f3)<-names(f1)
+names(f4)<-names(f1)
+names(f5)<-names(f1)
+
+facultades <- rbind(f1,f2,f3,f4,f5) 
+colnames(facultades)<-c("Facultades")
+
+facultades <- facultades %>% filter(!is.na(Facultades)) %>% 
+  count(Facultades,sort = TRUE,name = "Cantidad") %>% gt()
+
+facultades
+
+```
+## Centros regionales con proyectos de investigación en ejecución
+```{r}
+r1 <- data.frame(Reporte_proyectos_2021$PROGRAMA_REGION...54)
+r2 <- data.frame(Reporte_proyectos_2021$PROGRAMA_REGION...57)
+r3 <- data.frame(Reporte_proyectos_2021$PROGRAMA_REGION...60)
+r4 <- data.frame(Reporte_proyectos_2021$PROGRAMA_REGION...63)
+r5 <- data.frame(Reporte_proyectos_2021$PROGRAMA_REGION...66)
+
+names(r2)<-names(r1)
+names(r3)<-names(r1)
+names(r4)<-names(r1)
+names(r5)<-names(r1)
+
+regiones <- rbind(r1,r2,r3,r4,r5) 
+colnames(regiones)<-c("Centros_Regionales")
+
+regiones <- regiones %>% filter(!is.na(Centros_Regionales)) %>% 
+  count(Centros_Regionales,sort = TRUE,name = "Cantidad") %>% gt()
+
+regiones
+
 ```
 
 
 
+ 
+## Total proyectos convocatoria externa y Total proyectos convocatoria interna
+```{r}
+convocatorias <- data.frame(Reporte_proyectos_2021$DESCRIPCION_CONVOCATORIA)
 
+colnames(convocatorias)<-c("Convocatorias")
 
--  facultades y centros regionales con proyectos de investigación en ejecución
-- Total proyectos convocatoria externa
-- Total proyectos convocatoria interna
-- Total financiación interna y externa
-- Programas acreditados con ejecución de un proyecto de investigación con cofinanciación internacional.
-- Cofinanciación del 20 % en proyectos de investigación
+convocatorias <- convocatorias %>% filter(!is.na(Convocatorias)) %>% 
+  count(Convocatorias, sort = TRUE, name = "Cantidad") %>% gt()
+
+convocatorias
+```
+# Total financiación interna y externa
+
+```{r}
+presupuesto_interno <- Reporte_proyectos_2021 %>% 
+  summarise(Total_financiacion_interna=sum(Reporte_proyectos_2021$TOTAL_PRESUPUESTO_INTERNO))
+
+presupuesto_externo <- Reporte_proyectos_2021 %>% 
+  summarise(Total_financiacion_externa=sum(Reporte_proyectos_2021$PRESUPUESTO_EXTERNO)) 
+
+total_financiacion <- merge(presupuesto_externo,presupuesto_interno) %>%  gt()
+
+total_financiacion
+```
+## Programas acreditados con ejecución de un proyecto de investigación con cofinanciación internacional.
+## Cofinanciación del 20 % en proyectos de investigación.
