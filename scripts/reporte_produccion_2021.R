@@ -75,7 +75,16 @@ presupuesto_interno <- Reporte_proyectos_2021 %>%
 presupuesto_externo <- Reporte_proyectos_2021 %>% 
   summarise(Total_financiacion_externa=sum(Reporte_proyectos_2021$PRESUPUESTO_EXTERNO)) 
 
-total_financiacion <- merge(presupuesto_externo,presupuesto_interno)
+suma=presupuesto_externo$Total_financiacion_externa+presupuesto_interno$Total_financiacion_interna
+
+total_financiacion = NULL
+total_financiacion <-data.frame("categoria"=c("presupuesto_interno",
+                                              "presupuesto externo"),
+                                "total"=c(presupuesto_interno$Total_financiacion_interna,
+                                          presupuesto_externo$Total_financiacion_externa),
+                                "porcentaje"=
+                                  c(presupuesto_interno$Total_financiacion_interna/suma*100,
+                                    presupuesto_externo$Total_financiacion_externa/suma*100))
 
 datasets <- list("Programas_academicos" = programas, 
                          "Facultades" = facultades,

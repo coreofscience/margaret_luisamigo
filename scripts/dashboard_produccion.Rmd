@@ -1,0 +1,127 @@
+---
+title: "Producción Universidad Católica Luis Amigó 2021"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(shiny)
+library(readxl)
+library(tidyverse)
+library(rvest)
+library(here)
+library(dplyr)
+library(plotly)
+library(ggplot2)
+```
+
+```{r}
+Reporte_proyectos_2021 <- read_xls(here("scripts",
+                                          "Reporte_proyectos_2021.xls"))
+```
+Datos
+======================================================================
+
+Column
+------------------
+### Centros regionales
+
+```{r}
+
+
+r1 <- data.frame(Reporte_proyectos_2021$PROGRAMA_REGION...54)
+r2 <- data.frame(Reporte_proyectos_2021$PROGRAMA_REGION...57)
+r3 <- data.frame(Reporte_proyectos_2021$PROGRAMA_REGION...60)
+r4 <- data.frame(Reporte_proyectos_2021$PROGRAMA_REGION...63)
+r5 <- data.frame(Reporte_proyectos_2021$PROGRAMA_REGION...66)
+
+names(r2)<-names(r1)
+names(r3)<-names(r1)
+names(r4)<-names(r1)
+names(r5)<-names(r1)
+
+regiones <- rbind(r1,r2,r3,r4,r5) 
+colnames(regiones)<-c("Centros_Regionales")
+regiones <- regiones %>% filter(!is.na(Centros_Regionales))
+rm(r1,r2,r3,r4,r5)
+
+ggplot(regiones, aes(x=Centros_Regionales)) +
+  geom_bar(width = 0.4,  fill=rgb(0.1,1,0.5,0.7)) +
+  scale_x_discrete("Centro regional") +     # configuración eje X (etiqueta del eje)
+  scale_y_continuous("cantidad") +
+  labs(title = "Gráfico Centros regionales",
+       subtitle = "Frecuencia absoluta de la variable centros regionales")
+```
+
+
+COlumn
+-------------------
+### Presupuesto Total
+
+```{r}
+presupuesto_interno <- Reporte_proyectos_2021 %>% 
+  summarise(Total_financiacion_interna=sum(Reporte_proyectos_2021$TOTAL_PRESUPUESTO_INTERNO))
+
+presupuesto_externo <- Reporte_proyectos_2021 %>% 
+  summarise(Total_financiacion_externa=sum(Reporte_proyectos_2021$PRESUPUESTO_EXTERNO)) 
+
+suma=presupuesto_externo$Total_financiacion_externa+presupuesto_interno$Total_financiacion_interna
+
+total_financiacion = NULL
+total_financiacion <-data.frame("categoria"=c("presupuesto_interno",
+                                              "presupuesto externo"),
+                                "total"=c(presupuesto_interno$Total_financiacion_interna,
+                                          presupuesto_externo$Total_financiacion_externa),
+                                "porcentaje"=
+                                  c(presupuesto_interno$Total_financiacion_interna/suma*100,
+                                presupuesto_externo$Total_financiacion_externa/suma*100))
+total_financiacion$porcentaje <- round(total_financiacion$porcentaje,2)
+rm(presupuesto_interno,presupuesto_externo,suma)
+
+ggplot(total_financiacion,aes(x=2,y=porcentaje, fill=categoria))+
+  geom_bar(stat = "identity",
+           color="white")+
+    geom_text(aes(label=(porcentaje)),
+              position=position_stack(vjust=0.5),color="white",size=6)+
+  coord_polar(theta = "y")+
+  scale_fill_manual(values=c("salmon","steelblue","orange","gray"))+
+    theme_void()+
+    labs(title="Porcentajes presupuestos externo e interno")+
+  xlim(0.5,2.5)
+
+```
+
+
+Faculultades
+======================================
+
+```{r}
+f1 <- data.frame(Reporte_proyectos_2021$PROGRAMA_UNIDAD...53)
+f2 <- data.frame(Reporte_proyectos_2021$PROGRAMA_UNIDAD...56)
+f3 <- data.frame(Reporte_proyectos_2021$PROGRAMA_UNIDAD...59)
+f4 <- data.frame(Reporte_proyectos_2021$PROGRAMA_UNIDAD...62)
+f5 <- data.frame(Reporte_proyectos_2021$PROGRAMA_UNIDAD...65)
+
+names(f2)<-names(f1)
+names(f3)<-names(f1)
+names(f4)<-names(f1)
+names(f5)<-names(f1)
+
+facultades <- rbind(f1,f2,f3,f4,f5) 
+colnames(facultades)<-c("Facultades")
+
+facultades <- facultades %>% filter(!is.na(Facultades)) %>% 
+  count(Facultades,sort = TRUE,name = "Cantidad")
+rm(f1,f2,f3,f4,f5)
+
+facultades %>% 
+  group_by(Facultades) %>% 
+  plot_ly(x = ~Facultades,
+          y = ~Cantidad,
+          color = 'red',
+          type = 'bar')
+```
+
