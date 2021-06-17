@@ -1,0 +1,56 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+# Creando el ambiente
+
+```{r}
+library(readxl)
+library(here)
+library(gt)
+```
+
+
+# Cartando los datos 
+
+```{r message=FALSE, warning=FALSE}
+Reporte_proyectos_2021 <- read_excel(here("data",
+                                          "Reporte_proyectos_2021.xls"))
+```
+
+# Informe 1
+
+## Programas académicos
+
+```{r}
+p1 <- data.frame(Reporte_proyectos_2021$PROGRAMA_1)
+p2 <- data.frame(Reporte_proyectos_2021$PROGRAMA_2)
+p3 <- data.frame(Reporte_proyectos_2021$PROGRAMA_3)
+p4 <- data.frame(Reporte_proyectos_2021$PROGRAMA_4)
+p5 <- data.frame(Reporte_proyectos_2021$PROGRAMA_5)
+
+names(p2)<-names(p1)
+names(p3)<-names(p1)
+names(p4)<-names(p1)
+names(p5)<-names(p1)
+
+programas <- rbind(p1,p2,p3,p4,p5) 
+colnames(programas)<-c("Programas")
+
+programas <- programas %>% filter(!is.na(Programas)) %>% 
+  count(Programas,sort = TRUE,name = "Cantidad")
+
+programas |> gt()
+```
+
+
+
+
+
+-  facultades y centros regionales con proyectos de investigación en ejecución
+- Total proyectos convocatoria externa
+- Total proyectos convocatoria interna
+- Total financiación interna y externa
+- Programas acreditados con ejecución de un proyecto de investigación con cofinanciación internacional.
+- Cofinanciación del 20 % en proyectos de investigación
