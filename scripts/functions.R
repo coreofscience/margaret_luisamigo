@@ -2,7 +2,7 @@ trabajos_dirigidos_ucla <- function(grupo_df) {
   
   trabajosdirigidos = 
     grupo_df %>%
-    filter(categoria == "Trabajos dirigidos/turor韆s") %>% 
+    filter(categoria == "Trabajos dirigidos/turor铆as") %>% 
     separate(producto,
              c("info_1","info_2","info_3","info_4","info_5",
                "info_6","info_7","info_8","info_9","info_10",
@@ -27,7 +27,7 @@ trabajos_dirigidos_ucla <- function(grupo_df) {
            estudiante = str_remove(estudiante, ",$"),
            programa_academico = str_remove(info_9, ".*:"),
            programa_academico = str_trim(programa_academico),
-           paginas = str_remove(info_10, ".*p醙inas: "),
+           paginas = str_remove(info_10, ".*p谩ginas: "),
            paginas= str_remove(paginas, ",.*"),
            valoracion= str_extract(info_10, ",.*"),
            valoracion= str_remove(valoracion, "^,"),
@@ -35,7 +35,7 @@ trabajos_dirigidos_ucla <- function(grupo_df) {
            valoracion= str_remove(valoracion, ","),
            valoracion= str_trim(valoracion),
            institucion = str_trim(info_11),
-           institucion = str_remove(institucion, ".*Instituci髇: "),
+           institucion = str_remove(institucion, ".*Instituci贸n: "),
            tutor_coautor = str_trim(info_13),
            tutor_coautor = str_remove(tutor_coautor, ".*: ")) %>% 
     select(-info_2,
@@ -54,7 +54,7 @@ eventos_cientificos_ucla <- function(grupo_df) {
   
   grupo_df_EventosCientificos <- 
     grupo_df %>%
-    filter(categoria == "Eventos Cient韋icos") %>% 
+    filter(categoria == "Eventos Cient铆ficos") %>% 
     separate(producto ,
              c("info_1", "info_2","info_3","info_4","info_5"), 
              sep = "\r\n" )%>% 
@@ -72,27 +72,27 @@ eventos_cientificos_ucla <- function(grupo_df) {
            fecha_inicio = str_remove(info_2, "-$"),
            fecha_fin = str_remove(info_3, ".*hasta")) %>% 
     select(-info_2,-info_3) %>% 
-    mutate(info_4 = str_remove(info_4, "羗bito:"),
+    mutate(info_4 = str_remove(info_4, "脕mbito:"),
            ambito = str_remove(info_4, ",.*"),
-           info_4= str_extract(info_4, "Tipos de participaci髇:.*"),
-           info_4= str_remove(info_4, ".*Tipos de participaci髇:"),
-           tipo_participacion=str_remove(info_4,"Nombre de la instituci髇.*"),
-           info_4= str_extract(info_4, "Nombre de la instituci髇.*"),
-           nombre_Instituci髇= str_remove(info_4, ".*Nombre de la instituci髇:")) %>% 
+           info_4= str_extract(info_4, "Tipos de participaci贸n:.*"),
+           info_4= str_remove(info_4, ".*Tipos de participaci贸n:"),
+           tipo_participacion=str_remove(info_4,"Nombre de la instituci贸n.*"),
+           info_4= str_extract(info_4, "Nombre de la instituci贸n.*"),
+           nombre_Instituci贸n= str_remove(info_4, ".*Nombre de la instituci贸n:")) %>% 
     select(-info_4) %>% 
-    mutate(tipo_vinculaci髇 = str_remove(info_5,"Nombre.*"),
-           tipo_vinculaci髇 = str_remove(tipo_vinculaci髇,"羗bito.*"),
-           tipo_vinculaci髇 = str_trim(tipo_vinculaci髇)) %>% 
+    mutate(tipo_vinculaci贸n = str_remove(info_5,"Nombre.*"),
+           tipo_vinculaci贸n = str_remove(tipo_vinculaci贸n,"脕mbito.*"),
+           tipo_vinculaci贸n = str_trim(tipo_vinculaci贸n)) %>% 
     select(-info_5)
   
   return(grupo_df_EventosCientificos)
 }
-  
+
 articulos_ucla <- function(grupo_df) {
   
   grupo_df_articulos_lost_1 <- 
     grupo_df %>%
-    filter(categoria == "Art韈ulos publicados") %>% 
+    filter(categoria == "Art铆culos publicados") %>% 
     separate(producto,
              c("info_1", "info_2", "info_3", "info_4", "info_5"), 
              sep = "\r\n" ) %>% 
@@ -128,12 +128,12 @@ articulos_ucla <- function(grupo_df) {
            vol = str_remove(vol, "vol:"),
            info_2 = str_extract(info_4, "\\s.*"),
            info_2 = str_trim(info_4),
-           fasc = str_remove(info_4, "p醙s.*"),
+           fasc = str_remove(info_4, "p谩gs.*"),
            fasc = str_remove(fasc, "fasc: "),
-           info_2 = str_extract(info_4, "p醙s.*"),
+           info_2 = str_extract(info_4, "p谩gs.*"),
            info_2 = str_trim(info_4),
            pags = str_remove(info_4, ", DOI.*"),
-           pags = str_remove(pags, "p醙s: "),
+           pags = str_remove(pags, "p谩gs: "),
            DOI = str_extract(info_4, "DOI.*"),
            DOI = str_remove(DOI, "DOI:")) %>% 
     select(-info_4,
@@ -146,7 +146,7 @@ articulos_ucla <- function(grupo_df) {
   
   grupo_df_articulos_lost_2 <- 
     grupo_df %>%
-    filter(categoria == "Art韈ulos publicados") %>% 
+    filter(categoria == "Art铆culos publicados") %>% 
     separate(producto,
              c("info_1", "info_2", "info_3", "info_4", "info_5"), 
              sep = "\r\n" ) %>% 
@@ -178,12 +178,12 @@ articulos_ucla <- function(grupo_df) {
            vol = str_remove(vol, "vol:"),
            info_3 = str_extract(info_3, "\\s.*"),
            info_3 = str_trim(info_3),
-           fasc = str_remove(info_3, "p醙s.*"),
+           fasc = str_remove(info_3, "p谩gs.*"),
            fasc = str_remove(fasc, "fasc: "),
-           info_3 = str_extract(info_3, "p醙s.*"),
+           info_3 = str_extract(info_3, "p谩gs.*"),
            info_3 = str_trim(info_3),
            pags = str_remove(info_3, ", DOI.*"),
-           pags = str_remove(pags, "p醙s: "),
+           pags = str_remove(pags, "p谩gs: "),
            DOI = str_extract(info_3, "DOI.*"),
            DOI = str_remove(DOI, "DOI:")) %>% 
     select(-info_2,
@@ -196,7 +196,7 @@ articulos_ucla <- function(grupo_df) {
   
   grupo_df_articulos <- 
     grupo_df %>%
-    filter(categoria == "Art韈ulos publicados") %>% 
+    filter(categoria == "Art铆culos publicados") %>% 
     separate(producto ,
              c("info_1", "info_2", "info_3", "info_4", "info_5"), 
              sep = "\r\n" ) %>% 
@@ -232,12 +232,12 @@ articulos_ucla <- function(grupo_df) {
            vol = str_remove(vol, "vol:"),
            info_2 = str_extract(info_2, "\\s.*"),
            info_2 = str_trim(info_2),
-           fasc = str_remove(info_2, "p醙s.*"),
+           fasc = str_remove(info_2, "p谩gs.*"),
            fasc = str_remove(fasc, "fasc: "),
-           info_2 = str_extract(info_2, "p醙s.*"),
+           info_2 = str_extract(info_2, "p谩gs.*"),
            info_2 = str_trim(info_2),
            pags = str_remove(info_2, ", DOI.*"),
-           pags = str_remove(pags, "p醙s: "),
+           pags = str_remove(pags, "p谩gs: "),
            DOI = str_extract(info_2, "DOI.*"),
            DOI = str_remove(DOI, "DOI:")) %>% 
     select(-info_2) %>% 
@@ -277,7 +277,7 @@ capitulos_ucla <- function(grupo_df) {
   
   grupo_df_capitulos_libros_publicados = 
     grupo_df %>%
-    filter(categoria == "Cap韙ulos de libro publicados") %>% 
+    filter(categoria == "Cap铆tulos de libro publicados") %>% 
     separate(producto ,
              c("info_1", "info_2", "info_3", "info_4"), 
              sep = "\r\n" ) %>% 
@@ -301,8 +301,8 @@ capitulos_ucla <- function(grupo_df) {
            ISBN = str_remove(info_2, ".*ISBN: "),
            ISBN = str_remove(ISBN, ", Vol.*"), 
            vol = str_remove(info_2, ".*Vol."),
-           vol = str_remove(vol, ", p醙.*"),
-           pags = str_remove(info_2, ".*p?gs:"),
+           vol = str_remove(vol, ", p谩g.*"),
+           pags = str_remove(info_2, ".*p谩g.:"),
            pags = str_remove(pags, ",.*"),
            editorial = str_remove(info_2, ".*Ed. "),
            autores = str_remove(info_4, ".*Autores: ")) %>% 
@@ -358,7 +358,7 @@ cursos_ucla <- function(grupo_df) {
   
   grupo_df_CursosCortaDuracion <- 
     grupo_df %>%
-    filter(categoria == "Curso de Corta Duraci髇 Dictados") %>% 
+    filter(categoria == "Curso de Corta Duraci贸n Dictados") %>% 
     separate(producto ,
              c("info_1", "info_2","info_3","info_4","info_5","info_6","info_7","info_8"), 
              sep = "\r\n" )%>% 
@@ -386,7 +386,7 @@ cursos_ucla <- function(grupo_df) {
            sitio_web=str_remove(sitio_web, ".*:"),
            Participacion=str_remove(info_4, ".*, "),
            Participacion=str_remove(Participacion, ","),
-           Participacion=str_remove(Participacion, "Participaci髇 como"),
+           Participacion=str_remove(Participacion, "Participaci贸n como"),
            Participacion=str_trim(Participacion)
     ) %>% 
     select(-info_4) %>% 
@@ -401,8 +401,8 @@ cursos_ucla <- function(grupo_df) {
            lugar= str_remove(info_6, ",.*"),
            lugar= str_remove(lugar, ".*:"),
            lugar= str_trim(lugar),
-           Institucion_Financiadora= str_extract(info_6, "Instituci髇 financiadora:.*"),
-           Institucion_Financiadora= str_remove(Institucion_Financiadora, "Instituci髇 financiadora:"),
+           Institucion_Financiadora= str_extract(info_6, "Instituci贸n financiadora:.*"),
+           Institucion_Financiadora= str_remove(Institucion_Financiadora, "Instituci贸n financiadora:"),
            Institucion_Financiadora= str_trim(Institucion_Financiadora)) %>% 
     select(-info_6,-info_7) %>% 
     mutate(info_8 = str_trim(info_8),
@@ -414,7 +414,7 @@ otros_articulos_ucla <- function(grupo_df) {
   
   grupo_df_otros_articulos <- 
     grupo_df %>%
-    filter(categoria == "Otros art韈ulos publicados") %>% 
+    filter(categoria == "Otros art铆culos publicados") %>% 
     separate(producto ,
              c("info_1", "info_2", "info_3", "info_4", "info_5"), 
              sep = "\r\n" ) %>% 
@@ -467,7 +467,7 @@ consultorias_ucla <- function(grupo_df) {
   
   grupo_df_consultorias_cientico_tecnologicas <- 
     grupo_df%>%
-    filter(categoria == "Consultor韆s cient韋ico-tecnol骻icas") %>% 
+    filter(categoria == "Consultor铆as cient铆fico-tecnol贸gicas") %>% 
     separate(producto ,
              c("info_1", "info_2","info_3","info_4","info_5","info_6","info_7"), 
              sep = "\r\n" )%>% 
@@ -510,7 +510,7 @@ consultorias_ucla <- function(grupo_df) {
            Disponibilidad= str_remove(Disponibilidad, ",.*"),
            Disponibilidad= str_remove(Disponibilidad, ".*:"),
            Disponibilidad= str_trim(Disponibilidad),
-           Duracion= str_extract(info_5, "Duraci髇.*"),
+           Duracion= str_extract(info_5, "Duraci贸n.*"),
            Duracion= str_remove(Duracion, ".*:"),
            Duracion= str_remove(Duracion, ",$"),
            Duracion= str_trim(Duracion)
@@ -540,7 +540,7 @@ libros_ucla <- function(grupo_df) {
            Tipo_Libro = str_remove(info_1, ":.*"),
            Tipo_Libro = str_remove(Tipo_Libro, ".*-" ),
            Tipo_Libro = str_trim(Tipo_Libro),
-           Titulo = str_remove(info_1, ".*investigaci髇 :"),
+           Titulo = str_remove(info_1, ".*investigaci贸n :"),
            Titulo = str_trim(Titulo)) %>% 
     select(-info_1) %>% 
     mutate(info_2 = str_trim(info_2),
@@ -554,12 +554,12 @@ libros_ucla <- function(grupo_df) {
            ISBN= str_remove(ISBN, ".*:"),
            ISBN = str_trim(ISBN),
            Volumen = str_extract(info_2,"vol:.*"),
-           Volumen = str_remove(Volumen, "p醙s:.*"),
+           Volumen = str_remove(Volumen, "p谩gs:.*"),
            Volumen= str_remove(Volumen, "vol:"),
            Volumen=str_trim(Volumen),
-           Paginas= str_extract(info_2,"p醙s:.*,"),
+           Paginas= str_extract(info_2,"p谩gs:.*,"),
            Paginas= str_remove(Paginas, ",.*"),
-           Paginas= str_remove(Paginas, "p醙s:"),
+           Paginas= str_remove(Paginas, "p谩gs:"),
            Paginas=str_trim(Paginas),
            Editorial= str_extract(info_2,"Ed.*"),
            Editorial= str_remove(Editorial,"Ed."),
@@ -575,11 +575,11 @@ libros_ucla <- function(grupo_df) {
 
 participacion_comites_ucla <- function(grupo_df) {
   
-  #Data cleaning "Participaci髇 en comit閟 de evaluaci髇"
+  #Data cleaning "Participaci贸n en comit茅s de evaluaci贸n"
   
   grupo_df_participacion_comites <- 
     grupo_df %>%
-    filter(categoria == "Participaci髇 en comit閟 de evaluaci髇") %>% 
+    filter(categoria == "Participaci贸n en comit茅s de evaluaci贸n") %>% 
     separate(producto ,
              c("info_1", "info_2", "info_3", "info_4", "info_5", "info_6"), 
              sep = "\r\n" ) %>% 
@@ -613,7 +613,7 @@ demas_trabajos_ucla <- function(grupo_df) {
   
   grupo_df_demas_trabajos <- 
     grupo_df%>%
-    filter(categoria == "Dem醩 trabajos") %>% 
+    filter(categoria == "Dem谩s trabajos") %>% 
     separate(producto ,
              c("info_1", "info_2","info_3","info_4","info_5"), 
              sep = "\r\n" )%>% 
@@ -649,7 +649,7 @@ informes_investigacion_ucla <- function(grupo_df) {
   
   grupo_df_informe_de_investigacion <- 
     grupo_df %>%
-    filter(categoria == "Informes de investigaci髇") %>% 
+    filter(categoria == "Informes de investigaci贸n") %>% 
     separate(producto ,
              c("info_1", "info_2","info_3","info_4"), 
              sep = "\r\n" )%>% 
@@ -678,7 +678,7 @@ innovaciones_gestion_ucla <- function(grupo_df) {
   
   grupo_df_innov_gestion_empresarial <- 
     grupo_df %>%
-    filter(categoria == "Innovaciones generadas en la Gesti髇 Empresarial") %>% 
+    filter(categoria == "Innovaciones generadas en la Gesti贸n Empresarial") %>% 
     separate(producto ,
              c("info_1", "info_2", "info_3", "info_4", "info_5"), 
              sep = "\r\n" ) %>% 
@@ -710,7 +710,7 @@ generacion_multimedia_ucla <- function(grupo_df) {
   
   grupo_df_generacion_contenido_multimedia <- 
     grupo_df%>%
-    filter(categoria == "Generaci髇 de Contenido Multimedia") %>% 
+    filter(categoria == "Generaci贸n de Contenido Multimedia") %>% 
     separate(producto ,
              c("info_1", "info_2","info_3","info_4","info_5","info_6","info_7"), 
              sep = "\r\n" )%>% 
@@ -763,7 +763,7 @@ otra_publicacion_divulgativa_ucla <- function(grupo_df) {
   
   grupo_df_otra_publicacion_divulgativa <- 
     grupo_df %>%
-    filter(categoria == "Otra publicaci髇 divulgativa") %>% 
+    filter(categoria == "Otra publicaci贸n divulgativa") %>% 
     separate(producto ,
              c("info_1", "info_2","info_3","info_4"), 
              sep = "\r\n" )%>% 
@@ -797,11 +797,11 @@ otra_publicacion_divulgativa_ucla <- function(grupo_df) {
            volumen=str_remove(volumen, ",.*"),
            volumen=str_remove(volumen, "vol."),
            volumen=str_trim(volumen),
-           Paginas=str_extract(info_2, "p醙s.*"),
+           Paginas=str_extract(info_2, "p谩gs.*"),
            Paginas=str_remove(Paginas, ",.*"),
            Paginas=str_remove(Paginas, ".*:"),
            Paginas=str_trim(Paginas),
-           Informacion=str_extract(info_2, "p醙s.*"),
+           Informacion=str_extract(info_2, "p谩gs.*"),
            Informacion=str_extract(Informacion, ",.*"),
            Informacion=str_remove(Informacion, "^,"),
            info_2=str_extract(Informacion, ".*"),
@@ -908,7 +908,7 @@ estrategias_pedagogicas_ucla <- function(grupo_df) {
   
   grupo_df_estrategias_pedagogicas <- 
     grupo_df %>%
-    filter(categoria == "Estrategias Pedag骻icas para el fomento a la CTI") %>% 
+    filter(categoria == "Estrategias Pedag贸gicas para el fomento a la CTI") %>% 
     separate(producto ,
              c("info_1", "info_2","info_3","info_4","info_5","info_6","info_7",
                "info_8","info_9","info_10","info_11","info_12","info_13","info_14"
@@ -930,7 +930,7 @@ estrategias_pedagogicas_ucla <- function(grupo_df) {
            Fecha_Fin= str_extract(info_2, ".*")) %>%
     select(-info_2) %>% 
     mutate(info_3= str_trim(info_3),
-           Descripcion= str_remove(info_3, "Descripci髇:"),
+           Descripcion= str_remove(info_3, "Descripci贸n:"),
            Descripcion= str_remove(Descripcion, "NA.*"),
            Descripcion= str_remove(Descripcion, ",$"),
            Descripcion= str_trim(Descripcion)) %>% 
@@ -969,7 +969,7 @@ generacion_contenido_virtual_ucla <- function(grupo_df) {
   
   grupo_df_generacion_contenido_virtual <- 
     grupo_df%>%
-    filter(categoria == "Generaci髇 de Contenido Virtual") %>% 
+    filter(categoria == "Generaci贸n de Contenido Virtual") %>% 
     separate(producto ,
              c("info_1", "info_2","info_3","info_4","info_5"), 
              sep = "\r\n" )%>% 
@@ -1004,7 +1004,7 @@ espacios_participacion_ucla <- function(grupo_df) {
   
   grupo_df_espacio_participacion_ciudadano<- 
     grupo_df %>%
-    filter(categoria == "Espacios de Participaci髇 Ciudadana") %>% 
+    filter(categoria == "Espacios de Participaci贸n Ciudadana") %>% 
     separate(producto ,
              c("info_1", "info_2","info_3"), 
              sep = "\r\n" )%>% 
@@ -1129,12 +1129,12 @@ otros_libros_ucla <- function(grupo_df) {
            ISBN= str_remove(ISBN, ".*:"),
            ISBN = str_trim(ISBN),
            Volumen = str_extract(info_2,"vol:.*"),
-           Volumen = str_remove(Volumen, "p醙s:.*"),
+           Volumen = str_remove(Volumen, "p谩gs:.*"),
            Volumen= str_remove(Volumen, "vol:"),
            Volumen=str_trim(Volumen),
-           Paginas= str_extract(info_2,"p醙s:.*,"),
+           Paginas= str_extract(info_2,"p谩gs:.*,"),
            Paginas= str_remove(Paginas, ",.*"),
-           Paginas= str_remove(Paginas, "p醙s:"),
+           Paginas= str_remove(Paginas, "p谩gs:"),
            Paginas=str_trim(Paginas),
            Editorial= str_extract(info_2,"Ed.*"),
            Editorial= str_remove(Editorial,"Ed."),
@@ -1151,7 +1151,7 @@ estrategias_comunicacion_ucla <- function(grupo_df) {
   
   grupo_df_estreategias_comunicacion <- 
     grupo_df %>%
-    filter(categoria == "Estrategias de Comunicaci髇 del Conocimiento") %>% 
+    filter(categoria == "Estrategias de Comunicaci贸n del Conocimiento") %>% 
     separate(producto ,
              c("info_1", "info_2", "info_3", "info_4", "info_5", "info_6", 
                "info_7", "info_8", "info_9", "info_10", "info_11", "info_12", 
@@ -1168,7 +1168,7 @@ estrategias_comunicacion_ucla <- function(grupo_df) {
            desde = str_remove(desde, " hasta.*"),
            hata = str_trim(info_2),
            info_3 = str_remove(info_3, "NA.*"),
-           descripcion = str_remove(info_3, ".*Descripci髇: "),
+           descripcion = str_remove(info_3, ".*Descripci贸n: "),
            descripcion = str_trim(descripcion)) %>% 
     select(-info_1, -info_2, -info_3)
   
@@ -1178,7 +1178,7 @@ generacion_contenido_impreso_ucla <- function(grupo_df) {
   
   grupo_df_generacion_cont_impreso <- 
     grupo_df %>%
-    filter(categoria == "Generaci髇 de Contenido Impreso") %>% 
+    filter(categoria == "Generaci贸n de Contenido Impreso") %>% 
     separate(producto ,
              c("info_1", "info_2", "info_3", "info_4", "info_5", "info_6"), 
              sep = "\r\n" ) %>%
@@ -1211,7 +1211,7 @@ informes_tecnicos_ucla <- function(grupo_df) {
   
   grupo_df_informes_tecnicos<- 
     grupo_df %>%
-    filter(categoria == "Informes t閏nicos") %>% 
+    filter(categoria == "Informes t茅cnicos") %>% 
     separate(producto ,
              c("info_1", "info_2","info_3","info_4","info_5"), 
              sep = "\r\n" )%>% 
@@ -1259,7 +1259,7 @@ participacion_ciudadana_cti_ucla <- function(grupo_df) {
   
   grupo_df_participacion_cti <- 
     grupo_df %>%
-    filter(categoria == "Participaci髇 Ciudadana en Proyectos de CTI") %>% 
+    filter(categoria == "Participaci贸n Ciudadana en Proyectos de CTI") %>% 
     separate(producto ,
              c("info_1", "info_2", "info_3", "info_4", "info_5", "info_6","info_7", "info_8", "info_9"), 
              sep = "\r\n" ) %>% 
@@ -1299,7 +1299,7 @@ regulaciones_normas_ucla <- function(grupo_df) {
            ano = str_remove(ano, ".*, "),
            ambito = str_remove(info_3, ", Fecha.*"),
            ambito = str_remove(ambito, ".*: "),
-           fecha = str_remove(info_3, ".*publicaci髇: "),
+           fecha = str_remove(info_3, ".*publicaci贸n: "),
            fecha = str_trim(fecha),
            objeto = str_remove(info_4, ".*Objeto: "),
            objeto = str_trim(objeto),
@@ -1320,7 +1320,7 @@ actividades_formacion_ucla <- function(grupo_df) {
   
   grupo_df_actividades_formacion <- 
     grupo_df %>%
-    filter(categoria == "ACTIVIDADES DE FORMACI覰")
+    filter(categoria == "ACTIVIDADES DE FORMACI脫N")
   
 }
 
@@ -1328,7 +1328,7 @@ apropiacion_social_conocimiento_ucla <- function(grupo_df) {
   
   grupo_df_apropiacion_social <- 
     grupo_df %>%
-    filter(categoria == "APROPIACI覰 SOCIAL Y CIRCULACI覰 DEL CONOCIMIENTO")
+    filter(categoria == "APROPIACI脫N SOCIAL Y CIRCULACI脫N DEL CONOCIMIENTO")
   
 }
 
@@ -1336,7 +1336,7 @@ produccion_tecnica_tecnologica_ucla <- function(grupo_df) {
   
   grupo_df_produccion_tecnica_tecnologica<- 
     grupo_df %>%
-    filter(categoria == "PRODUCCI覰 T蒀NICA Y TECNOL覩ICA")
+    filter(categoria == "PRODUCCI脫N T脡CNICA Y TECNOL脫GICA")
   
 }
 
@@ -1344,7 +1344,7 @@ generacion_contenido_audio_ucla <- function(grupo_df) {
   
   grupo_df_generacion_audio <- 
     grupo_df %>%
-    filter(categoria == "Generaci髇es de contenido de audio") %>% 
+    filter(categoria == "Generaci贸nes de contenido de audio") %>% 
     separate(producto ,
              c("info_1", "info_2", "info_3", "info_4", "info_5"), 
              sep = "\r\n" ) %>% 
@@ -1371,7 +1371,7 @@ conceptos_tecnicos_ucla <- function(grupo_df) {
   
   grupo_df_conceptos_tecnicos <- 
     grupo_df %>%
-    filter(categoria == "Conceptos t閏nicos") %>% 
+    filter(categoria == "Conceptos t茅cnicos") %>% 
     separate(producto ,
              c("info_1", "info_2", "info_3", "info_4", "info_5"), 
              sep = "\r\n" ) %>%
@@ -1387,10 +1387,10 @@ conceptos_tecnicos_ucla <- function(grupo_df) {
            ano_solicitud = str_trim(ano_solicitud),
            mes_solicitud = str_remove(info_3, ", Fecha.*"),
            mes_solicitud = str_remove(mes_solicitud, ".*: "),
-           fecha_envio = str_remove(info_3, ".*env韔: "),
+           fecha_envio = str_remove(info_3, ".*env铆o: "),
            institucion_solicitante = str_remove(info_5, ", Ciudad.*"),
            institucion_solicitante = str_remove(institucion_solicitante, ".*solicitante: "),
-           ciudad = str_remove(info_5, ", N鷐ero.*"),
+           ciudad = str_remove(info_5, ", N煤mero.*"),
            ciudad = str_remove(ciudad, ".*Ciudad: "),
            numero_cosecutivo_concepto = str_remove(info_5, ".*concepto: ")) %>% 
     select(-info_1, -info_3, -info_5)
@@ -1401,7 +1401,7 @@ reglamentos_tecnicos_ucla <- function(grupo_df) {
   
   grupo_df_reglamentos_tecnicos <- 
     grupo_df %>%
-    filter(categoria == "Reglamentos t閏nicos") %>% 
+    filter(categoria == "Reglamentos t茅cnicos") %>% 
     separate(producto ,
              c("info_1", "info_2", "info_3", "info_4", "info_5","info_6"), 
              sep = "\r\n" ) %>%
@@ -1439,7 +1439,7 @@ otros_productos_tencologicos_ucla <- function(grupo_df) {
   
   grupo_df_otros_productos_tecnologicos<- 
     grupo_df %>%
-    filter(categoria == "Otros productos tecnol骻icos") %>% 
+    filter(categoria == "Otros productos tecnol贸gicos") %>% 
     separate(producto ,
              c("info_1", "info_2","info_3","info_4","info_5","info_6"), 
              sep = "\r\n" )%>% 
@@ -1498,10 +1498,10 @@ traducciones_ucla <- function(grupo_df) {
            libro = str_remove(libro, " ISBN.*"),
            ISBN = str_remove(info_4, ", Medio.*"),
            ISBN = str_trim(ISBN),
-           medio_divulgacion = str_remove(info_4, ".*ci髇: "),
+           medio_divulgacion = str_remove(info_4, ".*ci贸n: "),
            idioma_documento_original = str_remove(info_5, ",.*"),
            idioma_documento_original = str_remove(idioma_documento_original, ".*: "),
-           idioma_traduccion = str_remove(info_5, ".*ci髇: "),
+           idioma_traduccion = str_remove(info_5, ".*ci贸n: "),
            edicion = str_remove(info_6, ", Serie.*"),
            edicion = str_remove(edicion, ".*: "),
            serie = str_remove(info_6, ".*Serie: "),
@@ -1542,7 +1542,7 @@ nuevos_registros_cientificos_ucla <- function(grupo_df) {
   
   grupo_df_nuevos_registros_cientificos<- 
     grupo_df %>%
-    filter(categoria == "Nuevos registros cient韋icos") %>% 
+    filter(categoria == "Nuevos registros cient铆ficos") %>% 
     separate(producto ,
              c("info_1", "info_2","info_3","info_4","info_5","info_6","info_7","info_8","info_9"), 
              sep = "\r\n" )%>% 

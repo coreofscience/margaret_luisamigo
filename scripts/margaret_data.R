@@ -9,12 +9,12 @@ source(here("scripts",
             "data_getting.R"))
 source(here("scripts",
             "data_cleaning.R"))
+source(here("scripts",
+            "data_tidying.R"))
 
 grupo_df <- data_getting_ucla(grupos)
 produccion_grupos <- data_cleaning_ucla(grupo_df)
 
-source(here("scripts",
-            "data_tidying.R"))
 source(here("scripts",
             "report.R"))
 

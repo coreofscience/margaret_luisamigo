@@ -1,0 +1,65 @@
+---
+title: "Margaret"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(tidyverse)
+library(here)
+library(DT)
+```
+
+```{r}
+autores_2016_2020 <- 
+  read_csv(here("data",
+                "articulos_unicos.csv")) |>  
+  filter(ano >= 2016,
+         ano <=2020) |> 
+  select(ano, autores, id) |> 
+  separate_rows(autores, sep = ", ")
+```
+
+
+Investigadores
+======================================================================
+
+Column {data-width=350}
+-----------------------------------------------------------------------
+
+### Producción Investigadores Top total
+
+```{r}
+autores_top <- 
+  autores_2016_2020 |> 
+  count(autores, sort = TRUE) 
+
+datatable(autores_top , options = list(pageLength = 10))
+```
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### Producción Investigadores Top por año
+
+```{r}
+
+autores_top_5 <- 
+  autores_top |> 
+  slice(1:5)
+
+autores_2016_2020 |> 
+  filter(autores %in% autores_top_5$autores) |> 
+  group_by(ano, autores) |> 
+  count(autores) |>  
+  ggplot(aes(x = ano, y = n, group = 1)) +
+  geom_line() +
+  facet_wrap( ~ autores) +
+  theme(strip.text = element_text(size = 5))
+```
+
+
+

@@ -1,0 +1,48 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+# Getting data
+
+```{r}
+articulos_2016_2020 <- 
+  articulos_unicos |> 
+  filter(ano >= 2016,
+         ano <=2020)
+```
+
+
+# Cleaning data 
+
+The first thought is to split the column authors, however, we also need the data from the cvlac. In this column we have some names but they do not need to work for UCLA. However, we can use them to create an academic social network and a pre-data analysis. 
+
+```{r}
+autores_2016_2020 <- 
+  articulos_2016_2020 |> 
+  select(ano, autores, id) |> 
+  separate_rows(autores, sep = ", ")
+```
+
+In this part, we can ask: What is the most 10 productive author?
+
+```{r}
+autores_top <- 
+  autores_2016_2020 |> 
+  count(autores, sort = TRUE) |> 
+  slice(1:5)
+
+autores_top 
+```
+We can analyze their production per year. 
+
+```{r}
+autores_2016_2020 |> 
+  filter(autores %in% autores_top$autores) |> 
+  group_by(ano, autores) |> 
+  count(autores) |>  
+  ggplot(aes(x = ano, y = n, group = 1)) +
+  geom_line() +
+  facet_wrap( ~autores) +
+  theme(strip.text = element_text(size = 7))
+```
