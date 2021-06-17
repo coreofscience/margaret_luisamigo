@@ -53,27 +53,41 @@ fig
 
 
 ## {.tabset}
+
+### Trabajos dirigidos
+
+
+```{r}
+trabajos_dirigidos <- produccion_grupos[["trabajos_dirigidos"]] %>% 
+  select(desde) %>% 
+  mutate(Año = str_remove(desde, ".* ")) %>% 
+  select(-desde)%>%
+  count(Año, sort = FALSE,name = "Producciones") %>% 
+  filter(Año >= 2016)
+
+fig3 <- plot_ly(trabajos_dirigidos, x = ~Año)
+fig3 <- fig3 %>%  add_trace(y=~Producciones, 
+                            type = 'scatter', mode = 'lines',
+                            line = list(color='rgba(255,116,0, 1)', width = 4))
+fig3 <- fig3 %>% layout(title="Producción en la categoría Trabajos Dirigidos desde el 2016")
+
+fig3
+```
+
 ### Artículos
 ```{r}
-articulos <- produccion_grupos[["articulos"]] %>% select(ano) %>% count(ano, sort = FALSE,
-                                                         name = "Producciones") %>% 
-  filter(ano >= 2016)
+articulos <- produccion_grupos[["articulos"]] %>% 
+  select(ano) %>% count(ano, sort = FALSE,name = "Producciones") %>% 
+  filter(ano >= 2016) %>% 
+  mutate(Año = str_trim(ano)) %>% 
+  select(-ano)
 
-fig2 <- plot_ly(articulos, x = ~ano)
+fig2 <- plot_ly(articulos, x = ~Año)
 fig2 <- fig2 %>%  add_trace(y=~Producciones, 
                             type = 'scatter', mode = 'lines',
                             line = list(color='rgba(255,116,0, 1)', width = 4))
 fig2 <- fig2 %>% layout(title="Producción en la categoría Artículo desde el 2016")
 
 fig2
-
-```
-
-
-
-### Trabajos dirigidos
-
-
-```{r}
 
 ```
