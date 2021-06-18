@@ -1,0 +1,180 @@
+---
+title: "Margaret"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(tidyverse)
+library(here)
+library(DT)
+```
+
+```{r}
+articulos_unicos_2016_2020 <- 
+  read_csv(here("data",
+                "articulos_unicos.csv")) |> 
+  filter(ano >= 2016,
+         ano <=2020)
+```
+
+General
+======================================================================
+
+Column {data-width=500}
+-----------------------------------------------------------------------
+
+### Países
+
+```{r}
+articulos_unicos_2016_2020 |> 
+  count(pais_revista, sort = TRUE) |> 
+  datatable(options = list(pageLength = 5))
+```
+
+### Revistas
+
+```{r}
+articulos_unicos_2016_2020 |> 
+  count(revista, sort = TRUE) |> 
+  datatable(options = list(pageLength = 5))
+```
+
+Column {data-width=500}
+-----------------------------------------------------------------------
+
+
+### Paises por año
+
+```{r}
+paises_top <- 
+  articulos_unicos_2016_2020 |> 
+  count(pais_revista, sort = TRUE) |> 
+  slice(1:6)
+
+
+articulos_unicos_2016_2020 |> 
+  filter(pais_revista %in% paises_top$pais_revista) |> 
+  group_by(pais_revista, ano) |> 
+  count(pais_revista) |> 
+  ggplot(aes(x = ano, y = n, group = 1)) +
+  geom_line() +
+  facet_wrap(~ pais_revista) +
+  theme(axis.text.x = element_text( size = 6 )) +
+  xlab("año") +
+  ylab("artículos") +
+  ggtitle("Producción anual por país")
+```
+
+
+### Pevistas top por año
+
+```{r}
+revista_top <- 
+  articulos_unicos_2016_2020 |> 
+  count(revista, sort = TRUE) |> 
+  slice(1:6)
+
+
+articulos_unicos_2016_2020 |> 
+  filter(revista %in% revista_top$revista) |> 
+  group_by(revista, ano) |> 
+  count(revista) |> 
+  ggplot(aes(x = ano, y = n, group = 1)) +
+  geom_line() +
+  facet_wrap(~ revista) +
+  theme(strip.text = element_text(size = 10),
+        axis.text.x = element_text( size = 6 )) +
+  xlab("año") +
+  ylab("artículos") +
+  ggtitle("Producción anual por revista")
+```
+
+Grupos
+======================================================================
+
+Column {data-width=500}
+-----------------------------------------------------------------------
+
+### Producción total
+
+```{r}
+articulos_unicos_2016_2020 |> 
+  count(grupo, sort = TRUE) |> 
+  rename(articulos = "n") |> 
+  datatable(options = list(pageLength = 25))
+```
+
+Column {data-width=500}
+-----------------------------------------------------------------------
+
+### Producción anual
+
+```{r}
+articulos_unicos_2016_2020 |> 
+  group_by(ano, grupo) |> 
+  count(grupo) |>
+  ggplot(aes(x = ano, y = n, group = 1)) +
+  geom_line() + 
+  facet_wrap(~ grupo) +
+  theme(strip.text = element_text(size = 5),
+        axis.text.x = element_text( size = 6 )) +
+  xlab("año") +
+  ylab("artículos") +
+  ggtitle("Producción anual por grupo")
+```
+
+Categorías
+======================================================================
+
+Investigadores
+======================================================================
+
+Column {data-width=350}
+-----------------------------------------------------------------------
+
+### Producción Investigadores Top total
+
+```{r}
+autores_2016_2020 <- 
+  articulos_unicos_2016_2020 |> 
+  select(ano, autores, id) |> 
+  separate_rows(autores, sep = ", ")
+
+autores_top <- 
+  autores_2016_2020 |> 
+  count(autores, sort = TRUE) 
+
+datatable(autores_top , options = list(pageLength = 10))
+```
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### Producción Investigadores Top por año
+
+```{r}
+
+autores_top_6 <- 
+  autores_top |> 
+  slice(1:6)
+
+autores_2016_2020 |> 
+  filter(autores %in% autores_top_6$autores) |> 
+  group_by(ano, autores) |> 
+  count(autores) |>  
+  ggplot(aes(x = ano, y = n, group = 1)) +
+  geom_line() +
+  facet_wrap( ~ autores) +
+  theme(strip.text = element_text(size = 5),
+        axis.text.x = element_text( size = 6 )) +
+  xlab("año") +
+  ylab("artículos") +
+  ggtitle("Producción anual por investigador")
+```
+
+
+
