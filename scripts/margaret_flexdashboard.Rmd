@@ -11,6 +11,8 @@ library(flexdashboard)
 library(tidyverse)
 library(here)
 library(DT)
+library(plotly)
+library(readxl)
 ```
 
 ```{r}
@@ -19,35 +21,32 @@ articulos_unicos_2016_2020 <-
                 "articulos_unicos.csv")) |> 
   filter(ano >= 2016,
          ano <=2020)
+
+filename <-here("output","grupos_produccion.xlsx")
+
+sheets <- openxlsx::getSheetNames(filename)
+produccion_grupos <- lapply(sheets,openxlsx::read.xlsx,xlsxFile=filename)
+names(produccion_grupos) <- sheets
+categorias <- read_excel(here("data","categorias.xlsx")) 
 ```
 
 General
 ======================================================================
 
-Column {data-width=500}
+Column {data-width=350}
 -----------------------------------------------------------------------
+
+## {.tabset}
 
 ### Países
 
 ```{r}
 articulos_unicos_2016_2020 |> 
   count(pais_revista, sort = TRUE) |> 
-  datatable(options = list(pageLength = 5))
+  datatable(options = list(pageLength = 10))
 ```
 
-### Revistas
-
-```{r}
-articulos_unicos_2016_2020 |> 
-  count(revista, sort = TRUE) |> 
-  datatable(options = list(pageLength = 5))
-```
-
-Column {data-width=500}
------------------------------------------------------------------------
-
-
-### Paises por año
+### Países por año
 
 ```{r}
 paises_top <- 
@@ -70,7 +69,18 @@ articulos_unicos_2016_2020 |>
 ```
 
 
-### Pevistas top por año
+## {.tabset}
+
+### Revistas
+
+```{r}
+articulos_unicos_2016_2020 |> 
+  count(revista, sort = TRUE) |> 
+  datatable(options = list(pageLength = 10))
+```
+
+
+### Revistas top por año
 
 ```{r}
 revista_top <- 
@@ -86,7 +96,7 @@ articulos_unicos_2016_2020 |>
   ggplot(aes(x = ano, y = n, group = 1)) +
   geom_line() +
   facet_wrap(~ revista) +
-  theme(strip.text = element_text(size = 10),
+  theme(strip.text = element_text(size = 6),
         axis.text.x = element_text( size = 6 )) +
   xlab("año") +
   ylab("artículos") +
@@ -114,6 +124,13 @@ Column {data-width=500}
 ### Producción anual
 
 ```{r}
+filename <-here("output","grupos_produccion.xlsx")
+
+sheets <- openxlsx::getSheetNames(filename)
+produccion_grupos <- lapply(sheets,openxlsx::read.xlsx,xlsxFile=filename)
+names(produccion_grupos) <- sheets
+categorias <- read_excel(here("scripts","categorias.xlsx")) 
+
 articulos_unicos_2016_2020 |> 
   group_by(ano, grupo) |> 
   count(grupo) |>
@@ -128,7 +145,79 @@ articulos_unicos_2016_2020 |>
 ```
 
 Categorías
-======================================================================
+===========================
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+### Categorias con producción 
+
+```{r}
+table <- categorias %>% DT::datatable()
+table
+
+```
+
+### Categorias con mayor producción
+
+```{r}
+categorias <- data.frame(categorias, stringsAsFactors = FALSE)
+
+categorias$categoria <- 
+  factor(categorias$categoria, 
+         levels = unique(categorias$categoria)[order(categorias$cantidad, decreasing = TRUE)])
+
+fig <- plot_ly(
+  x = head(categorias$categoria, 10),
+  y = head(categorias$cantidad, 10),
+  type = "bar"
+)
+fig
+```
+
+
+## {.tabset}
+
+### Artículos
+```{r}
+articulos <- produccion_grupos[["articulos"]] %>% 
+  select(ano) %>% count(ano, sort = FALSE,name = "Producciones") %>% 
+  filter(ano >= 2016) %>%
+  filter(ano <=2020) %>% 
+  mutate(Año = str_trim(ano)) %>% 
+  select(-ano)
+
+fig2 <- plot_ly(articulos, x = ~Año)
+fig2 <- fig2 %>%  add_trace(y=~Producciones, 
+                            type = 'scatter', mode = 'lines',
+                            line = list(color='rgba(255,116,0, 1)', width = 4))
+fig2 <- fig2 %>% layout(title="Producción en la categoría Artículo desde el 2016")
+
+fig2
+
+```
+
+### Trabajos dirigidos
+
+
+```{r}
+trabajos_dirigidos <- produccion_grupos[["trabajos_dirigidos"]] %>% 
+  select(desde) %>% 
+  mutate(Año = str_remove(desde, ".* ")) %>% 
+  select(-desde)%>%
+  count(Año, sort = FALSE,name = "Producciones") %>% 
+  filter(Año >= 2016) %>% 
+  filter(Año <=2020)
+
+fig3 <- plot_ly(trabajos_dirigidos, x = ~Año)
+fig3 <- fig3 %>%  add_trace(y=~Producciones, 
+                            type = 'scatter', mode = 'lines',
+                            line = list(color='rgba(255,116,0, 1)', width = 4))
+fig3 <- fig3 %>% layout(title="Producción en la categoría Trabajos Dirigidos desde el 2016")
+
+fig3
+```
+
+
 
 Investigadores
 ======================================================================
