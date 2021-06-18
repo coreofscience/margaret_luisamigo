@@ -42,10 +42,15 @@ table
 ### Categorias con mayor producción
 
 ```{r}
+categorias <- data.frame(categorias, stringsAsFactors = FALSE)
+
+categorias$categoria <- 
+  factor(categorias$categoria, 
+         levels = unique(categorias$categoria)[order(categorias$cantidad, decreasing = TRUE)])
+
 fig <- plot_ly(
   x = head(categorias$categoria, 10),
   y = head(categorias$cantidad, 10),
-  name = names(categorias$categoria),
   type = "bar"
 )
 fig
@@ -63,7 +68,8 @@ trabajos_dirigidos <- produccion_grupos[["trabajos_dirigidos"]] %>%
   mutate(Año = str_remove(desde, ".* ")) %>% 
   select(-desde)%>%
   count(Año, sort = FALSE,name = "Producciones") %>% 
-  filter(Año >= 2016)
+  filter(Año >= 2016) %>% 
+  filter(Año <=2020)
 
 fig3 <- plot_ly(trabajos_dirigidos, x = ~Año)
 fig3 <- fig3 %>%  add_trace(y=~Producciones, 
@@ -78,7 +84,8 @@ fig3
 ```{r}
 articulos <- produccion_grupos[["articulos"]] %>% 
   select(ano) %>% count(ano, sort = FALSE,name = "Producciones") %>% 
-  filter(ano >= 2016) %>% 
+  filter(ano >= 2016) %>%
+  filter(ano <=2020) %>% 
   mutate(Año = str_trim(ano)) %>% 
   select(-ano)
 
