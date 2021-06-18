@@ -1,0 +1,57 @@
+---
+title: "Margaret"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(tidyverse)
+library(here)
+library(DT)
+```
+
+```{r}
+articulos_unicos_2016_2020 <- 
+  read_csv(here("data",
+                "articulos_unicos.csv")) |> 
+  filter(ano >= 2016,
+         ano <=2020)
+```
+
+Grupos
+======================================================================
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### Producción total
+
+```{r}
+articulos_unicos_2016_2020 |> 
+  count(grupo, sort = TRUE) |> 
+  rename(articulos = "n") |> 
+  datatable(options = list(pageLength = 25))
+```
+
+Column {data-width=350}
+-----------------------------------------------------------------------
+
+### Producción anual
+
+```{r}
+articulos_unicos_2016_2020 |> 
+  group_by(ano, grupo) |> 
+  count(grupo) |>
+  ggplot(aes(x = ano, y = n, group = 1)) +
+  geom_line() + 
+  facet_wrap(~ grupo) +
+  theme(strip.text = element_text(size = 5),
+        axis.text.x = element_text( size = 6 )) +
+  xlab("año") +
+  ylab("artículos") +
+  ggtitle("Producción anual por grupo")
+```
+
