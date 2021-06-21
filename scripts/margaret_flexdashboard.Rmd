@@ -33,8 +33,6 @@ categorias <- read_excel(here("data","categorias.xlsx"))
 General
 ======================================================================
 
-Column {data-width=350}
------------------------------------------------------------------------
 
 ## {.tabset}
 
@@ -129,7 +127,7 @@ filename <-here("output","grupos_produccion.xlsx")
 sheets <- openxlsx::getSheetNames(filename)
 produccion_grupos <- lapply(sheets,openxlsx::read.xlsx,xlsxFile=filename)
 names(produccion_grupos) <- sheets
-categorias <- read_excel(here("scripts","categorias.xlsx")) 
+categorias <- read_excel(here("data","categorias.xlsx")) 
 
 articulos_unicos_2016_2020 |> 
   group_by(ano, grupo) |> 
