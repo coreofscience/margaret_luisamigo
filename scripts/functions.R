@@ -1,3 +1,132 @@
+data_getting_product <- function(data_grupos_all){
+  
+  grupo_df <- 
+    tibble(grupo = character(),
+           producto = character(),
+           categoria = character())
+  
+  for (i in 1:length(grupos$url)) {
+    
+    grupo <- 
+      data_grupos_all[[i]] |> 
+      html_table()
+    
+    for (j in 14:71) {
+      
+      df_1 = 
+        grupo %>% 
+        tibble() %>% 
+        slice(j) %>% 
+        unlist %>% 
+        tibble() %>% 
+        rename(producto = ".") %>% 
+        mutate(grupo = grupos$grupo[i])
+      
+      if (length(df_1$producto) > 1) {
+        
+        df_2 =
+          df_1 %>% 
+          filter(producto != "") %>% 
+          mutate(categoria = df_1$producto[1]) %>% 
+          filter(str_detect(producto, "^[0-9]\\.*")) %>% 
+          select(grupo, producto, categoria)
+        
+      } else {
+        
+        df_2 = 
+          df_1 %>% 
+          mutate(categoria = df_1$producto[1],
+                 producto = "NO TIENE") %>% 
+          select(grupo, producto, categoria) %>% 
+          unique()
+        
+      }
+      
+      grupo_df <- 
+        bind_rows(df_2,
+                  grupo_df) 
+      
+    }
+  }
+  
+  rm(df_1, df_2, grupo, i, j)
+  return(grupo_df)
+}
+
+data_getting_main <- function(data_grupos_all){
+  
+  df_group_main = tibble()
+  
+  for (i in 1:length(data_grupos_all)) {
+    
+    df_1 = 
+      data_grupos_all[[i]] |> 
+      html_table()
+    
+    df_2 = 
+      df_1[[1]] |> 
+      column_to_rownames("X1") |> 
+      t() |>
+      as.data.frame() |> 
+      rename(fecha_creacion = 2,
+             departamento_ciudad = 3,
+             lider = 4,
+             web = 6,
+             email = 7,
+             clasificacion = 8,
+             area_conocimiento = 9) |> 
+      select(fecha_creacion,
+             departamento_ciudad,
+             lider,
+             web,
+             email,
+             clasificacion,
+             area_conocimiento) |> 
+      mutate(grupo = grupos$grupo[i])
+    
+    df_group_main <- bind_rows(df_group_main, df_2)
+  }
+  return(df_group_main)
+}
+
+data_getting_researcher <- function(data_grupos_all){
+  
+  df_researcher = tibble()
+  
+  for (i in 1:length(data_grupos_all)) {
+    
+    df_i <- html_nodes(data_grupos_all[[i]],"a") %>% 
+      html_attr("href") %>% 
+      tibble() %>%
+      mutate(grupo = grupos$grupo[i]) |> 
+      rename(url = 1) |> 
+      slice(-1,-2)
+    
+    df_1 = 
+      data_grupos_all[[i]] |> 
+      html_table()
+    
+    df_2 = 
+      df_1[[5]] |> 
+      slice(-1,-2) |> 
+      rename(nombre = X1,
+             vinculacion = X2,
+             horas_dedicacion = X3,
+             inicio_fin_vinculacion = X4) |> 
+      mutate(integrantes = str_remove(nombre, ".*-"),
+             integrantes = str_trim(integrantes)) |> 
+      select(integrantes,
+             vinculacion, 
+             horas_dedicacion, 
+             inicio_fin_vinculacion,
+             -nombre) |> 
+      cbind(df_i)
+    
+    df_researcher <- bind_rows(df_researcher,df_2)  
+  }
+  return(df_researcher)
+}
+
 trabajos_dirigidos_ucla <- function(grupo_df) {
   
   trabajosdirigidos = 
