@@ -16,8 +16,8 @@ data_tidying_ucla <- function(produccion_grupos) {
   df <- tibble(id = numeric())
   
   grupo_df_articulos <- # create an id 
-    produccion_grupos$articulos %>% 
-    mutate(id = 1:length(produccion_grupos$articulos$grupo))
+    produccion_grupos[[2]][["articulos"]] %>% 
+    mutate(id = 1:length(produccion_grupos[[2]][["articulos"]][["grupo"]]))
   
   grupos <- 
     grupo_df_articulos %>% 
