@@ -1,3 +1,19 @@
+data_cleaning_researcher <- function(grupo_df) {
+  
+  grupos_researcher_cleaned <- 
+    grupo_df[["grupo_researcher"]] |> 
+    mutate(inicio_vinculacion = str_remove(inicio_fin_vinculacion,
+                                           "-.*"),
+           inicio_vinculacion = ym(inicio_vinculacion),
+           fin_vinculacion = str_remove(inicio_fin_vinculacion,
+                                        ".*-")) |> 
+    select(-inicio_fin_vinculacion)
+  
+  return(grupos_researcher_cleaned)
+  
+}
+
+
 data_cleaning_main <- function(grupo_df) {
   
   grupos_main_cleaned <- 
