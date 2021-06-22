@@ -1,3 +1,134 @@
+data_cleaning_main <- function(grupo_df) {
+  
+  grupos_main_cleaned <- 
+    grupo_df[["grupo_main"]] |> 
+    mutate(fecha_creacion = ym(fecha_creacion),
+           departamento = str_remove(departamento_ciudad, 
+                                    "-.*"),
+           departamento = str_trim(departamento),
+           ciudad = str_remove(departamento_ciudad, 
+                                    ".*-"),
+           ciudad = str_trim(ciudad),
+           clasificacion = substr(clasificacion, 
+                                  start = 1, 
+                                  stop = 2),
+           clasificacion = str_remove(clasificacion, 
+                                      "\r"),
+           area_conocimiento_1 = str_remove(area_conocimiento,
+                                           "--.*"),
+           area_conocimiento_0 = str_extract(area_conocimiento,
+                                            "--.*"),
+           area_conocimiento_0 = str_remove(area_conocimiento,
+                                             "--"),
+           area_conocimiento_2 = str_remove(area_conocimiento_0,
+                                           "--.*"),
+           area_conocimiento_3 = str_remove(area_conocimiento,
+                                           ".*--")) |> 
+    select(grupo,
+           fecha_creacion,
+           departamento,
+           ciudad,
+           lider,
+           web,
+           email,
+           clasificacion,
+           area_conocimiento_1,
+           area_conocimiento_2,
+           area_conocimiento_3)
+  
+  return(grupos_main_cleaned)
+}
+
+data_cleaning_product <- function(grupo_df) { 
+  
+  trabajos_dirigidos = trabajos_dirigidos_ucla(grupo_df[["grupo_product"]])
+  eventos_cientificos = eventos_cientificos_ucla(grupo_df[["grupo_product"]])
+  articulos = articulos_ucla(grupo_df[["grupo_product"]])
+  proyectos = proyectos_ucla(grupo_df[["grupo_product"]])
+  capitulos = capitulos_ucla(grupo_df[["grupo_product"]])
+  jurado = jurado_ucla(grupo_df[["grupo_product"]])
+  cursos = cursos_ucla(grupo_df[["grupo_product"]])
+  otros_articulos = otros_articulos_ucla(grupo_df[["grupo_product"]])
+  consultorias = consultorias_ucla(grupo_df[["grupo_product"]])
+  libros = libros_ucla(grupo_df[["grupo_product"]])
+  participacion_comites <- participacion_comites_ucla(grupo_df[["grupo_product"]])
+  demas_trabajos <- demas_trabajos_ucla(grupo_df[["grupo_product"]])
+  informes_investigacion <- informes_investigacion_ucla(grupo_df[["grupo_product"]])
+  innovaciones_gestion <- innovaciones_gestion_ucla(grupo_df[["grupo_product"]])
+  generacion_multimedia <- generacion_multimedia_ucla(grupo_df[["grupo_product"]])
+  otra_publicacion_divulgativa <- otra_publicacion_divulgativa_ucla(grupo_df[["grupo_product"]])
+  documentos_trabajo <- documentos_trabajo_ucla(grupo_df[["grupo_product"]])
+  ediciones <- ediciones_ucla(grupo_df[["grupo_product"]])
+  estrategias_pedagogicas <- estrategias_pedagogicas_ucla(grupo_df[["grupo_product"]])
+  redes_conocimiento <-  redes_conocimiento_ucla(grupo_df[["grupo_product"]])
+  generacion_contenido_virtual <- generacion_contenido_virtual_ucla(grupo_df[["grupo_product"]])
+  espacios_participacion <- espacios_participacion_ucla(grupo_df[["grupo_product"]])
+  softwares <- softwares_ucla(grupo_df[["grupo_product"]])
+  innovaciones_procesos <- innovaciones_procesos_ucla(grupo_df[["grupo_product"]])
+  otros_libros <- otros_libros_ucla(grupo_df[["grupo_product"]])
+  estrategias_comunicacion <- estrategias_comunicacion_ucla(grupo_df[["grupo_product"]])
+  generacion_contenido_impreso <- generacion_contenido_impreso_ucla(grupo_df[["grupo_product"]])
+  informes_tecnicos <- informes_tecnicos_ucla(grupo_df[["grupo_product"]])
+  participacion_ciudadana_cti <- participacion_ciudadana_cti_ucla(grupo_df[["grupo_product"]])
+  regulaciones_normas <- regulaciones_normas_ucla(grupo_df[["grupo_product"]])
+  actividades_evaluador <- actividades_evaluador_ucla(grupo_df[["grupo_product"]])
+  actividades_formacion <- actividades_formacion_ucla(grupo_df[["grupo_product"]])
+  apropiacion_social_conocimiento <- apropiacion_social_conocimiento_ucla(grupo_df[["grupo_product"]])
+  produccion_tecnica_tecnologica <- produccion_tecnica_tecnologica_ucla(grupo_df[["grupo_product"]])
+  generacion_contenido_audio <- generacion_contenido_audio_ucla(grupo_df[["grupo_product"]])
+  conceptos_tecnicos <- conceptos_tecnicos_ucla(grupo_df[["grupo_product"]])
+  reglamentos_tecnicos<- reglamentos_tecnicos_ucla(grupo_df[["grupo_product"]])
+  otros_productos_tencologicos <- otros_productos_tencologicos_ucla(grupo_df[["grupo_product"]])
+  traducciones <- traducciones_ucla(grupo_df[["grupo_product"]])
+  signos_distintivos <- signos_distintivos_ucla(grupo_df[["grupo_product"]])
+  nuevos_registros_cientificos <- nuevos_registros_cientificos_ucla(grupo_df[["grupo_product"]])
+  
+  return(list(trabajos_dirigidos = trabajos_dirigidos,
+              eventos_cientificos = eventos_cientificos,
+              articulos = articulos,
+              proyectos = proyectos,
+              capitulos = capitulos, 
+              jurado = jurado, 
+              cursos = cursos,
+              otros_articulos = otros_articulos,
+              consultorias = consultorias,
+              libros = libros, 
+              participacion_comites = participacion_comites,
+              demas_trabajos = demas_trabajos,
+              informes_investigacion = informes_investigacion,
+              innovaciones_gestion = innovaciones_gestion,
+              generacion_multimedia = generacion_multimedia,
+              otra_publicacion_divulgativa = otra_publicacion_divulgativa,
+              documentos_trabajo = documentos_trabajo,
+              ediciones = ediciones,
+              estrategias_pedagogicas = estrategias_pedagogicas,
+              redes_conocimiento =  redes_conocimiento,
+              generacion_contenido_virtual = generacion_contenido_virtual,
+              espacios_participacion = espacios_participacion,
+              softwares = softwares,
+              innovaciones_procesos = innovaciones_procesos,
+              otros_libros = otros_libros,
+              estrategias_comunicacion = estrategias_comunicacion,
+              generacion_contenido_impreso = generacion_contenido_impreso,
+              informes_tecnicos = informes_tecnicos,
+              participacion_ciudadana_cti = participacion_ciudadana_cti,
+              regulaciones_normas = regulaciones_normas,
+              actividades_evaluador = actividades_evaluador,
+              actividades_formacion = actividades_formacion,
+              apropiacion_social_conocimiento = apropiacion_social_conocimiento,
+              produccion_tecnica_tecnologica = produccion_tecnica_tecnologica,
+              generacion_contenido_audio = generacion_contenido_audio,
+              conceptos_tecnicos = conceptos_tecnicos,
+              reglamentos_tecnicos=reglamentos_tecnicos,
+              otros_productos_tencologicos = otros_productos_tencologicos,
+              traducciones = traducciones,
+              signos_distintivos = signos_distintivos,
+              nuevos_registros_cientificos = nuevos_registros_cientificos))
+  
+}
+
+
+
 data_getting_product <- function(data_grupos_all){
   
   grupo_df <- 
