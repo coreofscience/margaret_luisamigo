@@ -1,6 +1,6 @@
 data_cleaning_researcher <- function(grupo_df) {
   
-  grupos_researcher_cleaned <- 
+  grupo_researcher_cleaned <- 
     grupo_df[["grupo_researcher"]] |> 
     mutate(inicio_vinculacion = str_remove(inicio_fin_vinculacion,
                                            "-.*"),
@@ -9,14 +9,14 @@ data_cleaning_researcher <- function(grupo_df) {
                                         ".*-")) |> 
     select(-inicio_fin_vinculacion)
   
-  return(grupos_researcher_cleaned)
+  return(grupo_researcher_cleaned)
   
 }
 
 
 data_cleaning_main <- function(grupo_df) {
   
-  grupos_main_cleaned <- 
+  grupo_main_cleaned <- 
     grupo_df[["grupo_main"]] |> 
     mutate(fecha_creacion = ym(fecha_creacion),
            departamento = str_remove(departamento_ciudad, 
