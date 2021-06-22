@@ -52,7 +52,7 @@ data_cleaning_main <- function(grupo_df) {
            area_conocimiento_2,
            area_conocimiento_3)
   
-  return(grupos_main_cleaned)
+  return(grupo_main_cleaned)
 }
 
 data_cleaning_product <- function(grupo_df) { 
