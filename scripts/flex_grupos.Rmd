@@ -31,6 +31,12 @@ grupos_general <-
 investigadores_general <- 
   read_csv(here("output", 
                 "df_researcher.csv"))
+
+filename <-here("output","grupos_produccion.xlsx")
+
+sheets <- openxlsx::getSheetNames(filename)
+produccion_grupos <- lapply(sheets,openxlsx::read.xlsx,xlsxFile=filename)
+names(produccion_grupos) <- sheets
 ```
 
 
@@ -123,6 +129,68 @@ submitButton("Aplicar")
 ```
 
 # Grupos - Top
+
+Column {data-width=330}
+-------------------------------
+## SISCO
+```{r}
+grupos_1 <- produccion_grupos[[3]] |> 
+  filter(ano >=2016, ano <=2020) |> 
+  select(grupo, ano) |> 
+  filter(grupo == "SISCO") |> 
+  mutate(Año = str_trim(ano)) %>% 
+  select(-ano) |> 
+  count(Año, sort = FALSE, name="cantidad")
+
+figura_1 <- plot_ly(grupos_1, x=~Año)
+figura_1 <- figura_1 %>%  add_trace(y=~cantidad, 
+                            type = 'scatter', mode = 'lines',
+                            line = list(color='rgba(255,116,0, 1)', width = 4))
+figura_1 <- figura_1 %>% layout(title="Producción del grupo desde el 2016")
+
+figura_1
+```
+
+Column {data-width=330}
+-------------------------------
+## ESTUDIOS DE FENOMENOS PSICOSOCIALES
+```{r}
+grupos_2 <- produccion_grupos[[3]] |> 
+  filter(ano >=2016, ano <=2020) |> 
+  select(grupo, ano) |> 
+  filter(grupo == "ESTUDIOS DE FENÃ“MENOS PSICOSOCIALES") |> 
+  mutate(Año = str_trim(ano)) %>% 
+  select(-ano) |> 
+  count(Año, sort = FALSE, name="cantidad")
+
+figura_2 <- plot_ly(grupos_2, x=~Año)
+figura_2 <- figura_2 %>%  add_trace(y=~cantidad, 
+                            type = 'scatter', mode = 'lines',
+                            line = list(color='rgba(255,116,0, 1)', width = 4))
+figura_2 <- figura_2 %>% layout(title="Producción del grupo desde el 2016")
+
+figura_2
+```
+Column {data-width=330}
+-------------------------------
+## tercera
+```{r}
+grupos_2 <- produccion_grupos[[3]] |> 
+  filter(ano >=2016, ano <=2020) |> 
+  select(grupo, ano) |> 
+  filter(grupo == "ESTUDIOS DE FENÃ“MENOS PSICOSOCIALES") |> 
+  mutate(Año = str_trim(ano)) %>% 
+  select(-ano) |> 
+  count(Año, sort = FALSE, name="cantidad")
+
+figura_2 <- plot_ly(grupos_2, x=~Año)
+figura_2 <- figura_2 %>%  add_trace(y=~cantidad, 
+                            type = 'scatter', mode = 'lines',
+                            line = list(color='rgba(255,116,0, 1)', width = 4))
+figura_2 <- figura_2 %>% layout(title="Producción del grupo desde el 2016")
+
+figura_2
+```
 
 # Grupos - Detalle
 
