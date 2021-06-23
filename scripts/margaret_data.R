@@ -2,6 +2,7 @@ library(tidyverse)
 library(rvest)
 library(here)
 library(openxlsx)
+library(scholar)
 
 source(here("scripts",
             "data_grupos.R"))
