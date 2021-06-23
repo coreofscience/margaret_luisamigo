@@ -27,6 +27,10 @@ articulos_unicos_2016_2020 <-
 grupos_general <- 
   read_csv(here("output",
                 "general_grupos.csv"))
+
+investigadores_general <- 
+  read_csv(here("output", 
+                "df_researcher.csv"))
 ```
 
 
@@ -41,13 +45,45 @@ grupos_general <-
 
 ```{r}
 grupos_general |> 
-  datatable(escape = FALSE)
+  datatable(options = list(pageLength = 15),
+            escape = FALSE)
 ```
 
 ### Investigadores
 
 ```{r}
-
+investigadores_general |> 
+  mutate(url = str_c("<a href=","\"",
+                     url,
+                     "\"",
+                     ">Link</a>"),
+         scholar = str_c("<a href=","\"",
+                         "https://scholar.google.com/citations?user=",
+                         id_scholar,
+                         "\"",
+                         ">Scholar</a>")) |>
+  select(-vinculacion,
+         -fin_vinculacion) |> 
+  rename(Investigador = integrantes,
+         Categoria = categoria,
+         Produccion = cantidad,
+         Horas = horas_dedicacion,
+         CvLAC = url,
+         Grupo = grupo,
+         Inicio = inicio_vinculacion,
+         Formacion = ultima_formacion_academica,
+         ) |> 
+  select(Investigador,
+         Categoria,
+         Produccion,
+         h_index,
+         Formacion,
+         Grupo,
+         Inicio,
+         CvLAC,
+         scholar) |> 
+  datatable(options = list(pageLength = 10),
+            escape = FALSE)
 ```
 
 ### Paises
