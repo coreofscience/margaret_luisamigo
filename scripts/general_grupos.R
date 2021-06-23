@@ -43,6 +43,11 @@ df_5 <-
          fecha_creacion,
          lider,
          email, 
-         area_conocimiento_1)
+         area_conocimiento_1) |> 
+  mutate(gruplac = str_c("<a href=","\"",
+                         gruplac,
+                         "\"",
+                         ">Link</a>"))
 
 
+<a href="http://rstudio.com">RStudio</a>

@@ -23,6 +23,10 @@ articulos_unicos_2016_2020 <-
                 "articulos_unicos.csv")) |> 
   filter(ano >= 2016,
          ano <=2020)
+
+grupos_general <- 
+  read_csv(here("output",
+                "general_grupos.csv"))
 ```
 
 
@@ -36,7 +40,8 @@ articulos_unicos_2016_2020 <-
 ### Grupos
 
 ```{r}
-
+grupos_general |> 
+  datatable(escape = FALSE)
 ```
 
 ### Investigadores
