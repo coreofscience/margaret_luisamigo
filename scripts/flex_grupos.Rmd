@@ -1,0 +1,98 @@
+---
+title: "Margaret"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+    runtime: shiny
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(tidyverse)
+library(here)
+library(DT)
+library(plotly)
+library(readxl)
+library(shiny)
+```
+
+```{r global}
+articulos_unicos_2016_2020 <- 
+  read_csv(here("data",
+                "articulos_unicos.csv")) |> 
+  filter(ano >= 2016,
+         ano <=2020)
+
+grupos_general <- 
+  read_csv(here("output",
+                "general_grupos.csv"))
+```
+
+
+# General
+```{r}
+
+```
+
+## Column {.tabset}
+
+### Grupos
+
+```{r}
+grupos_general |> 
+  datatable(escape = FALSE)
+```
+
+### Investigadores
+
+```{r}
+
+```
+
+### Paises
+```{r}
+articulos_unicos_2016_2020 |> 
+  count(pais_revista, sort = TRUE) |> 
+  datatable(options = list(pageLength = 10))
+```
+### Revistas
+```{r}
+articulos_unicos_2016_2020 |> 
+  count(revista, sort = TRUE) |> 
+  datatable(options = list(pageLength = 10))
+```
+# Grupos
+
+## column {.sidebar}
+```{r}
+selectInput("n_breaks",
+            label = "Grupos de investigación: ",
+            choices = c("SISCO", "ECOSOL", "GORAS","JURIDICAS Y SOCIALES",
+                        "NEUROCIENCIAS BASICAS Y APLICADAS",
+                        "EDUCACIÓN, INFANCIA Y LENGUAS EXTRANJERAS",
+                        "FAMILIA DESARROLLO Y CALIDAD DE VIDA",
+                        "ESTUDIOS DE FENÓMENOS PSICOSOCIALES",
+                        "CALIDAD DE VIDA","AYELEN",
+                        "FARMACODEPENDENCIA Y OTRAS ADICCIONES",
+                        "URBANITAS",
+                        "FILOSOFÍA Y TEOLOGIA CRITICA","CONTAS",
+                        "LUES"), selected = 20)
+
+checkboxGroupInput("chklvl", label = "Categorias",
+                   choices = c("A1","A","B","C"))
+submitButton("Aplicar")
+```
+
+# Investigadores
+
+## column{.sidebar}
+```{r}
+selectInput("n_breaks",
+            label = "Investigadores: ",
+            choices = c("Yamile", "Yoder", "Franklin"), selected = 20)
+
+checkboxGroupInput("chktipinv", label = "Tipo de investigador: ",
+                   choices = c("Senior","Junior","Asociado","Emérito"))
+submitButton("Aplicar")
+```

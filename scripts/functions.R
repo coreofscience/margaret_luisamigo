@@ -1,3 +1,14 @@
+getting_scholar_h_index <- function(data_scholar) {
+  
+  scholar_index <- 
+    data_scholar |> 
+    mutate(h_index = map(id_scholar, get_profile)) |> 
+    unnest_wider(h_index) |> 
+    select(researcher, id_scholar, h_index)
+  
+  return(scholar_index)
+}
+
 data_cleaning_researcher <- function(grupo_df) {
   
   grupo_researcher_cleaned <- 
