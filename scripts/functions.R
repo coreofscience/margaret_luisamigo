@@ -1,4 +1,4 @@
-getting_scholar_id <- function(data_scholar) {
+getting_scholar_h_index <- function(data_scholar) {
   
   scholar_index <- 
     data_scholar |> 
