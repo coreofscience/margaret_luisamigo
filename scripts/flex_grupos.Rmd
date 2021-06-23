@@ -31,6 +31,7 @@ grupos_general <-
 investigadores_general <- 
   read_csv(here("output", 
                 "df_researcher.csv"))
+
 ```
 
 
@@ -124,8 +125,6 @@ submitButton("Aplicar")
 
 # Grupos - Top
 
-# Grupos - Detalle
-
 # Investigadores - General
 
 # Investigadores - Individual
@@ -143,4 +142,10 @@ submitButton("Aplicar")
 
 # Investigadores - Top
 
-# Investigadores - Detalle
+# Productos General
+
+```{r}
+articulos_unicos_2016_2020 |>
+  select(-id) |> 
+  datatable(options = list(pageLength = 10))
+```
