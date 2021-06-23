@@ -60,4 +60,18 @@ for (i in 1:length(data_researcher_all)) {
   df_info_researcher <- bind_rows(df_info_researcher,df_1)
 }
 
+articulos_unicos <- read_csv("data/articulos_unicos.csv")
+View(articulos_unicos)
+
+cantidad <- articulos_unicos |> 
+  filter(ano >= 2016,ano <=2020) |> 
+  select(autores) |> 
+  separate_rows(autores, sep = ", ") |> 
+  count(autores, sort = TRUE, name = "cantidad")
+
 df_researcher <- cbind(df_researcher, df_info_researcher)
+
+df_researcher <- df_researcher |> 
+  mutate(integrantes = str_to_upper(integrantes),
+         integrantes = stri_trans_general(integrantes, id = "Latin-ASCII")) |> 
+  left_join(cantidad,by = c("integrantes"="autores"))
