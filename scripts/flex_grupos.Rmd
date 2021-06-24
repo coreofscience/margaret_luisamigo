@@ -32,13 +32,14 @@ investigadores_general <-
   read_csv(here("output", 
                 "df_researcher.csv"))
 
+grupos_inves <-
+  read_csv(here("data",
+                "grupos.csv"))
+
 ```
 
 
 # General
-```{r}
-
-```
 
 ## Column {.tabset}
 
@@ -99,48 +100,35 @@ articulos_unicos_2016_2020 |>
   count(revista, sort = TRUE) |> 
   datatable(options = list(pageLength = 10))
 ```
+
 # Grupos - General
 
-# Grupos - Individual
-
-## column {.sidebar}
+## column {.tabset}
 ```{r}
-selectInput("n_breaks",
-            label = "Grupos de investigación: ",
-            choices = c("SISCO", "ECOSOL", "GORAS","JURIDICAS Y SOCIALES",
-                        "NEUROCIENCIAS BASICAS Y APLICADAS",
-                        "EDUCACIÓN, INFANCIA Y LENGUAS EXTRANJERAS",
-                        "FAMILIA DESARROLLO Y CALIDAD DE VIDA",
-                        "ESTUDIOS DE FENÓMENOS PSICOSOCIALES",
-                        "CALIDAD DE VIDA","AYELEN",
-                        "FARMACODEPENDENCIA Y OTRAS ADICCIONES",
-                        "URBANITAS",
-                        "FILOSOFÍA Y TEOLOGIA CRITICA","CONTAS",
-                        "LUES"), selected = 20)
-
-checkboxGroupInput("chklvl", label = "Categorias",
-                   choices = c("A1","A","B","C"))
-submitButton("Aplicar")
+data1 <- grupos_inves |> count(clasificacion) |> arrange(desc(clasificacion))
+fig1 <- plot_ly(data1, labels = ~clasificacion, values = ~n, type = 'pie')
+fig1 <- fig1 %>% layout(title = 'Clasificacion grupos de investigacion',
+         xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+         yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+fig1
 ```
 
-# Grupos - Top
-
-# Investigadores - General
-
-# Investigadores - Individual
-
-## column{.sidebar}
+## column {.tabset}
 ```{r}
-selectInput("n_breaks",
-            label = "Investigadores: ",
-            choices = c("Yamile", "Yoder", "Franklin"), selected = 20)
-
-checkboxGroupInput("chktipinv", label = "Tipo de investigador: ",
-                   choices = c("Senior","Junior","Asociado","Emérito"))
-submitButton("Aplicar")
+data2 <- grupos_inves |> 
+  count(area_conocimiento_1, sort = TRUE, name = "cantidad")
+data2[3,1] = "ingenieria y tecnologia"
+fig2 <- plot_ly(data2, x = ~area_conocimiento_1, y = ~cantidad, type = 'bar')
+fig2 <- fig2 %>% layout(title = "Grupos segun area de conocimiento",
+         xaxis = list(title = ""),
+         yaxis = list(title = ""))
+fig2
 ```
 
-# Investigadores - Top
+
+
+
+
 
 # Productos General
 
