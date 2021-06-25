@@ -15,6 +15,7 @@ library(DT)
 library(plotly)
 library(readxl)
 library(shiny)
+library(crosstalk)
 ```
 
 ```{r global}
@@ -23,6 +24,15 @@ articulos_unicos_2016_2020 <-
                 "articulos_unicos.csv")) |> 
   filter(ano >= 2016,
          ano <=2020)
+grupos_inves <-
+  read_csv(here("data",
+                "grupos.csv")) 
+
+grupos_indi <- read_csv(here("data",
+                             "df_researcher.csv"))
+      
+grupos_produccion_articulos <- read_xlsx(here("data","grupos_produccion.xlsx"), 
+    sheet = "articulos")
 ```
 
 
@@ -32,14 +42,6 @@ articulos_unicos_2016_2020 <-
 ```
 
 ## Column {.tabset}
-
-### Grupos
-
-```{r}
-
-```
-
-### Investigadores
 
 ```{r}
 
@@ -57,37 +59,67 @@ articulos_unicos_2016_2020 |>
   count(revista, sort = TRUE) |> 
   datatable(options = list(pageLength = 10))
 ```
-# Grupos
+# Grupos general
 
-## column {.sidebar}
+Column {data-width=500}
+--------------------------------------
+
+### Grupos de investigación
 ```{r}
-selectInput("n_breaks",
-            label = "Grupos de investigación: ",
-            choices = c("SISCO", "ECOSOL", "GORAS","JURIDICAS Y SOCIALES",
-                        "NEUROCIENCIAS BASICAS Y APLICADAS",
-                        "EDUCACIÓN, INFANCIA Y LENGUAS EXTRANJERAS",
-                        "FAMILIA DESARROLLO Y CALIDAD DE VIDA",
-                        "ESTUDIOS DE FENÓMENOS PSICOSOCIALES",
-                        "CALIDAD DE VIDA","AYELEN",
-                        "FARMACODEPENDENCIA Y OTRAS ADICCIONES",
-                        "URBANITAS",
-                        "FILOSOFÍA Y TEOLOGIA CRITICA","CONTAS",
-                        "LUES"), selected = 20)
+data1 <- grupos_inves |> count(clasificacion) |> arrange(desc(clasificacion))
+fig1 <- plot_ly(data1, labels = ~clasificacion, values = ~n, type = 'pie')
+fig1 <- fig1 %>% layout(title = 'Clasificacion',
+         xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+         yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+fig1
+```
+### Grupos 
+```{r}
+data2 <- grupos_inves |> 
+  count(area_conocimiento_1, sort = TRUE, name = "cantidad")
+data2[3,1] = "ingenieria y tecnologia"
+fig2 <- plot_ly(data2, x = ~area_conocimiento_1, y = ~cantidad, type = 'bar')
+fig2 <- fig2 %>% layout(title = "Segun area de conocimiento",
+         xaxis = list(title = ""),
+         yaxis = list(title = ""))
+fig2
+```
+Column {data-width=500}
+-----------------------------------
 
-checkboxGroupInput("chklvl", label = "Categorias",
-                   choices = c("A1","A","B","C"))
-submitButton("Aplicar")
+### Evolución temporal
+```{r}
+data3 <- grupos_produccion_articulos |> 
+  select(categoria, ano, grupo) |> 
+  filter(ano >= 2016, ano <=2020) |> 
+  count(ano, sort = FALSE, name = "producciones")
+fig3 <- plot_ly(data3, x = ~ano, y = ~producciones, type = 'scatter', mode = 'lines')
+fig3 <- fig3 %>% layout(title = "Produccion articulos",
+         xaxis = list(title = ""),
+         yaxis = list(title = ""))
+
+fig3
 ```
 
-# Investigadores
+# Grupos individual
 
-## column{.sidebar}
+Column {data-width=200}
+-----------------------------------
+
 ```{r}
-selectInput("n_breaks",
-            label = "Investigadores: ",
-            choices = c("Yamile", "Yoder", "Franklin"), selected = 20)
+data4 <- grupos_indi |> select(grupo , categoria)
 
-checkboxGroupInput("chktipinv", label = "Tipo de investigador: ",
-                   choices = c("Senior","Junior","Asociado","Emérito"))
-submitButton("Aplicar")
+datos_compartidos <- SharedData$new(data4)
+
+filter_select("categoria", "Grupo", datos_compartidos, ~grupo)
+```
+
+Column {data-width=800}
+-----------------------------------
+### Categorias investigadores por grupo
+```{r}
+p0 <- plot_ly(data=datos_compartidos,x = ~grupo, y = ~categoria) |> 
+  add_trace(colorscale = 'YlGnBu')
+  
+p0
 ```
