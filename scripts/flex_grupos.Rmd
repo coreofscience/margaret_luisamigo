@@ -107,6 +107,31 @@ articulos_unicos_2016_2020 |>
   datatable(options = list(pageLength = 10))
 ```
 
+# Grupos - General
+
+## column {.tabset}
+```{r}
+data1 <- grupos_inves |> count(clasificacion) |> arrange(desc(clasificacion))
+fig1 <- plot_ly(data1, labels = ~clasificacion, values = ~n, type = 'pie')
+fig1 <- fig1 %>% layout(title = 'Clasificacion grupos de investigacion',
+         xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+         yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+fig1
+```
+
+## column {.tabset}
+```{r}
+data2 <- grupos_inves |> 
+  count(area_conocimiento_1, sort = TRUE, name = "cantidad")
+data2[3,1] = "ingenieria y tecnologia"
+fig2 <- plot_ly(data2, x = ~area_conocimiento_1, y = ~cantidad, type = 'bar')
+fig2 <- fig2 %>% layout(title = "Grupos segun area de conocimiento",
+         xaxis = list(title = ""),
+         yaxis = list(title = ""))
+fig2
+```
+
+
 Grupos - Top
 ======================================
 Column {data-width=330}
@@ -348,29 +373,6 @@ g_6
 
 ```
 
-# Grupos - General
-
-## column {.tabset}
-```{r}
-data1 <- grupos_inves |> count(clasificacion) |> arrange(desc(clasificacion))
-fig1 <- plot_ly(data1, labels = ~clasificacion, values = ~n, type = 'pie')
-fig1 <- fig1 %>% layout(title = 'Clasificacion grupos de investigacion',
-         xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
-         yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
-fig1
-```
-
-## column {.tabset}
-```{r}
-data2 <- grupos_inves |> 
-  count(area_conocimiento_1, sort = TRUE, name = "cantidad")
-data2[3,1] = "ingenieria y tecnologia"
-fig2 <- plot_ly(data2, x = ~area_conocimiento_1, y = ~cantidad, type = 'bar')
-fig2 <- fig2 %>% layout(title = "Grupos segun area de conocimiento",
-         xaxis = list(title = ""),
-         yaxis = list(title = ""))
-fig2
-```
 
 
 
