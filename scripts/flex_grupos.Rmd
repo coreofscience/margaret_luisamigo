@@ -15,6 +15,7 @@ library(DT)
 library(plotly)
 library(readxl)
 library(shiny)
+library(crosstalk)
 ```
 
 ```{r global}
@@ -36,12 +37,18 @@ grupos_inves <-
   read_csv(here("data",
                 "grupos.csv"))
 
+grupos_indi <- read_csv(here("data",
+                             "df_researcher.csv"))
+
 filename <-here("output","grupos_produccion.xlsx")
 
 sheets <- openxlsx::getSheetNames(filename)
 produccion_grupos <- lapply(sheets,openxlsx::read.xlsx,xlsxFile=filename)
 names(produccion_grupos) <- sheets
 
+
+grupos_produccion_articulos <- read_xlsx(here("output","grupos_produccion.xlsx"), 
+    sheet = "articulos")
 ```
 
 
@@ -90,47 +97,95 @@ investigadores_general |>
          Inicio,
          CvLAC,
          scholar) |> 
-  datatable(options = list(pageLength = 10),
+  datatable(options = list(pageLength = 15),
             escape = FALSE)
+```
+
+### Productos
+
+```{r}
+articulos_unicos_2016_2020 |>
+  select(-id) |> 
+  datatable(options = list(pageLength = 10))
 ```
 
 ### Paises
 ```{r}
 articulos_unicos_2016_2020 |> 
   count(pais_revista, sort = TRUE) |> 
-  datatable(options = list(pageLength = 10))
+  datatable(options = list(pageLength = 15))
 ```
 ### Revistas
 ```{r}
 articulos_unicos_2016_2020 |> 
   count(revista, sort = TRUE) |> 
-  datatable(options = list(pageLength = 10))
+  datatable(options = list(pageLength = 15))
 ```
 
 # Grupos - General
 
-## column {.tabset}
+Column {data-width=500}
+--------------------------------------
+
+### Grupos de investigación
 ```{r}
 data1 <- grupos_inves |> count(clasificacion) |> arrange(desc(clasificacion))
 fig1 <- plot_ly(data1, labels = ~clasificacion, values = ~n, type = 'pie')
-fig1 <- fig1 %>% layout(title = 'Clasificacion grupos de investigacion',
+fig1 <- fig1 %>% layout(title = 'Clasificacion',
          xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
          yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
 fig1
 ```
-
-## column {.tabset}
+### Grupos 
 ```{r}
 data2 <- grupos_inves |> 
   count(area_conocimiento_1, sort = TRUE, name = "cantidad")
 data2[3,1] = "ingenieria y tecnologia"
 fig2 <- plot_ly(data2, x = ~area_conocimiento_1, y = ~cantidad, type = 'bar')
-fig2 <- fig2 %>% layout(title = "Grupos segun area de conocimiento",
+fig2 <- fig2 %>% layout(title = "Segun area de conocimiento",
          xaxis = list(title = ""),
          yaxis = list(title = ""))
 fig2
 ```
+Column {data-width=500}
+-----------------------------------
 
+### Evolución temporal
+```{r}
+data3 <- grupos_produccion_articulos |> 
+  select(categoria, ano, grupo) |> 
+  filter(ano >= 2016, ano <=2020) |> 
+  count(ano, sort = FALSE, name = "producciones")
+fig3 <- plot_ly(data3, x = ~ano, y = ~producciones, type = 'scatter', mode = 'lines')
+fig3 <- fig3 %>% layout(title = "Produccion articulos",
+         xaxis = list(title = ""),
+         yaxis = list(title = ""))
+
+fig3
+```
+
+# Grupos individual
+
+Column {data-width=200}
+-----------------------------------
+
+```{r}
+data4 <- grupos_indi |> select(grupo , categoria)
+
+datos_compartidos <- crosstalk::SharedData$new(data4)
+
+filter_select("categoria", "Grupo", datos_compartidos, ~grupo)
+```
+
+Column {data-width=800}
+-----------------------------------
+### Categorias investigadores por grupo
+```{r}
+p0 <- plot_ly(data=datos_compartidos,x = ~grupo, y = ~categoria) |> 
+  add_trace(colorscale = 'YlGnBu')
+  
+p0
+```
 
 Grupos - Top
 ======================================
@@ -371,18 +426,4 @@ g_6 <- g_6 |> add_trace(y=~Producciones,
 g_6
 
 
-```
-
-
-
-
-
-
-
-# Productos General
-
-```{r}
-articulos_unicos_2016_2020 |>
-  select(-id) |> 
-  datatable(options = list(pageLength = 10))
 ```
