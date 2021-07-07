@@ -39,7 +39,6 @@ df_5 <-
          cantidad_articulos,
          cantidad_investigadores,
          gruplac,
-         universidad_link,
          fecha_creacion,
          lider,
          email, 
@@ -47,7 +46,6 @@ df_5 <-
   mutate(gruplac = str_c("<a href=","\"",
                          gruplac,
                          "\"",
-                         ">Link</a>"))
+                         ">Link</a>")) 
 
 
-<a href="http://rstudio.com">RStudio</a>
