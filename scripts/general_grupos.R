@@ -10,7 +10,13 @@ df_1 <-
          fecha_creacion, 
          lider, 
          email, 
-         area_conocimiento_1) 
+         area_conocimiento_1)
+
+articulos_unicos <- 
+  read_csv(here("data",
+                "articulos_unicos.csv")) |> 
+  filter(ano >= 2016,
+         ano <=2020)
 
 df_2 <- 
   articulos_unicos |> 
@@ -26,6 +32,7 @@ df_3 <-
 
 df_4 <- 
   produccion_grupos[[3]] |> 
+  filter(str_detect(fin_vinculacion, "Actual")) |> 
   count(grupo) |> 
   rename(cantidad_investigadores = "n")
 
@@ -48,4 +55,4 @@ df_5 <-
                          "\"",
                          ">Link</a>")) 
 
-
+write_csv(df_5, file = "general_grupos.csv")
