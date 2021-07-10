@@ -169,7 +169,7 @@ data_getting_product <- function(data_grupos_all){
       data_grupos_all[[i]] |> 
       html_table()
     
-    for (j in 14:71) {
+    for (j in 14:85) {
       
       df_1 = 
         grupo %>% 
