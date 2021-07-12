@@ -109,6 +109,11 @@ data_cleaning_product <- function(grupo_df) {
   traducciones <- traducciones_ucla(grupo_df[["grupo_product"]])
   signos_distintivos <- signos_distintivos_ucla(grupo_df[["grupo_product"]])
   nuevos_registros_cientificos <- nuevos_registros_cientificos_ucla(grupo_df[["grupo_product"]])
+  libros_divulgacion <- libros_divulgacion_compilacion_ucla(grupo_df[["grupo_product"]])
+  libros_formacion <- libros_formacion_ucla(grupo_df[["grupo_product"]])
+  Producciones_digital_audiovisual <- Producciones_digital_audiovisual_ucla(grupo_df[["grupo_product"]])
+  manuales_guias_especializadas <- manuales_guias_especializadas_ucla(grupo_df[["grupo_product"]])
+  divulgacion_publica_contenidos_transmedia <- divulgacion_publica_contenidos_transmedia_ucla(grupo_df[["grupo_product"]])
   
   return(list(trabajos_dirigidos = trabajos_dirigidos,
               eventos_cientificos = eventos_cientificos,
@@ -150,8 +155,12 @@ data_cleaning_product <- function(grupo_df) {
               otros_productos_tencologicos = otros_productos_tencologicos,
               traducciones = traducciones,
               signos_distintivos = signos_distintivos,
-              nuevos_registros_cientificos = nuevos_registros_cientificos))
-  
+              nuevos_registros_cientificos = nuevos_registros_cientificos,
+              libros_divulgacion = libros_divulgacion,
+              libros_formacion = libros_formacion,
+              Producciones_digital_audiovisual= Producciones_digital_audiovisual,
+              manuales_guias_especializadas = manuales_guias_especializadas,
+              divulgacion_publica_contenidos_transmedia = divulgacion_publica_contenidos_transmedia))
 }
 
 
@@ -1877,4 +1886,183 @@ nuevos_registros_cientificos_ucla <- function(grupo_df) {
     mutate(Descripcion=str_extract(info_9, ".*"),
            Descripcion= str_trim(Descripcion)) %>% 
     select(-info_9)
+}
+
+ 
+libros_divulgacion_compilacion_ucla <- function(grupo_df) {
+ 
+ grupo_df_libros_divulgacion_compilacion<- 
+   grupo_df %>%
+   filter(categoria == "Libros de divulgación y/o Compilación de divulgación") %>% 
+   separate(producto ,
+            c("info_1", "info_2","info_3","info_4",
+              "info_5","info_6","info_7"), 
+            sep = "\r\n" ) |> 
+   select(-info_6) |> 
+   mutate(tipo_producto1 = str_remove(info_1, ".*.- "),
+          tipo_producto = str_extract(tipo_producto1, ".*divulgación :"),
+          tipo_producto = str_remove(tipo_producto, ":"),
+          tipo_producto = str_trim(tipo_producto),
+          titulo = str_remove(tipo_producto1, ".*divulgación :"),
+          titulo = str_trim(titulo),
+          pais = str_remove(info_2, ","),
+          pais = str_trim(pais),
+          ano = str_remove(info_3, ","),
+          ano = str_trim(ano),
+          ISBN = str_remove(info_4, ".*:"),
+          ISBN = str_remove(ISBN, ","),
+          ISBN = str_trim(ISBN),
+          editorial = str_remove(info_5, ".*Ed. "),
+          editorial = str_trim(editorial),
+          autores = str_remove(info_7, ".*: "),
+          autores = str_trim(autores)) |> 
+   select(-tipo_producto1, -info_1, -info_2, -info_3, -info_4,
+          -info_5, -info_7)
+ 
+}
+
+libros_formacion_ucla <- function(grupo_df) {
+
+ grupo_df_libros_formacion<- 
+   grupo_df %>%
+   filter(categoria == "Libros de formación") %>% 
+   separate(producto ,
+            c("info_1", "info_2","info_3","info_4",
+              "info_5","info_6","info_7"), 
+            sep = "\r\n" ) |> 
+   select(-info_6) |> 
+   mutate(tipo_producto = str_extract(info_1, ".*formación : "),
+          tipo_producto = str_remove(tipo_producto, ":"),
+          tipo_producto = str_remove(tipo_producto, ".*.- "),
+          tipo_producto = str_trim(tipo_producto),
+          titulo = str_remove(info_1, ".*formación :"),
+          titulo = str_trim(titulo),
+          pais = str_remove(info_2, ","),
+          pais = str_trim(pais),
+          ano = str_remove(info_3, ","),
+          ano = str_trim(ano),
+          ISBN = str_remove(info_4, ".*:"),
+          ISBN = str_remove(ISBN, ","),
+          ISBN = str_trim(ISBN),
+          editorial = str_remove(info_5, ".*Ed. "),
+          editorial = str_trim(editorial),
+          autores = str_remove(info_7, ".*: "),
+          autores = str_trim(autores)) |> 
+   select(-info_1, -info_2, -info_3, -info_4,
+          -info_5, -info_7)
+}
+
+Producciones_digital_audiovisual_ucla <- function(grupo_df) {
+  
+  grupo_df_Producciones_contenido_digital_audiovisual <- 
+    grupo_df %>%
+    filter(categoria == "Producciones de contenido digital - Audiovisual") %>% 
+    separate(producto ,
+             c("info_1", "info_2","info_3","info_4",
+               "info_5","info_6","info_7", "info_8"), 
+             sep = "\r\n" ) |> 
+    mutate(tipo_producto = str_extract(info_1, ".*Audiovisual\\)"),
+           tipo_producto = str_remove(tipo_producto, ".*\\d. "),
+           titulo = str_remove(info_1, ".*Audiovisual\\)"),
+           titulo = str_trim(titulo),
+           ano = str_remove(info_3, ".*Año: "),
+           ano = str_remove(ano, ",.*"),
+           ano = str_trim(ano),
+           mes = str_remove(info_3, ".*Mes: "),
+           mes = str_remove(mes, ",.*"),
+           mes = str_trim(mes),
+           verificacion = str_remove(info_3, ".*: "),
+           verificacion = str_trim(verificacion),
+           publico_objetivo = str_remove(info_5, ".*objetivo: "),
+           publico_objetivo = str_remove(publico_objetivo, ",.*"),
+           publico_objetivo = str_trim(publico_objetivo),
+           cuidad = str_remove(info_5, ".*Ciudad: "),
+           cuidad = str_remove(cuidad, ",.*"),
+           cuidad = str_trim(cuidad),
+           genero_literario = str_remove(info_5, ".*literario: "),
+           genero_literario = str_remove(genero_literario, ",.*"),
+           genero_literario = str_trim(genero_literario),
+           tipo = str_remove(info_5, ".*Tipo: "),
+           tipo = str_remove(tipo, ","),
+           nombre_proyecto = str_remove(info_6, ".*proyecto: "),
+           nombre_proyecto = str_remove(nombre_proyecto, ",.*"),
+           nombre_proyecto = str_trim(nombre_proyecto),
+           tipo_circulacion = str_remove(info_6, ".*circulación: "),
+           tipo_circulacion = str_trim(tipo_circulacion),
+           duracion = str_remove(info_7, ".*Duracion: "),
+           duracion = str_remove(duracion, ","),
+           duracion = str_trim(duracion),
+           enfoque_diferencial = str_remove(info_8, ".*diferencial:")) |> 
+    select(-info_1, -info_2, -info_3, -info_4,
+           -info_5, -info_6, -info_7, -info_8)
+}
+
+manuales_guias_especializadas_ucla <- function(grupo_df) {
+  
+  grupo_df_manuales_guias_especializadas <- 
+    grupo_df %>%
+    filter(categoria == "Manuales y Guías Especializadas") %>% 
+    separate(producto ,
+             c("info_1", "info_2","info_3","info_4",
+               "info_5","info_6","info_7"), 
+             sep = "\r\n" ) |> 
+    mutate(tipo_producto = str_extract(info_1, ".*Especializadas : "),
+           tipo_producto = str_remove(tipo_producto, ":"),
+           tipo_producto = str_remove(tipo_producto, ".*.- "),
+           tipo_producto = str_trim(tipo_producto),
+           titulo = str_remove(info_1, ".*Especializadas :"),
+           titulo = str_trim(titulo),
+           pais = str_remove(info_2, ","),
+           pais = str_trim(pais),
+           ano = str_remove(info_3, ","),
+           ano = str_trim(ano),
+           ISBN = str_remove(info_4, ".*:"),
+           ISBN = str_remove(ISBN, ","),
+           ISBN = str_trim(ISBN),
+           editorial = str_remove(info_5, ".*Ed. "),
+           editorial = str_trim(editorial),
+           autores = str_remove(info_7, ".*: "),
+           autores = str_trim(autores)) |> 
+    select(-info_1, -info_2, -info_3, -info_4,
+           -info_5, -info_6, -info_7)
+}
+
+divulgacion_publica_contenidos_transmedia_ucla <- function(grupo_df) {
+  
+  grupo_df_divulgacion_publica_contenidos_transmedia <- 
+    grupo_df %>%
+    filter(categoria == "Divulgación Pública de la Ciencia producción de estrategias y contenidos transmedia") %>% 
+    separate(producto ,
+             c("info_1", "info_2","info_3","info_4",
+               "info_5","info_6","info_7"), 
+             sep = "\r\n" ) |> 
+    mutate(tipo_producto = str_extract(info_1, ".*transmedia"),
+           tipo_producto = str_remove(tipo_producto, ".*\\d. "),
+           titulo = str_remove(info_1, ".*transmedia"),
+           titulo = str_trim(titulo),
+           ano = str_remove(info_3, ".*Año: "),
+           ano = str_remove(ano, ",.*"),
+           ano = str_trim(ano),
+           mes = str_remove(info_3, ".*Mes: "),
+           mes = str_remove(mes, ",.*"),
+           mes = str_trim(mes),
+           verificacion = str_remove(info_3, ".*: "),
+           verificacion = str_trim(verificacion),
+           publico_objetivo = str_remove(info_5, ".*objetivo: "),
+           publico_objetivo = str_remove(publico_objetivo, ",.*"),
+           publico_objetivo = str_trim(publico_objetivo),
+           cuidad = str_remove(info_5, ".*Ciudad: "),
+           cuidad = str_remove(cuidad, ",.*"),
+           cuidad = str_trim(cuidad),
+           genero_literario = str_remove(info_5, ".*literario: "),
+           genero_literario = str_remove(genero_literario, ",.*"),
+           genero_literario = str_trim(genero_literario),
+           nombre_proyecto = str_remove(info_6, ".*proyecto: "),
+           nombre_proyecto = str_remove(nombre_proyecto, ",.*"),
+           nombre_proyecto = str_trim(nombre_proyecto),
+           tipo_circulacion = str_remove(info_6, ".*circulación: "),
+           tipo_circulacion = str_trim(tipo_circulacion),
+           enfoque_diferencial = str_remove(info_7, ".*:")) |> 
+    select(-info_1, -info_2,-info_3,-info_4,
+           -info_5,-info_6,-info_7)
 }
