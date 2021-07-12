@@ -2038,14 +2038,8 @@ notas_cientificas_ucla <- function(grupo_df){
            mes = str_remove(mes, ",.*"),
            volumen = str_remove(info_12, ".*men: "),
            volumen = str_remove(volumen, ",.*")) |> 
-    select(-info_1, -info_2, -info_3, -info_4,-info_5,-info_6,-info_7,-info_8,-info_9,
-           -info_10,-info_11,-info_12),
-           duracion = str_remove(info_7, ".*Duracion: "),
-           duracion = str_remove(duracion, ","),
-           duracion = str_trim(duracion),
-           enfoque_diferencial = str_remove(info_8, ".*diferencial:")) |> 
-    select(-info_1, -info_2, -info_3, -info_4,
-           -info_5, -info_6, -info_7, -info_8)
+    select(-info_1, -info_2, -info_3, -info_4,-info_5,-info_6,-info_7,-info_8,-info_9
+           ,-info_10,-info_11,-info_12)
 }
 
 manuales_guias_especializadas_ucla <- function(grupo_df) {
