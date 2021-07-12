@@ -1891,20 +1891,6 @@ nuevos_registros_cientificos_ucla <- function(grupo_df) {
            Descripcion= str_trim(Descripcion)) %>% 
     select(-info_9)
 }
-
-Producciones_de_contenido_digital_ucla <- function(grupo_df){
-  
-  grupo_df_producciones_de_contenido_digital <- 
-    grupo_df %>% 
-    filter(categoria == "Producciones de contenido digital - Recursos gráficos") %>% 
-    separate(producto ,
-             c("info_1", "info_2","info_3","info_4","info_5","info_6","info_7","info_8"), 
-             sep = "\r\n" ) |> 
-    mutate(tipo_producto = str_remove(info_1, "\\d. "),
-           tipo_producto = str_extract(tipo_producto, ".*Recurso gráfico\\)"),
-           tipo_producto = str_trim(tipo_producto),
-           titulo_producto = str_remove(info_1, ".*\\) "),
-           titulo_producto = str_trim(titulo_producto),
  
 libros_divulgacion_compilacion_ucla <- function(grupo_df) {
  
@@ -1969,19 +1955,19 @@ libros_formacion_ucla <- function(grupo_df) {
           -info_5, -info_7)
 }
 
-Producciones_digital_audiovisual_ucla <- function(grupo_df) {
+Producciones_de_contenido_digital_ucla <- function(grupo_df){
   
-  grupo_df_Producciones_contenido_digital_audiovisual <- 
-    grupo_df %>%
-    filter(categoria == "Producciones de contenido digital - Audiovisual") %>% 
+  grupo_df_producciones_de_contenido_digital <- 
+    grupo_df %>% 
+    filter(categoria == "Producciones de contenido digital - Recursos gráficos") %>% 
     separate(producto ,
-             c("info_1", "info_2","info_3","info_4",
-               "info_5","info_6","info_7", "info_8"), 
+             c("info_1", "info_2","info_3","info_4","info_5","info_6","info_7","info_8"), 
              sep = "\r\n" ) |> 
-    mutate(tipo_producto = str_extract(info_1, ".*Audiovisual\\)"),
-           tipo_producto = str_remove(tipo_producto, ".*\\d. "),
-           titulo = str_remove(info_1, ".*Audiovisual\\)"),
-           titulo = str_trim(titulo),
+    mutate(tipo_producto = str_remove(info_1, "\\d. "),
+           tipo_producto = str_extract(tipo_producto, ".*Recurso gráfico\\)"),
+           tipo_producto = str_trim(tipo_producto),
+           titulo_producto = str_remove(info_1, ".*\\) "),
+           titulo_producto = str_trim(titulo_producto),
            ano = str_remove(info_3, ".*Año: "),
            ano = str_remove(ano, ",.*"),
            ano = str_trim(ano),
@@ -2009,7 +1995,7 @@ Producciones_digital_audiovisual_ucla <- function(grupo_df) {
            duracion = str_remove(info_7, ".*: ,"),
            enfoque_diferencial = str_remove(info_8, ".*:")) |> 
     select(-info_1, -info_2, -info_3, -info_4,-info_5,-info_6,-info_7,-info_8)
-    
+  
 }
 
 notas_cientificas_ucla <- function(grupo_df){
