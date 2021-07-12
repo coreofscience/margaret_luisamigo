@@ -821,42 +821,36 @@ libros_ucla <- function(grupo_df) {
     grupo_df %>%
     filter(categoria == "Libros publicados") %>% 
     separate(producto ,
-             c("info_1", "info_2","info_3","info_4"), 
-             sep = "\r\n" )%>% 
+             c("info_1", "info_2","info_3",
+               "info_4", "info_5", "info_6", "info_7"), 
+             sep = "\r\n" ) %>% 
+    select(-info_6) |> 
     mutate(info_1 = str_trim(info_1),
-           Tipo_Libro = str_remove(info_1, ":.*"),
-           Tipo_Libro = str_remove(Tipo_Libro, ".*-" ),
-           Tipo_Libro = str_trim(Tipo_Libro),
+           Tipo_producto = str_remove(info_1, ":.*"),
+           Tipo_producto = str_remove(Tipo_producto, ".*-" ),
+           Tipo_producto = str_trim(Tipo_producto),
            Titulo = str_remove(info_1, ".*investigación :"),
            Titulo = str_trim(Titulo)) %>% 
     select(-info_1) %>% 
     mutate(info_2 = str_trim(info_2),
            Pais = str_remove(info_2,",.*"),
-           Ano = str_extract(info_2, ",.*"),
-           Ano = str_remove(Ano, ","),
-           Ano = str_trim(Ano),
-           Ano = str_remove(Ano, ",.*"),
-           ISBN= str_extract(info_2, "ISBN.*"),
+           Ano = str_remove(info_3, ","),
+           Ano = str_trim(Ano, side = "both"),
+           ISBN= str_extract(info_4, "ISBN.*"),
            ISBN= str_remove(ISBN, "vol.*"),
            ISBN= str_remove(ISBN, ".*:"),
            ISBN = str_trim(ISBN),
-           Volumen = str_extract(info_2,"vol:.*"),
-           Volumen = str_remove(Volumen, "págs:.*"),
-           Volumen= str_remove(Volumen, "vol:"),
-           Volumen=str_trim(Volumen),
-           Paginas= str_extract(info_2,"págs:.*,"),
-           Paginas= str_remove(Paginas, ",.*"),
-           Paginas= str_remove(Paginas, "págs:"),
-           Paginas=str_trim(Paginas),
-           Editorial= str_extract(info_2,"Ed.*"),
+           ISBN = str_remove(ISBN, ","),
+           ISBN = str_remove(ISBN, "SIN"),
+           Editorial= str_extract(info_5,"Ed.*"),
            Editorial= str_remove(Editorial,"Ed."),
            Editorial=str_trim(Editorial)) %>% 
     select(-info_2,-info_3) %>% 
-    mutate(info_4=str_trim(info_4),
-           Autores=str_extract(info_4, ".*"),
+    mutate(info_7=str_trim(info_7),
+           Autores=str_extract(info_7, ".*"),
            Autores=str_remove(Autores, ".*:"),
            Autores= str_trim(Autores)) %>% 
-    select(-info_4)
+    select(-info_4, -info_5, -info_7)
   
 }
 
