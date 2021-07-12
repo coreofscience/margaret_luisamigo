@@ -108,9 +108,9 @@ data_cleaning_product <- function(grupo_df) {
   otros_productos_tencologicos <- otros_productos_tencologicos_ucla(grupo_df[["grupo_product"]])
   traducciones <- traducciones_ucla(grupo_df[["grupo_product"]])
   signos_distintivos <- signos_distintivos_ucla(grupo_df[["grupo_product"]])
-  nuevos_registros_cientificos <- nuevos_registros_cientificos_ucla(grupo_df[["grupo_product"]]
+  nuevos_registros_cientificos <- nuevos_registros_cientificos_ucla(grupo_df[["grupo_product"]])
   notas_cientificas <- notas_cientificas_ucla(grupo_df[["grupo_product"]])
-  Producciones_de_contenido_digital <- Producciones_de_contenido_digital_ucla(grupo_df[["grupo_product"]]
+  Producciones_de_contenido_digital <- Producciones_de_contenido_digital_ucla(grupo_df[["grupo_product"]])
   libros_divulgacion <- libros_divulgacion_compilacion_ucla(grupo_df[["grupo_product"]])
   libros_formacion <- libros_formacion_ucla(grupo_df[["grupo_product"]])
   Producciones_digital_audiovisual <- Producciones_digital_audiovisual_ucla(grupo_df[["grupo_product"]])
@@ -159,7 +159,7 @@ data_cleaning_product <- function(grupo_df) {
               signos_distintivos = signos_distintivos,
               nuevos_registros_cientificos = nuevos_registros_cientificos,
               notas_cientificas = notas_cientificas,
-              Producciones_de_contenido_digital = Producciones_de_contenido_digital))
+              Producciones_de_contenido_digital = Producciones_de_contenido_digital,
               libros_divulgacion = libros_divulgacion,
               libros_formacion = libros_formacion,
               Producciones_digital_audiovisual= Producciones_digital_audiovisual,
@@ -2039,8 +2039,7 @@ notas_cientificas_ucla <- function(grupo_df){
            volumen = str_remove(info_12, ".*men: "),
            volumen = str_remove(volumen, ",.*")) |> 
     select(-info_1, -info_2, -info_3, -info_4,-info_5,-info_6,-info_7,-info_8,-info_9
-           ,-info_10,-info_11,-info_12)
-}
+           ,-info_10,-info_11,-info_12),
            duracion = str_remove(info_7, ".*Duracion: "),
            duracion = str_remove(duracion, ","),
            duracion = str_trim(duracion),
