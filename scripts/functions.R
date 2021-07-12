@@ -108,7 +108,9 @@ data_cleaning_product <- function(grupo_df) {
   otros_productos_tencologicos <- otros_productos_tencologicos_ucla(grupo_df[["grupo_product"]])
   traducciones <- traducciones_ucla(grupo_df[["grupo_product"]])
   signos_distintivos <- signos_distintivos_ucla(grupo_df[["grupo_product"]])
-  nuevos_registros_cientificos <- nuevos_registros_cientificos_ucla(grupo_df[["grupo_product"]])
+  nuevos_registros_cientificos <- nuevos_registros_cientificos_ucla(grupo_df[["grupo_product"]]
+  notas_cientificas <- notas_cientificas_ucla(grupo_df[["grupo_product"]])
+  Producciones_de_contenido_digital <- Producciones_de_contenido_digital_ucla(grupo_df[["grupo_product"]]
   libros_divulgacion <- libros_divulgacion_compilacion_ucla(grupo_df[["grupo_product"]])
   libros_formacion <- libros_formacion_ucla(grupo_df[["grupo_product"]])
   Producciones_digital_audiovisual <- Producciones_digital_audiovisual_ucla(grupo_df[["grupo_product"]])
@@ -156,6 +158,8 @@ data_cleaning_product <- function(grupo_df) {
               traducciones = traducciones,
               signos_distintivos = signos_distintivos,
               nuevos_registros_cientificos = nuevos_registros_cientificos,
+              notas_cientificas = notas_cientificas,
+              Producciones_de_contenido_digital = Producciones_de_contenido_digital))
               libros_divulgacion = libros_divulgacion,
               libros_formacion = libros_formacion,
               Producciones_digital_audiovisual= Producciones_digital_audiovisual,
@@ -1888,6 +1892,19 @@ nuevos_registros_cientificos_ucla <- function(grupo_df) {
     select(-info_9)
 }
 
+Producciones_de_contenido_digital_ucla <- function(grupo_df){
+  
+  grupo_df_producciones_de_contenido_digital <- 
+    grupo_df %>% 
+    filter(categoria == "Producciones de contenido digital - Recursos gráficos") %>% 
+    separate(producto ,
+             c("info_1", "info_2","info_3","info_4","info_5","info_6","info_7","info_8"), 
+             sep = "\r\n" ) |> 
+    mutate(tipo_producto = str_remove(info_1, "\\d. "),
+           tipo_producto = str_extract(tipo_producto, ".*Recurso gráfico\\)"),
+           tipo_producto = str_trim(tipo_producto),
+           titulo_producto = str_remove(info_1, ".*\\) "),
+           titulo_producto = str_trim(titulo_producto),
  
 libros_divulgacion_compilacion_ucla <- function(grupo_df) {
  
@@ -1989,6 +2006,41 @@ Producciones_digital_audiovisual_ucla <- function(grupo_df) {
            nombre_proyecto = str_trim(nombre_proyecto),
            tipo_circulacion = str_remove(info_6, ".*circulación: "),
            tipo_circulacion = str_trim(tipo_circulacion),
+           duracion = str_remove(info_7, ".*: ,"),
+           enfoque_diferencial = str_remove(info_8, ".*:")) |> 
+    select(-info_1, -info_2, -info_3, -info_4,-info_5,-info_6,-info_7,-info_8)
+    
+}
+
+notas_cientificas_ucla <- function(grupo_df){
+  
+  grupo_df_notas_cientificas <- 
+    grupo_df %>% 
+    filter(categoria == "Notas científicas") %>% 
+    separate(producto ,
+             c("info_1", "info_2","info_3","info_4","info_5","info_6","info_7","info_8", "info_9"
+               , "info_10", "info_11", "info_12"), 
+             sep = "\r\n" ) |> 
+    mutate(nota_cientifica = str_remove(info_1, ".*científica: "),
+           nota_cientifica = str_trim(nota_cientifica),
+           revista = str_remove(info_3, ".*Revista: "),
+           revista = str_remove(revista, ",.*"),
+           revista = str_trim(revista),
+           medio = str_trim(info_5),
+           pagina_inicial = str_remove(info_8, ".*inicial: "),
+           pagina_inicial = str_remove(pagina_inicial, ",.*"),
+           pagina_final= str_remove(info_8, ".*final: "),
+           ano = str_remove(info_10, ".*Año: "),
+           ano = str_remove(ano, ",.*"),
+           mes = str_remove(info_10, ".*Mes: "),
+           sitio_web = str_extract(info_10, "https.*"),
+           sitio_web = str_remove(sitio_web, ", DOI.*"),
+           mes = str_remove(mes, ",.*"),
+           volumen = str_remove(info_12, ".*men: "),
+           volumen = str_remove(volumen, ",.*")) |> 
+    select(-info_1, -info_2, -info_3, -info_4,-info_5,-info_6,-info_7,-info_8,-info_9
+           ,-info_10,-info_11,-info_12)
+}
            duracion = str_remove(info_7, ".*Duracion: "),
            duracion = str_remove(duracion, ","),
            duracion = str_trim(duracion),
