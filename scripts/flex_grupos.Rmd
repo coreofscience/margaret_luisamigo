@@ -4,7 +4,6 @@ output:
   flexdashboard::flex_dashboard:
     orientation: columns
     vertical_layout: fill
-    runtime: shiny
 ---
 
 ```{r setup, include=FALSE}
@@ -106,20 +105,31 @@ investigadores_general |>
 ```{r}
 articulos_unicos_2016_2020 |>
   select(-id) |> 
-  datatable(options = list(pageLength = 10))
+  mutate(DOI = str_extract(DOI, "\\d.*")) |> 
+  mutate(DOI =  str_c("<a href=","\"",
+                         "https://doi.org/",
+                         DOI,
+                         "\"",
+                         ">DOI</a>")) |>  
+  datatable(options = list(pageLength = 15),
+            escape = FALSE)
 ```
 
 ### Paises
 ```{r}
-articulos_unicos_2016_2020 |> 
-  count(pais_revista, sort = TRUE) |> 
-  datatable(options = list(pageLength = 15))
+paises <- articulos_unicos_2016_2020 |> 
+  count(pais_revista, sort = TRUE)
+paises$porcentaje <- round(prop.table(paises$n),3)*100 
+paises |> 
+  datatable(options = list(pageLength = 20))
 ```
 ### Revistas
 ```{r}
-articulos_unicos_2016_2020 |> 
-  count(revista, sort = TRUE) |> 
-  datatable(options = list(pageLength = 15))
+revistas <- articulos_unicos_2016_2020 |> 
+  count(revista, sort = TRUE)
+revistas$porcentaje <- round(prop.table(revistas$n),3)*100 
+revistas |> 
+  datatable(options = list(pageLength = 20))
 ```
 
 # Grupos - General
@@ -130,23 +140,13 @@ Column {data-width=500}
 ### Grupos de investigación
 ```{r}
 data1 <- grupos_inves |> count(clasificacion) |> arrange(desc(clasificacion))
-fig1 <- plot_ly(data1, labels = ~clasificacion, values = ~n, type = 'pie')
-fig1 <- fig1 %>% layout(title = 'Clasificacion',
-         xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
-         yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
-fig1
-```
-### Grupos 
-```{r}
-data2 <- grupos_inves |> 
-  count(area_conocimiento_1, sort = TRUE, name = "cantidad")
-data2[3,1] = "ingenieria y tecnologia"
-fig2 <- plot_ly(data2, x = ~area_conocimiento_1, y = ~cantidad, type = 'bar')
-fig2 <- fig2 %>% layout(title = "Segun area de conocimiento",
+fig1 <- plot_ly(data1, x = ~clasificacion, y = ~n, type = 'bar')
+fig1 <- fig1 %>% layout(title = 'Clasificación',
          xaxis = list(title = ""),
          yaxis = list(title = ""))
-fig2
+fig1
 ```
+
 Column {data-width=500}
 -----------------------------------
 
@@ -157,7 +157,7 @@ data3 <- grupos_produccion_articulos |>
   filter(ano >= 2016, ano <=2020) |> 
   count(ano, sort = FALSE, name = "producciones")
 fig3 <- plot_ly(data3, x = ~ano, y = ~producciones, type = 'scatter', mode = 'lines')
-fig3 <- fig3 %>% layout(title = "Produccion articulos",
+fig3 <- fig3 %>% layout(title = "Producción articulos",
          xaxis = list(title = ""),
          yaxis = list(title = ""))
 
@@ -170,20 +170,23 @@ Column {data-width=200}
 -----------------------------------
 
 ```{r}
-data4 <- grupos_indi |> select(grupo , categoria)
+data4 <- grupos_indi |> select(grupo , categoria) |> 
+  group_by(grupo, categoria) |> 
+  summarise(n = n())
 
 datos_compartidos <- crosstalk::SharedData$new(data4)
 
-filter_select("categoria", "Grupo", datos_compartidos, ~grupo)
+filter_select("categoria", "Grupo","n", datos_compartidos, ~grupo)
 ```
 
 Column {data-width=800}
 -----------------------------------
 ### Categorias investigadores por grupo
 ```{r}
-p0 <- plot_ly(data=datos_compartidos,x = ~grupo, y = ~categoria) |> 
-  add_trace(colorscale = 'YlGnBu')
-  
+p0 <- plot_ly(data4, labels = ~clasificacion, values = ~n, type = 'pie')
+p0 <- p0 %>% layout(title = 'Categorias',
+         xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+         yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
 p0
 ```
 
