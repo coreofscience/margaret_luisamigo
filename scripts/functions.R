@@ -818,7 +818,7 @@ consultorias_ucla <- function(grupo_df) {
 libros_ucla <- function(grupo_df) {
   
   grupo_df_librosPublicados <- 
-    grupo_df[["grupo_product"]] %>%
+    grupo_df %>%
     filter(categoria == "Libros publicados") %>% 
     separate(producto ,
              c("info_1", "info_2","info_3",
