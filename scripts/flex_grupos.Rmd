@@ -31,7 +31,7 @@ grupos_general <-
 
 investigadores_general <- 
   read_csv(here("output", 
-                "df_researcher.csv"))
+                "investigadores.csv"))
 
 grupos_inves <-
   read_csv(here("data",
