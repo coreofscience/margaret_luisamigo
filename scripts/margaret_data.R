@@ -23,22 +23,20 @@ articulos_unicos <- data_tidying_ucla(produccion_grupos)
 
 
 produccion_actualizada <- produccion_grupos
-produccion_actualizada[[3]]<- articulos_unicos
-produccion_actualizada[[42]] <- df_eliminados_total
-produccion_actualizada[[43]] <- df_similares_total_grupos
-names(produccion_actualizada)[[42]]<- "Eliminados_por_grupo"
-names(produccion_actualizada)[[43]]<- "Similares_entre_grupo"
+produccion_actualizada[[2]][["articulos"]]<- articulos_unicos
+produccion_actualizada[[2]][["Eliminados_por_grupo"]] <- df_eliminados_total
+produccion_actualizada[[2]][["Similares_entre_grupo"]] <- df_similares_total_grupos
 
 # This code save produccion_grupos in an excel file
 
 wb <- createWorkbook()
-lapply(seq_along(produccion_actualizada), 
+lapply(seq_along(produccion_actualizada[[2]]), 
        function(i){
          addWorksheet(wb=wb, 
-                      sheetName = names(produccion_actualizada[i]))
+                      sheetName = names(produccion_actualizada[[2]][i]))
          writeData(wb, 
                    sheet = i, 
-                   produccion_actualizada[[i]])
+                   produccion_actualizada[[2]][[i]])
        })
 
 #Save Workbook
