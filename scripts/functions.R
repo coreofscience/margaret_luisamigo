@@ -392,7 +392,7 @@ articulos_ucla <- function(grupo_df) {
   
   grupo_df_articulos_lost_1 <- 
     grupo_df %>%
-    filter(categoria == "Artículos publicados") %>% 
+    filter(categoria == "ArtÃ­culos publicados") %>% 
     separate(producto,
              c("info_1", "info_2", "info_3", "info_4", "info_5"), 
              sep = "\r\n" ) %>% 
@@ -445,7 +445,7 @@ articulos_ucla <- function(grupo_df) {
   
   grupo_df_articulos_lost_2 <- 
     grupo_df %>%
-    filter(categoria == "Artículos publicados") %>% 
+    filter(categoria == "Art?culos publicados") %>% 
     separate(producto,
              c("info_1", "info_2", "info_3", "info_4", "info_5"), 
              sep = "\r\n" ) %>% 
@@ -494,7 +494,7 @@ articulos_ucla <- function(grupo_df) {
   
   grupo_df_articulos <- 
     grupo_df %>%
-    filter(categoria == "Artículos publicados") %>% 
+    filter(categoria == "Art?culos publicados") %>% 
     separate(producto ,
              c("info_1", "info_2", "info_3", "info_4", "info_5"), 
              sep = "\r\n" ) %>% 
@@ -573,8 +573,8 @@ proyectos_ucla <- function(grupo_df) {
 capitulos_ucla <- function(grupo_df) {
   
   grupo_df_capitulos_libros_publicados = 
-    grupo_df[["grupo_product"]] %>%
-    filter(categoria == "Capítulos de libro publicados") %>% 
+    grupo_df %>%
+    filter(categoria == "CapÃ­tulos de libro publicados") %>% 
     separate(producto ,
              c("info_1", "info_2", "info_3", "info_4"), 
              sep = "\r\n" ) %>% 
