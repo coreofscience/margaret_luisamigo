@@ -48,7 +48,7 @@ names(produccion_grupos) <- sheets
 
 
 grupos_produccion_articulos <- read_xlsx(here("output","grupos_produccion.xlsx"), 
-    sheet = "articulos")
+                                         sheet = "articulos")
 ```
 
 
@@ -87,7 +87,7 @@ investigadores_general |>
          Grupo = grupo,
          Inicio = inicio_vinculacion,
          Formacion = ultima_formacion_academica,
-         ) |> 
+  ) |> 
   select(Investigador,
          Categoria,
          Produccion,
@@ -106,20 +106,39 @@ investigadores_general |>
 ```{r}
 articulos_unicos_2016_2020 |>
   select(-id) |> 
-  datatable(options = list(pageLength = 10))
+  mutate(DOI = str_extract(DOI, "\\d.*")) |> 
+  mutate(DOI =  str_c("<a href=","\"",
+                      "https://doi.org/",
+                      DOI,
+                      "\"",
+                      ">DOI</a>")) |>  
+  datatable(options = list(pageLength = 15),
+            escape = FALSE,
+            colnames = c("Grupo", "Categoría", "Tipo producto",
+                         "Título", "País revista", "Revista", 
+                         "ISSN", "Año", "Volumen", "Fasc",
+                         "Paginas", "DOI", "Autores"))
 ```
 
 ### Paises
 ```{r}
-articulos_unicos_2016_2020 |> 
-  count(pais_revista, sort = TRUE) |> 
-  datatable(options = list(pageLength = 15))
+paises <- articulos_unicos_2016_2020 |> 
+  count(pais_revista, sort = TRUE)
+paises$porcentaje <- round(prop.table(paises$n),3)*100 
+paises |> 
+  mutate(porcentaje = str_c(porcentaje," %")) |> 
+  datatable(options = list(pageLength = 20), 
+            colnames = c('País revista', 'Cantidad', 'Porcentajes')) 
 ```
 ### Revistas
 ```{r}
-articulos_unicos_2016_2020 |> 
-  count(revista, sort = TRUE) |> 
-  datatable(options = list(pageLength = 15))
+revistas <- articulos_unicos_2016_2020 |> 
+  count(revista, sort = TRUE)
+revistas$porcentaje <- round(prop.table(revistas$n),3)*100 
+revistas |>
+  mutate(porcentaje = str_c(porcentaje," %")) |> 
+  datatable(options = list(pageLength = 20), 
+            colnames = c('Revista', 'Cantidad', 'Porcentajes'))
 ```
 
 # Grupos - General
@@ -130,23 +149,13 @@ Column {data-width=500}
 ### Grupos de investigación
 ```{r}
 data1 <- grupos_inves |> count(clasificacion) |> arrange(desc(clasificacion))
-fig1 <- plot_ly(data1, labels = ~clasificacion, values = ~n, type = 'pie')
-fig1 <- fig1 %>% layout(title = 'Clasificacion',
-         xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
-         yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
-fig1
-```
-### Grupos 
-```{r}
-data2 <- grupos_inves |> 
-  count(area_conocimiento_1, sort = TRUE, name = "cantidad")
-data2[3,1] = "ingenieria y tecnologia"
-fig2 <- plot_ly(data2, x = ~area_conocimiento_1, y = ~cantidad, type = 'bar')
-fig2 <- fig2 %>% layout(title = "Segun area de conocimiento",
+fig1 <- plot_ly(data1, x = ~clasificacion, y = ~n, type = 'bar')
+fig1 <- fig1 %>% layout(title = 'Clasificación',
          xaxis = list(title = ""),
          yaxis = list(title = ""))
-fig2
+fig1
 ```
+
 Column {data-width=500}
 -----------------------------------
 
@@ -157,10 +166,9 @@ data3 <- grupos_produccion_articulos |>
   filter(ano >= 2016, ano <=2020) |> 
   count(ano, sort = FALSE, name = "producciones")
 fig3 <- plot_ly(data3, x = ~ano, y = ~producciones, type = 'scatter', mode = 'lines')
-fig3 <- fig3 %>% layout(title = "Produccion articulos",
+fig3 <- fig3 %>% layout(title = "Producción articulos",
          xaxis = list(title = ""),
          yaxis = list(title = ""))
-
 fig3
 ```
 
@@ -170,7 +178,9 @@ Column {data-width=200}
 -----------------------------------
 
 ```{r}
-data4 <- grupos_indi |> select(grupo , categoria)
+data4 <- grupos_indi |> select(grupo , categoria) |> 
+  group_by(grupo, categoria) |> 
+  summarise(n = n())
 
 datos_compartidos <- crosstalk::SharedData$new(data4)
 
@@ -181,9 +191,12 @@ Column {data-width=800}
 -----------------------------------
 ### Categorias investigadores por grupo
 ```{r}
-p0 <- plot_ly(data=datos_compartidos,x = ~grupo, y = ~categoria) |> 
-  add_trace(colorscale = 'YlGnBu')
-  
+p0 <- datos_compartidos |> 
+  plot_ly(labels= ~categoria, values=~n, type = 'pie')
+p0 <- p0 %>% layout(title = 'Categorias',
+         xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+         yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+
 p0
 ```
 
@@ -202,8 +215,8 @@ grupos_1 <- articulos_unicos_2016_2020 |>
 
 figura_1 <- plot_ly(grupos_1, x=~Año)
 figura_1 <- figura_1 %>%  add_trace(y=~cantidad, 
-                            type = 'scatter', mode = 'lines',
-                            line = list(color='rgba(255,116,0, 1)', width = 4))
+                                    type = 'scatter', mode = 'lines',
+                                    line = list(color='rgba(255,116,0, 1)', width = 4))
 
 figura_1
 ```
@@ -219,8 +232,8 @@ grupos_4 <- articulos_unicos_2016_2020 |>
 
 figura_4 <- plot_ly(grupos_4, x=~Año)
 figura_4 <- figura_4 %>%  add_trace(y=~cantidad, 
-                            type = 'scatter', mode = 'lines',
-                            line = list(color='rgba(255,116,0, 1)', width = 4))
+                                    type = 'scatter', mode = 'lines',
+                                    line = list(color='rgba(255,116,0, 1)', width = 4))
 
 figura_4
 ```
@@ -239,8 +252,8 @@ grupos_2 <- articulos_unicos_2016_2020 |>
 
 figura_2 <- plot_ly(grupos_2, x=~Año)
 figura_2 <- figura_2 %>%  add_trace(y=~cantidad, 
-                            type = 'scatter', mode = 'lines',
-                            line = list(color='rgba(255,116,0, 1)', width = 4))
+                                    type = 'scatter', mode = 'lines',
+                                    line = list(color='rgba(255,116,0, 1)', width = 4))
 figura_2
 ```
 ### GORAS
@@ -254,8 +267,8 @@ grupos_5 <- articulos_unicos_2016_2020 |>
 
 figura_5 <- plot_ly(grupos_5, x=~Año)
 figura_5 <- figura_5 %>%  add_trace(y=~cantidad, 
-                            type = 'scatter', mode = 'lines',
-                            line = list(color='rgba(255,116,0, 1)', width = 4))
+                                    type = 'scatter', mode = 'lines',
+                                    line = list(color='rgba(255,116,0, 1)', width = 4))
 
 figura_5
 ```
@@ -274,8 +287,8 @@ grupos_3 <- articulos_unicos_2016_2020 |>
 
 figura_3 <- plot_ly(grupos_3, x=~Año)
 figura_3 <- figura_3 |> add_trace(y=~cantidad, 
-                            type = 'scatter', mode = 'lines',
-                            line = list(color='rgba(255,116,0, 1)', width = 4))
+                                  type = 'scatter', mode = 'lines',
+                                  line = list(color='rgba(255,116,0, 1)', width = 4))
 
 figura_3
 ```
@@ -291,8 +304,8 @@ grupos_6 <- articulos_unicos_2016_2020 |>
 
 figura_6 <- plot_ly(grupos_6, x=~Año)
 figura_6 <- figura_6 |> add_trace(y=~cantidad, 
-                            type = 'scatter', mode = 'lines',
-                            line = list(color='rgba(255,116,0, 1)', width = 4))
+                                  type = 'scatter', mode = 'lines',
+                                  line = list(color='rgba(255,116,0, 1)', width = 4))
 
 figura_6
 ```
@@ -324,8 +337,8 @@ d_1 <- articulos_unicos_2016_2020 |>
 
 g_1 <- plot_ly(d_1, x=~Año)
 g_1 <- g_1 |> add_trace(y=~Producciones, 
-                            type = 'scatter', mode = 'lines',
-                            line = list(color='rgba(104,255,0, 1)', width = 6))
+                        type = 'scatter', mode = 'lines',
+                        line = list(color='rgba(104,255,0, 1)', width = 6))
 
 g_1
 ```
@@ -342,8 +355,8 @@ d_4 <- articulos_unicos_2016_2020 |>
 
 g_4 <- plot_ly(d_4, x=~Año)
 g_4 <- g_4 |> add_trace(y=~Producciones, 
-                            type = 'scatter', mode = 'lines',
-                            line = list(color='rgba(104,255,0, 1)', width = 6))
+                        type = 'scatter', mode = 'lines',
+                        line = list(color='rgba(104,255,0, 1)', width = 6))
 
 g_4
 ```
@@ -363,8 +376,8 @@ d_2 <- articulos_unicos_2016_2020 |>
 
 g_2 <- plot_ly(d_2, x=~Año)
 g_2 <- g_2 |> add_trace(y=~Producciones, 
-                            type = 'scatter', mode = 'lines',
-                            line = list(color='rgba(104,255,0, 1)', width = 6))
+                        type = 'scatter', mode = 'lines',
+                        line = list(color='rgba(104,255,0, 1)', width = 6))
 
 g_2
 ```
@@ -381,8 +394,8 @@ d_5 <- articulos_unicos_2016_2020 |>
 
 g_5 <- plot_ly(d_5, x=~Año)
 g_5 <- g_5 |> add_trace(y=~Producciones, 
-                            type = 'scatter', mode = 'lines',
-                            line = list(color='rgba(104,255,0, 1)', width = 6))
+                        type = 'scatter', mode = 'lines',
+                        line = list(color='rgba(104,255,0, 1)', width = 6))
 
 g_5
 ```
@@ -402,8 +415,8 @@ d_3 <- articulos_unicos_2016_2020 |>
 
 g_3 <- plot_ly(d_3, x=~Año)
 g_3 <- g_3 |> add_trace(y=~Producciones, 
-                            type = 'scatter', mode = 'lines',
-                            line = list(color='rgba(104,255,0, 1)', width = 6))
+                        type = 'scatter', mode = 'lines',
+                        line = list(color='rgba(104,255,0, 1)', width = 6))
 
 g_3
 ```
@@ -420,8 +433,8 @@ d_6 <- articulos_unicos_2016_2020 |>
 
 g_6 <- plot_ly(d_6, x=~Año)
 g_6 <- g_6 |> add_trace(y=~Producciones, 
-                            type = 'scatter', mode = 'lines',
-                            line = list(color='rgba(104,255,0, 1)', width = 6))
+                        type = 'scatter', mode = 'lines',
+                        line = list(color='rgba(104,255,0, 1)', width = 6))
 
 g_6
 
