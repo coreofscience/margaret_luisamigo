@@ -176,14 +176,15 @@ data4 <- grupos_indi |> select(grupo , categoria) |>
 
 datos_compartidos <- crosstalk::SharedData$new(data4)
 
-filter_select("categoria", "Grupo","n", datos_compartidos, ~grupo)
+filter_select("categoria", "Grupo", datos_compartidos, ~grupo)
 ```
 
 Column {data-width=800}
 -----------------------------------
 ### Categorias investigadores por grupo
 ```{r}
-p0 <- plot_ly(data4, labels = ~clasificacion, values = ~n, type = 'pie')
+p0 <- datos_compartidos |> 
+  plot_ly(labels= ~categoria, values=~n, type = 'pie')
 p0 <- p0 %>% layout(title = 'Categorias',
          xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
          yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
