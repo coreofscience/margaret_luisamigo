@@ -112,7 +112,11 @@ articulos_unicos_2016_2020 |>
                          "\"",
                          ">DOI</a>")) |>  
   datatable(options = list(pageLength = 15),
-            escape = FALSE)
+            escape = FALSE,
+            colnames = c("Grupo", "Categoría", "Tipo producto",
+                         "Título", "País revista", "Revista", 
+                         "ISSN", "Año", "Volumen", "Fasc",
+                         "Paginas", "DOI", "Autores"))
 ```
 
 ### Paises
@@ -121,15 +125,19 @@ paises <- articulos_unicos_2016_2020 |>
   count(pais_revista, sort = TRUE)
 paises$porcentaje <- round(prop.table(paises$n),3)*100 
 paises |> 
-  datatable(options = list(pageLength = 20))
+  mutate(porcentaje = str_c(porcentaje," %")) |> 
+  datatable(options = list(pageLength = 20), 
+            colnames = c('País revista', 'Cantidad', 'Porcentajes')) 
 ```
 ### Revistas
 ```{r}
 revistas <- articulos_unicos_2016_2020 |> 
   count(revista, sort = TRUE)
 revistas$porcentaje <- round(prop.table(revistas$n),3)*100 
-revistas |> 
-  datatable(options = list(pageLength = 20))
+revistas |>
+  mutate(porcentaje = str_c(porcentaje," %")) |> 
+  datatable(options = list(pageLength = 20), 
+            colnames = c('Revista', 'Cantidad', 'Porcentajes'))
 ```
 
 # Grupos - General
