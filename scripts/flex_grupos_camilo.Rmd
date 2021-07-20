@@ -60,7 +60,9 @@ grupos_produccion_articulos <- read_xlsx(here("output","grupos_produccion.xlsx")
 ```{r}
 grupos_general |> 
   datatable(options = list(pageLength = 15),
-            escape = FALSE)
+            escape = FALSE,
+            colnames = c("Grupo", "Clasificación", "Cantidad Articulo", "Cantidad investigadores",
+                         "GrupLAC", "Fecha Creación", "Lider", "Email", "Área de Conocimiento"))
 ```
 
 ### Investigadores
@@ -97,7 +99,9 @@ investigadores_general |>
          CvLAC,
          scholar) |> 
   datatable(options = list(pageLength = 15),
-            escape = FALSE)
+            escape = FALSE,
+            colnames = c("Investigador", "Categoria", "Producción", "H index", "Formación",
+                         "Grupo", "Inicio", "CvLAC", "Scholar"))
 ```
 
 ### Productos
@@ -140,7 +144,7 @@ revistas |>
             colnames = c('Revista', 'Cantidad', 'Porcentajes'))
 ```
 
-# Grupos - General
+# Grupos en cifras
 
 Column {data-width=500}
 --------------------------------------
@@ -172,7 +176,7 @@ fig3 <- fig3 %>% layout(title = "Producción articulos",
 fig3
 ```
 
-# Grupos individual
+# Grupos individual en cifras
 
 Column {data-width=200}
 -----------------------------------
@@ -199,7 +203,7 @@ p0 <- p0 %>% layout(title = 'Categorias',
 p0
 ```
 
-Grupos - Top
+Grupos top en cifras
 ======================================
 Column {data-width=330}
 -------------------------------
@@ -310,7 +314,7 @@ figura_6
 ```
 
 
-Investigadores - Top
+Investigadores top en cifras
 =================================
 ```{r}
 investigadores<- articulos_unicos_2016_2020 |> 
