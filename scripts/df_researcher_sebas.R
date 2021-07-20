@@ -10,6 +10,26 @@ df_researcher_dummy <-
   mutate(posgrade_1 = map(posgrade, "result"),
          error = map(posgrade, "error"))
 
+df_researcher_dummy_1 <- 
+  df_researcher_dummy |> 
+  mutate(posgrade_1 = map(posgrade, "result"),
+         error_1 = map(posgrade, "error")) |> 
+  unnest(posgrade_1) |> 
+  unnest(error_1)
+
+
+# missing values
+
+df_researcher_juan <- 
+  df_researcher |> 
+  filter(integrantes == "Juan Esteban  Aguirre  Espinosa") |>   
+  mutate(posgrade = map(.x = url, 
+                        .f = safely(get_posgrade_from_cvlac))) |> 
+  mutate(posgrade_1 = map(posgrade, "result"),
+         error = map(posgrade, "error"))
+
+# Function
+
 get_posgrade_from_cvlac <- function(cvlac_url) {
   
   cvlac_df = read_html(cvlac_url) |> 
@@ -18,19 +38,29 @@ get_posgrade_from_cvlac <- function(cvlac_url) {
   cvlac_posgrade_df = cvlac_df[[1]] |> 
     filter(str_detect(string = X1, 
                       pattern = "Formación Académica")) |> 
-    select(X5, X7) |> 
+    select(X5, X7, X9, X11) |> 
     slice(1) |> 
-    separate_rows(X5, sep = "\r\n") |>
+    separate_rows(X5, sep = "\r\n") |> # X5
     slice(1,4) |> 
     mutate(X5 = str_trim(X5)) |> 
     nest(data = X5) |> 
     rename("X5" = data) |> 
-    separate_rows(X7, sep = "\r\n") |> 
+    separate_rows(X7, sep = "\r\n") |> # X7
     slice(1,4) |> 
     mutate(X7 = str_trim(X7)) |> 
     nest(data = X7) |> 
     rename("X7" = data) |> 
-    unnest(cols = c(X5, X7)) |> 
+    separate_rows(X9, sep = "\r\n") |> # X9
+    slice(1,4) |> 
+    mutate(X9 = str_trim(X9)) |> 
+    nest(data = X9) |> 
+    rename("X9" = data) |> 
+    separate_rows(X11, sep = "\r\n") |> 
+    slice(1,4) |> 
+    mutate(X11 = str_trim(X11)) |> 
+    nest(data = X11) |> 
+    rename("X11" = data) |> 
+    unnest(cols = c(X5, X7, X9, X11)) |> 
     add_rownames() |> 
     gather(var, value, -rowname) |> 
     spread(rowname, value) |> 
@@ -38,7 +68,7 @@ get_posgrade_from_cvlac <- function(cvlac_url) {
     rename("posgrade" = 1,
            "duration" = 2) |> 
     separate(duration, sep = " - ", into = c("start", "end")) |> 
-    filter(end != "de") |> 
+    filter(end != "de") |> # Removing not ending posgrades
     select(posgrade) |> 
     slice(1) |> 
     unlist()
@@ -46,7 +76,7 @@ get_posgrade_from_cvlac <- function(cvlac_url) {
   return(cvlac_posgrade_df)
   
 }
-  
+
 
 # Olga cvlac
 
@@ -115,7 +145,7 @@ df_pedro <-
   filter(fin != "de") |> 
   select(posgrado) |> 
   slice(1)
-  
+
 
 # Yamile cvlac
 
