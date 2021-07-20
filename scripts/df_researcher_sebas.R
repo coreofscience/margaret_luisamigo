@@ -35,7 +35,7 @@ get_posgrade_from_cvlac <- function(cvlac_url) {
   cvlac_df = read_html(cvlac_url) |> 
     html_table()
   
-  cvlac_posgrade_df = cvlac_df[[1]] |> 
+  cvlac_posgrade = cvlac_df[[1]] |> 
     filter(str_detect(string = X1, 
                       pattern = "Formación Académica")) |> 
     select(X5, X7, X9, X11) |> 
@@ -68,12 +68,12 @@ get_posgrade_from_cvlac <- function(cvlac_url) {
     rename("posgrade" = 1,
            "duration" = 2) |> 
     separate(duration, sep = " - ", into = c("start", "end")) |> 
-    filter(end != "de") |> # Removing not ending posgrades
+    filter(end != "de") |> # Removing not ending postgrades
+    separate(end, into = c("Month", "year"), sep = " ") |> 
+    slice_max(year) |> 
     select(posgrade) |> 
     slice(1) |> 
     unlist()
-  
-  return(cvlac_posgrade_df)
   
 }
 
