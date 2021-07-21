@@ -18,7 +18,11 @@ data_cleaning_researcher <- function(grupo_df) {
            inicio_vinculacion = ym(inicio_vinculacion),
            fin_vinculacion = str_remove(inicio_fin_vinculacion,
                                         ".*-")) |> 
-    select(-inicio_fin_vinculacion)
+    select(-inicio_fin_vinculacion) |> 
+    filter(str_detect(fin_vinculacion, "Actual")) |> 
+    mutate(posgrade = map(.x = url, 
+                          .f = safely(get_posgrade_from_cvlac))) |> 
+    mutate(posgrade = map(posgrade, "result"))
   
   return(grupo_researcher_cleaned)
   
