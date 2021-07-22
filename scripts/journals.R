@@ -114,3 +114,21 @@ p_h_2018_4 <- read_excel(here("data",
   mutate(ano = "2018")
 
 p_h_2018 <- rbind(p_h_2018_1, p_h_2018_2, p_h_2018_3, p_h_2018_4)
+
+p_h_2019_2020 <- read_excel(here("data",
+                                 "PUBLINDEX_H_2019_2020.xlsx")) |> 
+  rename(revista_h = 2,
+         categoria = 4,
+         ano = 5) |> 
+  filter(!is.na(revista_h)) |> 
+  select(revista_h, categoria, ano) |> 
+  mutate(ano = "2019-2020") |> 
+  slice(-1)
+
+revistas_internacional <- rbind(p_h_2016, p_h_2017, p_h_2018, p_h_2019_2020)
+
+write_csv(journals_2016_2020, here("output",
+                                   "journals_2016_2020.csv"))
+
+write_csv(revistas_internacional, here("output",
+                                   "journals_international_2016_2020.csv"))
