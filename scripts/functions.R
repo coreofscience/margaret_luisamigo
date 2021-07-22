@@ -21,8 +21,9 @@ data_cleaning_researcher <- function(grupo_df) {
     select(-inicio_fin_vinculacion) |> 
     filter(str_detect(fin_vinculacion, "Actual")) |> 
     mutate(posgrade = map(.x = url, 
-                          .f = safely(get_posgrade_from_cvlac))) |> 
-    mutate(posgrade = map(posgrade, "result"))
+                          .f = safely(get_posgrade_clasficitation_cvlac))) |> 
+    mutate(posgrade = map(posgrade, "result")) |> 
+    unnest(posgrade)
   
   return(grupo_researcher_cleaned)
   
@@ -35,10 +36,10 @@ data_cleaning_main <- function(grupo_df) {
     grupo_df[["grupo_main"]] |> 
     mutate(fecha_creacion = ym(fecha_creacion),
            departamento = str_remove(departamento_ciudad, 
-                                    "-.*"),
+                                     "-.*"),
            departamento = str_trim(departamento),
            ciudad = str_remove(departamento_ciudad, 
-                                    ".*-"),
+                               ".*-"),
            ciudad = str_trim(ciudad),
            clasificacion = substr(clasificacion, 
                                   start = 1, 
@@ -46,15 +47,15 @@ data_cleaning_main <- function(grupo_df) {
            clasificacion = str_remove(clasificacion, 
                                       "\r"),
            area_conocimiento_1 = str_remove(area_conocimiento,
-                                           "--.*"),
-           area_conocimiento_0 = str_extract(area_conocimiento,
                                             "--.*"),
+           area_conocimiento_0 = str_extract(area_conocimiento,
+                                             "--.*"),
            area_conocimiento_0 = str_remove(area_conocimiento,
-                                             "--"),
+                                            "--"),
            area_conocimiento_2 = str_remove(area_conocimiento_0,
-                                           "--.*"),
+                                            "--.*"),
            area_conocimiento_3 = str_remove(area_conocimiento,
-                                           ".*--")) |> 
+                                            ".*--")) |> 
     select(grupo,
            fecha_creacion,
            departamento,
@@ -1895,68 +1896,68 @@ nuevos_registros_cientificos_ucla <- function(grupo_df) {
            Descripcion= str_trim(Descripcion)) %>% 
     select(-info_9)
 }
- 
+
 libros_divulgacion_compilacion_ucla <- function(grupo_df) {
- 
- grupo_df_libros_divulgacion_compilacion<- 
-   grupo_df %>%
-   filter(categoria == "Libros de divulgación y/o Compilación de divulgación") %>% 
-   separate(producto ,
-            c("info_1", "info_2","info_3","info_4",
-              "info_5","info_6","info_7"), 
-            sep = "\r\n" ) |> 
-   select(-info_6) |> 
-   mutate(tipo_producto1 = str_remove(info_1, ".*.- "),
-          tipo_producto = str_extract(tipo_producto1, ".*divulgación :"),
-          tipo_producto = str_remove(tipo_producto, ":"),
-          tipo_producto = str_trim(tipo_producto),
-          titulo = str_remove(tipo_producto1, ".*divulgación :"),
-          titulo = str_trim(titulo),
-          pais = str_remove(info_2, ","),
-          pais = str_trim(pais),
-          ano = str_remove(info_3, ","),
-          ano = str_trim(ano),
-          ISBN = str_remove(info_4, ".*:"),
-          ISBN = str_remove(ISBN, ","),
-          ISBN = str_trim(ISBN),
-          editorial = str_remove(info_5, ".*Ed. "),
-          editorial = str_trim(editorial),
-          autores = str_remove(info_7, ".*: "),
-          autores = str_trim(autores)) |> 
-   select(-tipo_producto1, -info_1, -info_2, -info_3, -info_4,
-          -info_5, -info_7)
- 
+  
+  grupo_df_libros_divulgacion_compilacion<- 
+    grupo_df %>%
+    filter(categoria == "Libros de divulgación y/o Compilación de divulgación") %>% 
+    separate(producto ,
+             c("info_1", "info_2","info_3","info_4",
+               "info_5","info_6","info_7"), 
+             sep = "\r\n" ) |> 
+    select(-info_6) |> 
+    mutate(tipo_producto1 = str_remove(info_1, ".*.- "),
+           tipo_producto = str_extract(tipo_producto1, ".*divulgación :"),
+           tipo_producto = str_remove(tipo_producto, ":"),
+           tipo_producto = str_trim(tipo_producto),
+           titulo = str_remove(tipo_producto1, ".*divulgación :"),
+           titulo = str_trim(titulo),
+           pais = str_remove(info_2, ","),
+           pais = str_trim(pais),
+           ano = str_remove(info_3, ","),
+           ano = str_trim(ano),
+           ISBN = str_remove(info_4, ".*:"),
+           ISBN = str_remove(ISBN, ","),
+           ISBN = str_trim(ISBN),
+           editorial = str_remove(info_5, ".*Ed. "),
+           editorial = str_trim(editorial),
+           autores = str_remove(info_7, ".*: "),
+           autores = str_trim(autores)) |> 
+    select(-tipo_producto1, -info_1, -info_2, -info_3, -info_4,
+           -info_5, -info_7)
+  
 }
 
 libros_formacion_ucla <- function(grupo_df) {
-
- grupo_df_libros_formacion<- 
-   grupo_df %>%
-   filter(categoria == "Libros de formación") %>% 
-   separate(producto ,
-            c("info_1", "info_2","info_3","info_4",
-              "info_5","info_6","info_7"), 
-            sep = "\r\n" ) |> 
-   select(-info_6) |> 
-   mutate(tipo_producto = str_extract(info_1, ".*formación : "),
-          tipo_producto = str_remove(tipo_producto, ":"),
-          tipo_producto = str_remove(tipo_producto, ".*.- "),
-          tipo_producto = str_trim(tipo_producto),
-          titulo = str_remove(info_1, ".*formación :"),
-          titulo = str_trim(titulo),
-          pais = str_remove(info_2, ","),
-          pais = str_trim(pais),
-          ano = str_remove(info_3, ","),
-          ano = str_trim(ano),
-          ISBN = str_remove(info_4, ".*:"),
-          ISBN = str_remove(ISBN, ","),
-          ISBN = str_trim(ISBN),
-          editorial = str_remove(info_5, ".*Ed. "),
-          editorial = str_trim(editorial),
-          autores = str_remove(info_7, ".*: "),
-          autores = str_trim(autores)) |> 
-   select(-info_1, -info_2, -info_3, -info_4,
-          -info_5, -info_7)
+  
+  grupo_df_libros_formacion<- 
+    grupo_df %>%
+    filter(categoria == "Libros de formación") %>% 
+    separate(producto ,
+             c("info_1", "info_2","info_3","info_4",
+               "info_5","info_6","info_7"), 
+             sep = "\r\n" ) |> 
+    select(-info_6) |> 
+    mutate(tipo_producto = str_extract(info_1, ".*formación : "),
+           tipo_producto = str_remove(tipo_producto, ":"),
+           tipo_producto = str_remove(tipo_producto, ".*.- "),
+           tipo_producto = str_trim(tipo_producto),
+           titulo = str_remove(info_1, ".*formación :"),
+           titulo = str_trim(titulo),
+           pais = str_remove(info_2, ","),
+           pais = str_trim(pais),
+           ano = str_remove(info_3, ","),
+           ano = str_trim(ano),
+           ISBN = str_remove(info_4, ".*:"),
+           ISBN = str_remove(ISBN, ","),
+           ISBN = str_trim(ISBN),
+           editorial = str_remove(info_5, ".*Ed. "),
+           editorial = str_trim(editorial),
+           autores = str_remove(info_7, ".*: "),
+           autores = str_trim(autores)) |> 
+    select(-info_1, -info_2, -info_3, -info_4,
+           -info_5, -info_7)
 }
 
 Producciones_de_contenido_digital_ucla <- function(grupo_df){
@@ -2261,7 +2262,7 @@ export_csv <- function(produccion_actualizada) {
   
 }
 
-get_posgrade_from_cvlac <- function(cvlac_url) {
+get_posgrade_clasficitation_cvlac <- function(cvlac_url) {
   
   cvlac_df = read_html(cvlac_url) |> 
     html_table()
@@ -2307,7 +2308,27 @@ get_posgrade_from_cvlac <- function(cvlac_url) {
     separate(end, into = c("Month", "year"), sep = " ") |> 
     slice_max(year) |> 
     select(posgrade) |> 
-    slice(1) |> 
-    unlist()
+    slice(1) 
+  
+  cvlac_category <- cvlac_df[[1]] |>
+    filter(X1 == "Categoría") |> 
+    select(X2) 
+  
+  if (is_empty(cvlac_category$X2)) {
+    
+    cvlac_category <-  tibble(clasification = "Sin clasificar")
+    
+  } else {
+    
+    cvlac_category <- 
+      cvlac_category |> 
+      mutate(clasification = str_extract(string = X2, pattern = ".*\\)")) |> 
+      select(clasification)
+  }                  
+  
+  cvlac_posgrade_category <- 
+    cvlac_posgrade |> 
+    bind_cols(cvlac_category)
+
   
 }
