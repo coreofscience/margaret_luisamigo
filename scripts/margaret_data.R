@@ -15,7 +15,7 @@ source(here("scripts",
 source(here("scripts/data_analysis_descriptive.R"))
 
 # Data outside
-
+ 
 grupos <- read_csv("https://docs.google.com/spreadsheets/d/1gBaXHFp1NTUTeXodb4JyHqY-P-AWV5yN5-p4L1O09gk/export?format=csv&gid=0") |> 
   mutate(grupo = str_to_upper(grupo),
          grupo = stri_trans_general(str = grupo,

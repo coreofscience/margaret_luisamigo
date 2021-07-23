@@ -36,7 +36,7 @@ data_cleaning_researcher <- function(grupo_df) {
   return(grupo_researcher_cleaned)
   
 }
-
+ 
 
 data_cleaning_main <- function(grupo_df) {
   
