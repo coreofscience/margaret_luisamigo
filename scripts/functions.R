@@ -4,7 +4,7 @@ getting_scholar_h_index <- function(data_scholar) {
     data_scholar |> 
     mutate(h_index = map(id_scholar, get_profile)) |> 
     unnest_wider(h_index) |> 
-    select(researcher, id_scholar, h_index)
+    select(integrantes, id_scholar, h_index)
   
   return(scholar_index)
 }
@@ -13,20 +13,29 @@ data_cleaning_researcher <- function(grupo_df) {
   
   grupo_researcher_cleaned <- 
     grupo_df[["grupo_researcher"]] |> 
+    slice(1:3) |> 
     mutate(inicio_vinculacion = str_remove(inicio_fin_vinculacion,
                                            "-.*"),
            inicio_vinculacion = ym(inicio_vinculacion),
            fin_vinculacion = str_remove(inicio_fin_vinculacion,
                                         ".*-")) |> 
     select(-inicio_fin_vinculacion) |> 
-    filter(str_detect(fin_vinculacion, "Actual")) |> 
+    filter(str_detect(fin_vinculacion, "Actual")) |> # Only active researchers
     mutate(posgrade = map(.x = url, 
                           .f = safely(get_posgrade_clasficitation_cvlac))) |> 
     mutate(posgrade = map(posgrade, "result")) |> 
-    unnest(posgrade)
-  
-  return(grupo_researcher_cleaned)
-  
+    unnest(posgrade) |> 
+    mutate(integrantes = str_to_upper(integrantes),
+           integrantes = stri_trans_general(str = integrantes,
+                                            id = "Latin-ASCII"),
+           integrantes = str_squish(integrantes)) |> 
+    left_join(researchers, by = c("integrantes" = "researcher")) |>
+      mutate(h_index = map(id_scholar, get_profile)) |> 
+      unnest_wider(h_index) |> 
+      select(1:9, id_scholar, h_index)
+    
+    return(grupo_researcher_cleaned)
+    
 }
 
 
@@ -66,7 +75,10 @@ data_cleaning_main <- function(grupo_df) {
            clasificacion,
            area_conocimiento_1,
            area_conocimiento_2,
-           area_conocimiento_3)
+           area_conocimiento_3) |> 
+    mutate(grupo = stri_trans_general(str = grupo, # Removing tildes
+                                      id = "Latin-ASCII")) |> 
+    left_join(grupos)
   
   return(grupo_main_cleaned)
 }
@@ -258,7 +270,8 @@ data_getting_main <- function(data_grupos_all){
              email,
              clasificacion,
              area_conocimiento) |> 
-      mutate(grupo = grupos$grupo[i])
+      mutate(grupo = grupos$grupo[i],
+             gruplac = grupos$url[i])
     
     df_group_main <- bind_rows(df_group_main, df_2)
   }
@@ -2103,159 +2116,159 @@ divulgacion_publica_contenidos_transmedia_ucla <- function(grupo_df) {
            -info_5,-info_6,-info_7)
 }
 
-export_csv <- function(produccion_actualizada) {
+export_csv <- function(shiny_data) {
   
-  write_csv(produccion_actualizada[[1]], 
+  write_csv(shiny_data[[1]], 
             here("output", 
                  "grupos_general.csv"))
-  write_csv(produccion_actualizada[[2]][["trabajos_dirigidos"]],
+  write_csv(shiny_data[[2]][["trabajos_dirigidos"]],
             here("output", 
                  "trabajos_dirigidos.csv"))
-  write_csv(produccion_actualizada[[2]][["eventos_cientificos"]],
+  write_csv(shiny_data[[2]][["eventos_cientificos"]],
             here("output", 
                  "eventos_cientificos.csv"))
-  write_csv(produccion_actualizada[[2]][["articulos"]],
+  write_csv(shiny_data[[2]][["articulos"]],
             here("output", 
                  "articulos.csv"))
-  write_csv(produccion_actualizada[[2]][["capitulos"]],
+  write_csv(shiny_data[[2]][["capitulos"]],
             here("output", 
                  "capitulos.csv"))
-  write_csv(produccion_actualizada[[2]][["jurado"]],
+  write_csv(shiny_data[[2]][["jurado"]],
             here("output", 
                  "jurado.csv"))
-  write_csv(produccion_actualizada[[2]][["cursos"]],
+  write_csv(shiny_data[[2]][["cursos"]],
             here("output", 
                  "cursos.csv"))
-  write_csv(produccion_actualizada[[2]][["otros_articulos"]],
+  write_csv(shiny_data[[2]][["otros_articulos"]],
             here("output", 
                  "otros_articulos.csv"))
-  write_csv(produccion_actualizada[[2]][["consultorias"]],
+  write_csv(shiny_data[[2]][["consultorias"]],
             here("output", 
                  "consultorias.csv"))
-  write_csv(produccion_actualizada[[2]][["libros"]],
+  write_csv(shiny_data[[2]][["libros"]],
             here("output", 
                  "libros.csv"))
-  write_csv(produccion_actualizada[[2]][["participacion_comites"]],
+  write_csv(shiny_data[[2]][["participacion_comites"]],
             here("output", 
                  "participacion_comites.csv"))
-  write_csv(produccion_actualizada[[2]][["demas_trabajos"]],
+  write_csv(shiny_data[[2]][["demas_trabajos"]],
             here("output", 
                  "demas_trabajos.csv"))
-  write_csv(produccion_actualizada[[2]][["informes_investigacion"]],
+  write_csv(shiny_data[[2]][["informes_investigacion"]],
             here("output", 
                  "informes_investigacion.csv"))
-  write_csv(produccion_actualizada[[2]][["innovaciones_gestion"]],
+  write_csv(shiny_data[[2]][["innovaciones_gestion"]],
             here("output", 
                  "innovaciones_gestion.csv"))
-  write_csv(produccion_actualizada[[2]][["generacion_multimedia"]],
+  write_csv(shiny_data[[2]][["generacion_multimedia"]],
             here("output", 
                  "generacion_multimedia.csv"))
-  write_csv(produccion_actualizada[[2]][["otra_publicacion_divulgativa"]],
+  write_csv(shiny_data[[2]][["otra_publicacion_divulgativa"]],
             here("output", 
                  "otra_publicacion_divulgativa.csv"))
-  write_csv(produccion_actualizada[[2]][["documentos_trabajo"]],
+  write_csv(shiny_data[[2]][["documentos_trabajo"]],
             here("output", 
                  "documentos_trabajo.csv"))
-  write_csv(produccion_actualizada[[2]][["ediciones"]],
+  write_csv(shiny_data[[2]][["ediciones"]],
             here("output", 
                  "ediciones.csv"))
-  write_csv(produccion_actualizada[[2]][["estrategias_pedagogicas"]],
+  write_csv(shiny_data[[2]][["estrategias_pedagogicas"]],
             here("output", 
                  "estrategias_pedagogicas.csv"))
-  write_csv(produccion_actualizada[[2]][["redes_conocimiento"]],
+  write_csv(shiny_data[[2]][["redes_conocimiento"]],
             here("output", 
                  "redes_conocimiento.csv"))
-  write_csv(produccion_actualizada[[2]][["generacion_contenido_virtual"]],
+  write_csv(shiny_data[[2]][["generacion_contenido_virtual"]],
             here("output", 
                  "generacion_contenido_virtual.csv"))
-  write_csv(produccion_actualizada[[2]][["espacios_participacion"]],
+  write_csv(shiny_data[[2]][["espacios_participacion"]],
             here("output", 
                  "espacios_participacion.csv"))
-  write_csv(produccion_actualizada[[2]][["softwares"]],
+  write_csv(shiny_data[[2]][["softwares"]],
             here("output", 
                  "softwares.csv"))
-  write_csv(produccion_actualizada[[2]][["innovaciones_procesos"]],
+  write_csv(shiny_data[[2]][["innovaciones_procesos"]],
             here("output", 
                  "innovaciones_procesos.csv"))
-  write_csv(produccion_actualizada[[2]][["otros_libros"]],
+  write_csv(shiny_data[[2]][["otros_libros"]],
             here("output", 
                  "otros_libros.csv"))
-  write_csv(produccion_actualizada[[2]][["estrategias_comunicacion"]],
+  write_csv(shiny_data[[2]][["estrategias_comunicacion"]],
             here("output", 
                  "estrategias_comunicacion.csv"))
-  write_csv(produccion_actualizada[[2]][["generacion_contenido_impreso"]],
+  write_csv(shiny_data[[2]][["generacion_contenido_impreso"]],
             here("output", 
                  "generacion_contenido_impreso.csv"))
-  write_csv(produccion_actualizada[[2]][["informes_tecnicos"]],
+  write_csv(shiny_data[[2]][["informes_tecnicos"]],
             here("output", 
                  "informes_tecnicos.csv"))
-  write_csv(produccion_actualizada[[2]][["participacion_ciudadana_cti"]],
+  write_csv(shiny_data[[2]][["participacion_ciudadana_cti"]],
             here("output", 
                  "participacion_ciudadana_cti.csv"))
-  write_csv(produccion_actualizada[[2]][["regulaciones_normas"]],
+  write_csv(shiny_data[[2]][["regulaciones_normas"]],
             here("output", 
                  "regulaciones_normas.csv"))
-  write_csv(produccion_actualizada[[2]][["actividades_evaluador"]],
+  write_csv(shiny_data[[2]][["actividades_evaluador"]],
             here("output", 
                  "actividades_evaluador.csv"))
-  write_csv(produccion_actualizada[[2]][["actividades_formacion"]],
+  write_csv(shiny_data[[2]][["actividades_formacion"]],
             here("output", 
                  "actividades_formacion.csv"))
-  write_csv(produccion_actualizada[[2]][["apropiacion_social_conocimiento"]],
+  write_csv(shiny_data[[2]][["apropiacion_social_conocimiento"]],
             here("output", 
                  "apropiacion_social_conocimiento.csv"))
-  write_csv(produccion_actualizada[[2]][["produccion_tecnica_tecnologica"]],
+  write_csv(shiny_data[[2]][["produccion_tecnica_tecnologica"]],
             here("output", 
                  "produccion_tecnica_tecnologica.csv"))
-  write_csv(produccion_actualizada[[2]][["generacion_contenido_audio"]],
+  write_csv(shiny_data[[2]][["generacion_contenido_audio"]],
             here("output", 
                  "generacion_contenido_audio.csv"))
-  write_csv(produccion_actualizada[[2]][["conceptos_tecnicos"]],
+  write_csv(shiny_data[[2]][["conceptos_tecnicos"]],
             here("output", 
                  "conceptos_tecnicos.csv"))
-  write_csv(produccion_actualizada[[2]][["reglamentos_tecnicos"]],
+  write_csv(shiny_data[[2]][["reglamentos_tecnicos"]],
             here("output", 
                  "reglamentos_tecnicos.csv"))
-  write_csv(produccion_actualizada[[2]][["otros_productos_tencologicos"]],
+  write_csv(shiny_data[[2]][["otros_productos_tencologicos"]],
             here("output", 
                  "otros_productos_tencologicos.csv"))
-  write_csv(produccion_actualizada[[2]][["traducciones"]],
+  write_csv(shiny_data[[2]][["traducciones"]],
             here("output", 
                  "traducciones.csv"))
-  write_csv(produccion_actualizada[[2]][["signos_distintivos"]],
+  write_csv(shiny_data[[2]][["signos_distintivos"]],
             here("output", 
                  "signos_distintivos.csv"))
-  write_csv(produccion_actualizada[[2]][["nuevos_registros_cientificos"]],
+  write_csv(shiny_data[[2]][["nuevos_registros_cientificos"]],
             here("output", 
                  "nuevos_registros_cientificos.csv"))
-  write_csv(produccion_actualizada[[2]][["notas_cientificas"]],
+  write_csv(shiny_data[[2]][["notas_cientificas"]],
             here("output", 
                  "notas_cientificas.csv"))
-  write_csv(produccion_actualizada[[2]][["Producciones_de_contenido_digital"]],
+  write_csv(shiny_data[[2]][["Producciones_de_contenido_digital"]],
             here("output", 
                  "Producciones_de_contenido_digital.csv"))
-  write_csv(produccion_actualizada[[2]][["libros_divulgacion"]],
+  write_csv(shiny_data[[2]][["libros_divulgacion"]],
             here("output", 
                  "libros_divulgacion.csv"))
-  write_csv(produccion_actualizada[[2]][["libros_formacion"]],
+  write_csv(shiny_data[[2]][["libros_formacion"]],
             here("output", 
                  "libros_formacion.csv"))
-  write_csv(produccion_actualizada[[2]][["Producciones_digital_audiovisual"]],
+  write_csv(shiny_data[[2]][["Producciones_digital_audiovisual"]],
             here("output", 
                  "Producciones_digital_audiovisual.csv"))
-  write_csv(produccion_actualizada[[2]][["manuales_guias_especializadas"]],
+  write_csv(shiny_data[[2]][["manuales_guias_especializadas"]],
             here("output", 
                  "manuales_guias_especializadas.csv"))
-  write_csv(produccion_actualizada[[2]][["divulgacion_publica_contenidos_transmedia"]],
+  write_csv(shiny_data[[2]][["divulgacion_publica_contenidos_transmedia"]],
             here("output", 
                  "divulgacion_publica_contenidos_transmedia.csv"))
-  write_csv(produccion_actualizada[[2]][["Eliminados_por_grupo"]],
+  write_csv(shiny_data[[2]][["Eliminados_por_grupo"]],
             here("output", 
                  "Eliminados_por_grupo.csv"))
-  write_csv(produccion_actualizada[[2]][["Similares_entre_grupo"]],
+  write_csv(shiny_data[[2]][["Similares_entre_grupo"]],
             here("output", 
                  "Similares_entre_grupo.csv"))
-  write_csv(produccion_actualizada[[3]],
+  write_csv(shiny_data[[3]],
             here("output", 
                  "investigadores.csv"))
   
@@ -2329,6 +2342,90 @@ get_posgrade_clasficitation_cvlac <- function(cvlac_url) {
   cvlac_posgrade_category <- 
     cvlac_posgrade |> 
     bind_cols(cvlac_category)
-
+  
   
 }
+
+make_general_grupos <- function(produccion_actualizada){
+  
+  # Count production of each group of active researchers
+  ## Identify active researchers with the group
+  researcher_active <-  
+    produccion_actualizada[[3]] |> 
+    select(grupo, integrantes) |> 
+    unique() |> 
+    mutate(integrantes = str_to_upper(integrantes),
+           integrantes = stri_trans_general(str = integrantes,
+                                            id = "Latin-ASCII"))
+  
+  # Identify the production of each researcher and count 
+  group_production_general <- 
+    produccion_actualizada[[2]][["articulos"]] |> 
+    separate_rows(autores, sep = ", ") |> 
+    group_by(grupo) |> 
+    count(autores, sort = TRUE) |> 
+    rename("integrantes" = autores)
+  
+  # Merge active researches with production
+  group_production <- 
+    researcher_active |> 
+    left_join(group_production_general, 
+              by = c("grupo", "integrantes")) |> 
+    mutate(count_papers = ifelse(is.na(n), 0, n)) |> 
+    select(-integrantes, -n) |> 
+    group_by(grupo) |> 
+    summarize(sum_papers = sum(count_papers))
+  
+  # Merge group production with produccion actualizada
+  general_grupos <- 
+    produccion_actualizada[[1]]  |> 
+    left_join(group_production, by = "grupo")
+  
+  return(general_grupos)
+}
+
+count_articles_researcher <- function(produccion_actualizada) {
+  
+  # Count production of each group of active researchers
+  ## Identify active researchers with the group
+  researcher_active <-  
+    produccion_actualizada[[3]] |> 
+    select(grupo, integrantes) |> 
+    unique() |> 
+    mutate(integrantes = str_to_upper(integrantes),
+           integrantes = stri_trans_general(str = integrantes,
+                                            id = "Latin-ASCII"))
+  
+  # Identify the production of each researcher and count 
+  group_production_general <- 
+    produccion_actualizada[[2]][["articulos"]] |> 
+    separate_rows(autores, sep = ", ") |> 
+    group_by(grupo) |> 
+    count(autores, sort = TRUE) |> 
+    rename("integrantes" = autores)
+  
+  # Merge active researches with production
+  researcher_production <- 
+    researcher_active |> 
+    left_join(group_production_general, 
+              by = c("grupo", "integrantes")) |> 
+    mutate(count_papers = ifelse(is.na(n), 0, n)) |> 
+    select(integrantes, count_papers) |> 
+    group_by(integrantes) |> 
+    summarize(total_papers = sum(count_papers))
+    
+  
+  # Merge group production with produccion actualizada
+  researcher_general <- 
+    produccion_actualizada[[3]]  |> 
+    mutate(integrantes = str_to_upper(integrantes),
+           integrantes = stri_trans_general(integrantes, 
+                                            id = "Latin-ASCII"),
+           integrantes = str_squish(integrantes)) |> 
+    left_join(researcher_production, 
+              by = "integrantes") |> 
+    mutate(total_papers = ifelse(is.na(total_papers), 0, total_papers))
+  
+  return(researcher_general)
+  
+} 
