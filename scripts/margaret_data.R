@@ -15,11 +15,16 @@ source(here("scripts",
 
 # Data outside
 
-grupos <- read_csv("https://docs.google.com/spreadsheets/d/1gBaXHFp1NTUTeXodb4JyHqY-P-AWV5yN5-p4L1O09gk/export?format=csv&gid=0")
+grupos <- read_csv("https://docs.google.com/spreadsheets/d/1gBaXHFp1NTUTeXodb4JyHqY-P-AWV5yN5-p4L1O09gk/export?format=csv&gid=0") |> 
+  mutate(grupo = str_to_upper(grupo),
+         grupo = stri_trans_general(str = grupo,
+                                    id = "Latin-ASCII"))
+
 researchers <- read_csv("https://docs.google.com/spreadsheets/d/1gBaXHFp1NTUTeXodb4JyHqY-P-AWV5yN5-p4L1O09gk/export?format=csv&gid=347194763") |> 
   mutate(researcher = str_to_upper(researcher),
          researcher = stri_trans_general(str = researcher,
-                                         id = "Latin-ASCII"))
+                                         id = "Latin-ASCII")) |> 
+  unique()
 
 grupo_df <- data_getting_ucla(grupos)
 produccion_grupos <- data_cleaning_ucla(grupo_df)
@@ -36,7 +41,7 @@ produccion_actualizada[[2]][["Similares_entre_grupo"]] <- df_similares_total_gru
 
 shiny_data <- data_analysis_descriptive_ucla(produccion_actualizada)
 
-export_csv(produccion_actualizada)
+export_csv(shiny_data)
 
 # This code save produccion_grupos in an excel file
 

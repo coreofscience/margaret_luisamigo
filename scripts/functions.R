@@ -30,20 +30,9 @@ data_cleaning_researcher <- function(grupo_df) {
                                             id = "Latin-ASCII"),
            integrantes = str_squish(integrantes)) |> 
     left_join(researchers, by = c("integrantes" = "researcher")) |>
-    
-    grupo_researcher_cleaned_1 <- 
-      grupo_researcher_cleaned |> 
       mutate(h_index = map(id_scholar, get_profile)) |> 
       unnest_wider(h_index) |> 
       select(1:9, id_scholar, h_index)
-    
-    df_hindex <- getting_scholar_h_index(researchers$scholar_id[1])
-    
-    df_hindex <- df_hindex |> 
-      mutate(h_index = ifelse(is.na(h_index),0,h_index),
-             researcher = str_to_upper(researcher),
-             researcher = stri_trans_general(researcher, id = "Latin-ASCII")) |> 
-      filter(!duplicated(researcher))
     
     return(grupo_researcher_cleaned)
     
@@ -2394,3 +2383,49 @@ make_general_grupos <- function(produccion_actualizada){
   
   return(general_grupos)
 }
+
+count_articles_researcher <- function(produccion_actualizada) {
+  
+  # Count production of each group of active researchers
+  ## Identify active researchers with the group
+  researcher_active <-  
+    produccion_actualizada[[3]] |> 
+    select(grupo, integrantes) |> 
+    unique() |> 
+    mutate(integrantes = str_to_upper(integrantes),
+           integrantes = stri_trans_general(str = integrantes,
+                                            id = "Latin-ASCII"))
+  
+  # Identify the production of each researcher and count 
+  group_production_general <- 
+    produccion_actualizada[[2]][["articulos"]] |> 
+    separate_rows(autores, sep = ", ") |> 
+    group_by(grupo) |> 
+    count(autores, sort = TRUE) |> 
+    rename("integrantes" = autores)
+  
+  # Merge active researches with production
+  researcher_production <- 
+    researcher_active |> 
+    left_join(group_production_general, 
+              by = c("grupo", "integrantes")) |> 
+    mutate(count_papers = ifelse(is.na(n), 0, n)) |> 
+    select(integrantes, count_papers) |> 
+    group_by(integrantes) |> 
+    summarize(total_papers = sum(count_papers))
+    
+  
+  # Merge group production with produccion actualizada
+  researcher_general <- 
+    produccion_actualizada[[3]]  |> 
+    mutate(integrantes = str_to_upper(integrantes),
+           integrantes = stri_trans_general(integrantes, 
+                                            id = "Latin-ASCII"),
+           integrantes = str_squish(integrantes)) |> 
+    left_join(researcher_production, 
+              by = "integrantes") |> 
+    mutate(total_papers = ifelse(is.na(total_papers), 0, total_papers))
+  
+  return(researcher_general)
+  
+} 

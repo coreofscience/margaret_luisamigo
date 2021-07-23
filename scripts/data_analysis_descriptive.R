@@ -4,6 +4,12 @@ data_analysis_descriptive_ucla <- function(produccion_actualizada) {
     make_general_grupos(produccion_actualizada) |> 
     left_join(grupos, by = "grupo")
   
+  # Added amount of produced papers per researcher to researcher df
+  
+  produccion_actualizada[[3]] <- 
+    count_articles_researcher(produccion_actualizada)
+  
+  
   produccion_actualizada
   
 }
