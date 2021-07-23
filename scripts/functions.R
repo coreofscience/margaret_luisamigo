@@ -129,7 +129,7 @@ data_cleaning_product <- function(grupo_df) {
   Producciones_de_contenido_digital <- Producciones_de_contenido_digital_ucla(grupo_df[["grupo_product"]])
   libros_divulgacion <- libros_divulgacion_compilacion_ucla(grupo_df[["grupo_product"]])
   libros_formacion <- libros_formacion_ucla(grupo_df[["grupo_product"]])
-  Producciones_digital_audiovisual <- Producciones_digital_audiovisual_ucla(grupo_df[["grupo_product"]])
+  Producciones_digital_audiovisual <-producciones_digital_audiovisual_ucla(grupo_df[["grupo_product"]])
   manuales_guias_especializadas <- manuales_guias_especializadas_ucla(grupo_df[["grupo_product"]])
   divulgacion_publica_contenidos_transmedia <- divulgacion_publica_contenidos_transmedia_ucla(grupo_df[["grupo_product"]])
   
@@ -1970,6 +1970,49 @@ libros_formacion_ucla <- function(grupo_df) {
            autores = str_trim(autores)) |> 
     select(-info_1, -info_2, -info_3, -info_4,
            -info_5, -info_7)
+}
+
+producciones_digital_audiovisual_ucla <- function(grupo_df){
+  
+  grupo_df_producciones_digital_audiovisual <- 
+    grupo_df %>% 
+    filter(categoria == "Producciones de contenido digital - Audiovisual") %>% 
+    separate(producto ,
+             c("info_1", "info_2","info_3","info_4","info_5","info_6","info_7","info_8"), 
+             sep = "\r\n" ) |> 
+    mutate(tipo_producto = str_remove(info_1, "\\d. "),
+           tipo_producto = str_extract(tipo_producto, ".*Recurso gráfico\\)"),
+           tipo_producto = str_trim(tipo_producto),
+           titulo_producto = str_remove(info_1, ".*\\) "),
+           titulo_producto = str_trim(titulo_producto),
+           ano = str_remove(info_3, ".*Año: "),
+           ano = str_remove(ano, ",.*"),
+           ano = str_trim(ano),
+           mes = str_remove(info_3, ".*Mes: "),
+           mes = str_remove(mes, ",.*"),
+           mes = str_trim(mes),
+           verificacion = str_remove(info_3, ".*: "),
+           verificacion = str_trim(verificacion),
+           publico_objetivo = str_remove(info_5, ".*objetivo: "),
+           publico_objetivo = str_remove(publico_objetivo, ",.*"),
+           publico_objetivo = str_trim(publico_objetivo),
+           cuidad = str_remove(info_5, ".*Ciudad: "),
+           cuidad = str_remove(cuidad, ",.*"),
+           cuidad = str_trim(cuidad),
+           genero_literario = str_remove(info_5, ".*literario: "),
+           genero_literario = str_remove(genero_literario, ",.*"),
+           genero_literario = str_trim(genero_literario),
+           tipo = str_remove(info_5, ".*Tipo: "),
+           tipo = str_remove(tipo, ","),
+           nombre_proyecto = str_remove(info_6, ".*proyecto: "),
+           nombre_proyecto = str_remove(nombre_proyecto, ",.*"),
+           nombre_proyecto = str_trim(nombre_proyecto),
+           tipo_circulacion = str_remove(info_6, ".*circulación: "),
+           tipo_circulacion = str_trim(tipo_circulacion),
+           duracion = str_remove(info_7, ".*: ,"),
+           enfoque_diferencial = str_remove(info_8, ".*:")) |> 
+    select(-info_1, -info_2, -info_3, -info_4,-info_5,-info_6,-info_7,-info_8)
+  
 }
 
 Producciones_de_contenido_digital_ucla <- function(grupo_df){
