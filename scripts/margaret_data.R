@@ -3,9 +3,9 @@ library(rvest)
 library(here)
 library(openxlsx)
 library(scholar)
+library(stringi)
 
-source(here("scripts",
-            "data_grupos.R"))
+
 source(here("scripts",
             "data_getting.R"))
 source(here("scripts",
@@ -13,8 +13,13 @@ source(here("scripts",
 source(here("scripts",
             "data_tidying.R"))
 
+# Data outside
+
 grupos <- read_csv("https://docs.google.com/spreadsheets/d/1gBaXHFp1NTUTeXodb4JyHqY-P-AWV5yN5-p4L1O09gk/export?format=csv&gid=0")
-researchers <- read_csv("https://docs.google.com/spreadsheets/d/1gBaXHFp1NTUTeXodb4JyHqY-P-AWV5yN5-p4L1O09gk/export?format=csv&gid=347194763")
+researchers <- read_csv("https://docs.google.com/spreadsheets/d/1gBaXHFp1NTUTeXodb4JyHqY-P-AWV5yN5-p4L1O09gk/export?format=csv&gid=347194763") |> 
+  mutate(researcher = str_to_upper(researcher),
+         researcher = stri_trans_general(str = researcher,
+                                         id = "Latin-ASCII"))
 
 grupo_df <- data_getting_ucla(grupos)
 produccion_grupos <- data_cleaning_ucla(grupo_df)
@@ -28,6 +33,8 @@ produccion_actualizada <- produccion_grupos
 produccion_actualizada[[2]][["articulos"]]<- articulos_unicos
 produccion_actualizada[[2]][["Eliminados_por_grupo"]] <- df_eliminados_total
 produccion_actualizada[[2]][["Similares_entre_grupo"]] <- df_similares_total_grupos
+
+shiny_data <- data_analysis_descriptive_ucla(produccion_actualizada)
 
 export_csv(produccion_actualizada)
 

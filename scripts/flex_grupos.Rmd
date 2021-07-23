@@ -27,7 +27,7 @@ articulos_unicos_2016_2020 <-
 
 grupos_general <- 
   read_csv(here("output",
-                "general_grupos.csv"))
+                "grupos_general.csv"))
 
 investigadores_general <- 
   read_csv(here("output", 
