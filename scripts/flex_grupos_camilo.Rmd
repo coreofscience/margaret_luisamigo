@@ -19,18 +19,18 @@ library(crosstalk)
 
 ```{r global}
 articulos_unicos_2016_2020 <- 
-  read_csv(here("data",
-                "articulos_unicos.csv")) |> 
+  read_csv(here("output",
+                "articulos.csv")) |> 
   filter(ano >= 2016,
          ano <=2020)
 
 grupos_general <- 
   read_csv(here("output",
-                "general_grupos.csv"))
+                "grupos_general.csv"))
 
 investigadores_general <- 
   read_csv(here("output", 
-                "df_researcher.csv"))
+                "investigadores.csv"))
 
 grupos_inves <-
   read_csv(here("data",
@@ -59,6 +59,7 @@ grupos_produccion_articulos <- read_xlsx(here("output","grupos_produccion.xlsx")
 
 ```{r}
 grupos_general |> 
+  select(grupo, clasificacion, sum_papers, departamento , url, fecha_creacion, lider, email, area_conocimiento_1)
   datatable(options = list(pageLength = 15),
             escape = FALSE,
             colnames = c("Grupo", "Clasificación", "Cantidad Articulo", "Cantidad investigadores",
