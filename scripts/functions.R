@@ -12,7 +12,7 @@ getting_scholar_h_index <- function(data_scholar) {
 data_cleaning_researcher <- function(grupo_df) {
   
   grupo_researcher_cleaned <- 
-    grupo_df[["grupo_researcher"]] |>  
+    grupo_df[["grupo_researcher"]] |>
     mutate(inicio_vinculacion = str_remove(inicio_fin_vinculacion,
                                            "-.*"),
            inicio_vinculacion = ym(inicio_vinculacion),
@@ -28,10 +28,10 @@ data_cleaning_researcher <- function(grupo_df) {
            integrantes = stri_trans_general(str = integrantes,
                                             id = "Latin-ASCII"),
            integrantes = str_squish(integrantes)) |> 
-    left_join(researchers, by = c("integrantes" = "researcher")) |>
-    mutate(h_index = map(id_scholar, get_profile)) |> 
-    unnest_wider(h_index) |> 
-    select(1:9, id_scholar, h_index)
+    left_join(researchers, by = c("integrantes" = "researcher")) |> 
+    mutate(h_index = ifelse(is.na(h_index), 
+                             0, 
+                             h_index))
   
   return(grupo_researcher_cleaned)
   
