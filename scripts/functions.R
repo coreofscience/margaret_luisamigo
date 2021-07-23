@@ -12,8 +12,7 @@ getting_scholar_h_index <- function(data_scholar) {
 data_cleaning_researcher <- function(grupo_df) {
   
   grupo_researcher_cleaned <- 
-    grupo_df[["grupo_researcher"]] |> 
-    slice(1:3) |> 
+    grupo_df[["grupo_researcher"]] |>  
     mutate(inicio_vinculacion = str_remove(inicio_fin_vinculacion,
                                            "-.*"),
            inicio_vinculacion = ym(inicio_vinculacion),
@@ -30,12 +29,12 @@ data_cleaning_researcher <- function(grupo_df) {
                                             id = "Latin-ASCII"),
            integrantes = str_squish(integrantes)) |> 
     left_join(researchers, by = c("integrantes" = "researcher")) |>
-      mutate(h_index = map(id_scholar, get_profile)) |> 
-      unnest_wider(h_index) |> 
-      select(1:9, id_scholar, h_index)
-    
-    return(grupo_researcher_cleaned)
-    
+    mutate(h_index = map(id_scholar, get_profile)) |> 
+    unnest_wider(h_index) |> 
+    select(1:9, id_scholar, h_index)
+  
+  return(grupo_researcher_cleaned)
+  
 }
 
 
@@ -2413,7 +2412,7 @@ count_articles_researcher <- function(produccion_actualizada) {
     select(integrantes, count_papers) |> 
     group_by(integrantes) |> 
     summarize(total_papers = sum(count_papers))
-    
+  
   
   # Merge group production with produccion actualizada
   researcher_general <- 
