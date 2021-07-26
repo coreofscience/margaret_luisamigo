@@ -14,6 +14,8 @@ source(here("scripts",
             "data_tidying.R"))
 source(here("scripts/data_analysis_descriptive.R"))
 
+eval(parse("scripts/functions.R", encoding = "UTF-8"))
+
 # Data outside
  
 grupos <- read_csv("https://docs.google.com/spreadsheets/d/1gBaXHFp1NTUTeXodb4JyHqY-P-AWV5yN5-p4L1O09gk/export?format=csv&gid=0") |> 
@@ -40,6 +42,18 @@ source(here("scripts",
             "report.R"))
 
 articulos_unicos <- data_tidying_ucla(produccion_grupos)
+
+national_journals <- read_csv(here("output",
+                                   "journals_2016_2020.csv"))
+
+national_journals <- transform(national_journals, ano=as.character(ano))
+
+articulos <- articulos_unicos |> 
+  mutate(ISSN = str_remove(ISSN, "-"))|>
+  left_join(national_journals, by =c("ISSN", "ano")) |> 
+  select(1:7,16,8:14)
+
+articulos_unicos <- articulos
 
 produccion_actualizada <- produccion_grupos
 produccion_actualizada[[2]][["articulos"]]<- articulos_unicos
