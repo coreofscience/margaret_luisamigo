@@ -59,11 +59,17 @@ grupos_produccion_articulos <- read_xlsx(here("output","grupos_produccion.xlsx")
 
 ```{r}
 grupos_general |> 
-  select(grupo, clasificacion, sum_papers, departamento , url, fecha_creacion, lider, email, area_conocimiento_1)
+  select(grupo, clasificacion, sum_papers, departamento , url,
+         fecha_creacion,lider, email, area_conocimiento_1) |> 
+  mutate(url= str_c("<a href=",
+                     url,
+                     ">Link</a>")) |> 
   datatable(options = list(pageLength = 15),
             escape = FALSE,
-            colnames = c("Grupo", "Clasificación", "Cantidad Articulo", "Cantidad investigadores",
-                         "GrupLAC", "Fecha Creación", "Lider", "Email", "Área de Conocimiento"))
+            colnames = c("Grupo", "Clasificaci�n", "Cantidad Articulo",
+                         "Departamento","GrupLAC", 
+                         "Fecha Creaci�n", "Lider", "Email", 
+                         "�rea de Conocimiento"))
 ```
 
 ### Investigadores
@@ -82,16 +88,14 @@ investigadores_general |>
   select(-vinculacion,
          -fin_vinculacion) |> 
   rename(Investigador = integrantes,
-         Categoria = categoria,
-         Produccion = cantidad,
+         Produccion = total_papers,
          Horas = horas_dedicacion,
          CvLAC = url,
          Grupo = grupo,
          Inicio = inicio_vinculacion,
-         Formacion = ultima_formacion_academica,
+         Formacion = posgrade,
          ) |> 
   select(Investigador,
-         Categoria,
          Produccion,
          h_index,
          Formacion,
@@ -115,7 +119,7 @@ articulos_unicos_2016_2020 |>
                          "https://doi.org/",
                          DOI,
                          "\"",
-                         ">DOI</a>")) |>  
+                         ">Link</a>")) |>  
   datatable(options = list(pageLength = 15),
             escape = FALSE,
             colnames = c("Grupo", "Categoría", "Tipo producto",
@@ -179,20 +183,38 @@ fig3
 
 # Grupos individual en cifras
 
-Column {data-width=200}
+Column {data-width=200} 
 -----------------------------------
 
 ```{r}
 data4 <- grupos_indi |> select(grupo , categoria) |> 
   group_by(grupo, categoria) |> 
-  summarise(n = n())
+  summarise(n = n()) 
 
-datos_compartidos <- crosstalk::SharedData$new(data4)
+data5 <- grupos_indi |> select(grupo , ultima_formacion_academica) |> 
+  group_by(grupo, ultima_formacion_academica) |> 
+  summarise(n = n()) |> 
+  rename(m = n,
+         formacion = ultima_formacion_academica)
+
+matriz <- matrix(NA, nrow = 5, ncol = 3)
+  
+matriz <- data.frame(matriz) |> 
+  rename(grupo = X1,
+         formacion = X2,
+         m = X3)
+
+data5 <- rbind(data5, matriz) |> 
+  rename(categoria = 2)
+
+data6 <- merge(data4, data5, by = c("grupo", "categoria"), all = TRUE)
+
+datos_compartidos <- crosstalk::SharedData$new(data6)
 
 filter_select("categoria", "Grupo", datos_compartidos, ~grupo)
 ```
 
-Column {data-width=800}
+Column {data-width=400}
 -----------------------------------
 ### Categorias investigadores por grupo
 ```{r}
@@ -204,243 +226,14 @@ p0 <- p0 %>% layout(title = 'Categorias',
 p0
 ```
 
-Grupos top en cifras
-======================================
-Column {data-width=330}
--------------------------------
-### SISCO
+Column {data-width=400}
+-----------------------------------
+### Formacion por grupo
 ```{r}
-grupos_1 <- articulos_unicos_2016_2020 |> 
-  select(grupo, ano) |> 
-  filter(grupo == "SISCO") |> 
-  mutate(Año = str_trim(ano)) %>% 
-  select(-ano) |> 
-  count(Año, sort = FALSE, name="cantidad")
-
-figura_1 <- plot_ly(grupos_1, x=~Año)
-figura_1 <- figura_1 %>%  add_trace(y=~cantidad, 
-                            type = 'scatter', mode = 'lines',
-                            line = list(color='rgba(255,116,0, 1)', width = 4))
-
-figura_1
-```
-
-### NEUROCIENCIAS BASICAS Y APLICADAS
-```{r}
-grupos_4 <- articulos_unicos_2016_2020 |> 
-  select(grupo, ano) |> 
-  filter(grupo == "NEUROCIENCIAS BASICAS Y APLICADAS") |> 
-  mutate(Año = str_trim(ano)) %>% 
-  select(-ano) |> 
-  count(Año, sort = FALSE, name="cantidad")
-
-figura_4 <- plot_ly(grupos_4, x=~Año)
-figura_4 <- figura_4 %>%  add_trace(y=~cantidad, 
-                            type = 'scatter', mode = 'lines',
-                            line = list(color='rgba(255,116,0, 1)', width = 4))
-
-figura_4
-```
-
-
-Column {data-width=330}
--------------------------------
-### ESTUDIOS DE FENOMENOS PSICOSOCIALES
-```{r}
-grupos_2 <- articulos_unicos_2016_2020 |> 
-  select(grupo, ano) |> 
-  filter(grupo == "ESTUDIOS DE FENÓMENOS PSICOSOCIALES") |> 
-  mutate(Año = str_trim(ano)) %>% 
-  select(-ano) |> 
-  count(Año, sort = FALSE, name="cantidad")
-
-figura_2 <- plot_ly(grupos_2, x=~Año)
-figura_2 <- figura_2 %>%  add_trace(y=~cantidad, 
-                            type = 'scatter', mode = 'lines',
-                            line = list(color='rgba(255,116,0, 1)', width = 4))
-figura_2
-```
-### GORAS
-```{r}
-grupos_5 <- articulos_unicos_2016_2020 |> 
-  select(grupo, ano) |> 
-  filter(grupo == "GORAS") |> 
-  mutate(Año = str_trim(ano)) %>% 
-  select(-ano) |> 
-  count(Año, sort = FALSE, name="cantidad")
-
-figura_5 <- plot_ly(grupos_5, x=~Año)
-figura_5 <- figura_5 %>%  add_trace(y=~cantidad, 
-                            type = 'scatter', mode = 'lines',
-                            line = list(color='rgba(255,116,0, 1)', width = 4))
-
-figura_5
-```
-
-
-Column {data-width=330}
--------------------------------
-### EDUCACION, INFANCIA Y LENGUAS EXTRANJERAS
-```{r}
-grupos_3 <- articulos_unicos_2016_2020 |> 
-  select(grupo, ano) |> 
-  filter(grupo == "EDUCACIÓN, INFANCIA Y LENGUAS EXTRANJERAS") |> 
-  mutate(Año = str_trim(ano)) |>  
-  select(-ano) |> 
-  count(Año, sort = FALSE, name="cantidad")
-
-figura_3 <- plot_ly(grupos_3, x=~Año)
-figura_3 <- figura_3 |> add_trace(y=~cantidad, 
-                            type = 'scatter', mode = 'lines',
-                            line = list(color='rgba(255,116,0, 1)', width = 4))
-
-figura_3
-```
-
-### FARMACODEPENDENCIA Y OTRAS ADICCIONES
-```{r}
-grupos_6 <- articulos_unicos_2016_2020 |> 
-  select(grupo, ano) |> 
-  filter(grupo == "FARMACODEPENDENCIA Y OTRAS ADICCIONES") |> 
-  mutate(Año = str_trim(ano)) |>  
-  select(-ano) |> 
-  count(Año, sort = FALSE, name="cantidad")
-
-figura_6 <- plot_ly(grupos_6, x=~Año)
-figura_6 <- figura_6 |> add_trace(y=~cantidad, 
-                            type = 'scatter', mode = 'lines',
-                            line = list(color='rgba(255,116,0, 1)', width = 4))
-
-figura_6
-```
-
-
-Investigadores top en cifras
-=================================
-```{r}
-investigadores<- articulos_unicos_2016_2020 |> 
-  separate_rows(autores,sep = ", ") |> 
-  select(autores, grupo) |> 
-  left_join(investigadores_general, by=c("autores"="integrantes")) |> 
-  filter(grupo.x == grupo.y) |> 
-  count(autores, sort = TRUE, name = "Producciones")
-```
-
-Column {data-width=330}
--------------------------------
-
-### BAIRON JARAMILLO VALENCIA
-```{r}
-d_1 <- articulos_unicos_2016_2020 |> 
-  separate_rows(autores, sep = ", ") |> 
-  filter(autores == "BAIRON JARAMILLO VALENCIA") |>
-  select(ano) |> 
-  mutate(Año = str_trim(ano)) |> 
-  select(-ano) |> 
-  count(Año, sort=FALSE, name="Producciones")
-
-g_1 <- plot_ly(d_1, x=~Año)
-g_1 <- g_1 |> add_trace(y=~Producciones, 
-                            type = 'scatter', mode = 'lines',
-                            line = list(color='rgba(104,255,0, 1)', width = 6))
-
-g_1
-```
-
-### ALEXANDER RODRIGUEZ BUSTAMANTE
-```{r}
-d_4 <- articulos_unicos_2016_2020 |> 
-  separate_rows(autores, sep = ", ") |> 
-  filter(autores == "ALEXANDER RODRIGUEZ BUSTAMANTE")|>
-  select(ano) |> 
-  mutate(Año = str_trim(ano)) |> 
-  select(-ano) |> 
-  count(Año, sort=FALSE, name="Producciones")
-
-g_4 <- plot_ly(d_4, x=~Año)
-g_4 <- g_4 |> add_trace(y=~Producciones, 
-                            type = 'scatter', mode = 'lines',
-                            line = list(color='rgba(104,255,0, 1)', width = 6))
-
-g_4
-```
-
-Column {data-width=330}
--------------------------------
-
-### FRANKLIN FERRARO GOMEZ
-```{r}
-d_2 <- articulos_unicos_2016_2020 |> 
-  separate_rows(autores, sep = ", ") |> 
-  filter(autores == "FRANKLIN FERRARO GOMEZ") |>
-  select(ano) |> 
-  mutate(Año = str_trim(ano)) |> 
-  select(-ano) |> 
-  count(Año, sort=FALSE, name="Producciones")
-
-g_2 <- plot_ly(d_2, x=~Año)
-g_2 <- g_2 |> add_trace(y=~Producciones, 
-                            type = 'scatter', mode = 'lines',
-                            line = list(color='rgba(104,255,0, 1)', width = 6))
-
-g_2
-```
-
-### CATALINA QUINTERO LOPEZ
-```{r}
-d_5 <- articulos_unicos_2016_2020 |> 
-  separate_rows(autores, sep = ", ") |> 
-  filter(autores == "CATALINA QUINTERO LOPEZ") |>
-  select(ano) |> 
-  mutate(Año = str_trim(ano)) |> 
-  select(-ano) |> 
-  count(Año, sort=FALSE, name="Producciones")
-
-g_5 <- plot_ly(d_5, x=~Año)
-g_5 <- g_5 |> add_trace(y=~Producciones, 
-                            type = 'scatter', mode = 'lines',
-                            line = list(color='rgba(104,255,0, 1)', width = 6))
-
-g_5
-```
-
-Column {data-width=330}
--------------------------------
-
-### EDISON FRANCISCO VIVEROS CHAVARRIA
-```{r}
-d_3 <- articulos_unicos_2016_2020 |> 
-  separate_rows(autores, sep = ", ") |> 
-  filter(autores == "EDISON FRANCISCO VIVEROS CHAVARRIA") |>
-  select(ano) |> 
-  mutate(Año = str_trim(ano)) |> 
-  select(-ano) |> 
-  count(Año, sort=FALSE, name="Producciones")
-
-g_3 <- plot_ly(d_3, x=~Año)
-g_3 <- g_3 |> add_trace(y=~Producciones, 
-                            type = 'scatter', mode = 'lines',
-                            line = list(color='rgba(104,255,0, 1)', width = 6))
-
-g_3
-```
-
-### EDGAR ANDRES CHAVARRIAGA MIRANDA
-```{r}
-d_6 <- articulos_unicos_2016_2020 |> 
-  separate_rows(autores, sep = ", ") |> 
-  filter(autores == "EDGAR ANDRES CHAVARRIAGA MIRANDA") |>
-  select(ano) |> 
-  mutate(Año = str_trim(ano)) |> 
-  select(-ano) |> 
-  count(Año, sort=FALSE, name="Producciones")
-
-g_6 <- plot_ly(d_6, x=~Año)
-g_6 <- g_6 |> add_trace(y=~Producciones, 
-                            type = 'scatter', mode = 'lines',
-                            line = list(color='rgba(104,255,0, 1)', width = 6))
-
-g_6
-
-
+p0 <- datos_compartidos |> 
+  plot_ly(labels= ~categoria, values=~m, type = 'pie')
+p0 <- p0 %>% layout(title = 'Formacion',
+         xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+         yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+p0
 ```
