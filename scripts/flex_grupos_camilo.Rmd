@@ -66,10 +66,10 @@ grupos_general |>
                      ">Link</a>")) |> 
   datatable(options = list(pageLength = 15),
             escape = FALSE,
-            colnames = c("Grupo", "Clasificación", "Cantidad Articulo",
+            colnames = c("Grupo", "Clasificaci?n", "Cantidad Articulo",
                          "Departamento","GrupLAC", 
-                         "Fecha Creación", "Lider", "Email", 
-                         "Área de Conocimiento"))
+                         "Fecha Creaci?n", "Lider", "Email", 
+                         "?rea de Conocimiento"))
 ```
 
 ### Investigadores
@@ -149,7 +149,7 @@ revistas |>
             colnames = c('Revista', 'Cantidad', 'Porcentajes'))
 ```
 
-# Grupos en cifras
+# Grupos general en cifras
 
 Column {data-width=500}
 --------------------------------------
@@ -207,11 +207,12 @@ matriz <- data.frame(matriz) |>
 data5 <- rbind(data5, matriz) |> 
   rename(categoria = 2)
 
-data6 <- merge(data4, data5, by = c("grupo", "categoria"), all = TRUE)
+data6 <- merge(data5, data4, by = c("grupo", "categoria"), all = TRUE)
 
 datos_compartidos <- crosstalk::SharedData$new(data6)
 
 filter_select("categoria", "Grupo", datos_compartidos, ~grupo)
+
 ```
 
 Column {data-width=400}
@@ -236,4 +237,34 @@ p0 <- p0 %>% layout(title = 'Formacion',
          xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
          yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
 p0
+
+```
+
+# Produccion anual por grupos en cifras
+
+Column {data-width=200} 
+-----------------------------------
+
+```{r}
+data7 <- articulos_unicos_2016_2020 |> 
+  select(categoria, ano, grupo) |> 
+  count(ano, grupo, sort = FALSE, name = "producciones")
+
+datos_anual <- crosstalk::SharedData$new(data7)
+
+filter_select("Produccion", "Grupo", datos_anual, ~grupo)
+
+```
+
+Column {data-width=800}
+-----------------------------------
+### produccion anual
+```{r}
+p1 <- datos_anual |> 
+  plot_ly(x = ~ano, y = ~producciones, type = 'scatter', mode = 'lines')
+p1 <- p1 %>% layout(title = "Produccion articulos",
+         xaxis = list(title = ""),
+         yaxis = list(title = ""))
+
+p1
 ```
