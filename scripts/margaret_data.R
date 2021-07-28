@@ -14,8 +14,7 @@ source(here("scripts",
             "data_tidying.R"))
 source(here("scripts/data_analysis_descriptive.R"))
 
-eval(parse("scripts/functions.R", encoding = "UTF-8"))
-
+eval(parse(here("scripts/functions.R"), encoding = "UTF-8"))
 # Data outside
  
 grupos <- read_csv("https://docs.google.com/spreadsheets/d/1gBaXHFp1NTUTeXodb4JyHqY-P-AWV5yN5-p4L1O09gk/export?format=csv&gid=0") |> 

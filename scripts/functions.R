@@ -2441,6 +2441,7 @@ count_articles_researcher <- function(produccion_actualizada) {
   # Identify the production of each researcher and count 
   group_production_general <- 
     produccion_actualizada[[2]][["articulos"]] |> 
+    filter(ano>=2016, ano<=2020) |> 
     separate_rows(autores, sep = ", ") |> 
     group_by(grupo) |> 
     count(autores, sort = TRUE) |> 
