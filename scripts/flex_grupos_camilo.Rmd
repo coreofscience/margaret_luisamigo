@@ -50,10 +50,10 @@ grupos_general |>
                      ">Link</a>")) |> 
   datatable(options = list(pageLength = 15),
             escape = FALSE,
-            colnames = c("Grupo", "Clasificaci?n", "Cantidad Articulos",
+            colnames = c("Grupo", "Clasificación", "Cantidad artículos",
                          "Departamento","GrupLAC", 
-                         "Fecha Creaci?n", "Lider", "Email", 
-                         "?rea de Conocimiento"))
+                         "Fecha Creación", "Líder", "Email", 
+                         "Área de Conocimiento"))
 ```
 
 ### Investigadores
@@ -89,7 +89,7 @@ investigadores_general |>
          scholar) |> 
   datatable(options = list(pageLength = 15),
             escape = FALSE,
-            colnames = c("Investigador", "Categoria", "Producci?n", "H index", "Formaci?n",
+            colnames = c("Investigador", "Categoría", "Producción", "H index", "Formación",
                          "Grupo", "Inicio", "CvLAC", "Scholar"))
 ```
 
@@ -108,9 +108,8 @@ articulos_unicos_2016_2020 |>
             escape = FALSE,
             colnames = c("Grupo", "Categoría", "Tipo producto",
                          "Título", "País revista", "Revista", 
-                         "ISSN","Casiflicaci?n Revista", "A?o", "Volumen",
-                         "Fasc",
-                         "Paginas", "DOI", "Autores"))
+                         "ISSN","Casiflicación Revista", "Año", "Volumen",
+                         "Fasc","Paginas", "Enlace artículo", "Autores"))
 ```
 
 ### Paises
@@ -119,7 +118,8 @@ paises <- articulos_unicos_2016_2020 |>
   count(pais_revista, sort = TRUE)
 paises$porcentaje <- round(prop.table(paises$n),3)*100 
 paises |> 
-  mutate(porcentaje = str_c(porcentaje," %")) |> 
+  mutate(porcentaje = str_c(porcentaje," %"),
+         pais_revista = if_else(is.na(pais_revista), "No registra", pais_revista)) |> 
   datatable(options = list(pageLength = 20), 
             colnames = c('País revista', 'Cantidad', 'Porcentajes')) 
 ```
@@ -139,7 +139,7 @@ revistas |>
 Column {data-width=500}
 --------------------------------------
 
-### Clasificacion Grupos de investigación
+### Clasificación Grupos de investigación
 ```{r}
 data1 <- grupos_general |> count(clasificacion) |> arrange(desc(clasificacion))
 fig1 <- plot_ly(data1, x = ~clasificacion, y = ~n, type = 'bar')
@@ -149,7 +149,7 @@ fig1 <- fig1 %>% layout(title = 'Clasificación',
 fig1
 ```
 
-### Clasificacion Investigadores general
+### Clasificación Investigadores general
 ```{r}
 datos <- investigadores_general |> count(clasification) |> arrange(desc(clasification)) 
 p9 <- datos |> 
@@ -176,14 +176,14 @@ fig3 <- fig3 %>% layout(title = "Producción articulos",
 fig3
 ```
 
-### Formacion Investigadores general
+### Formación Investigadores general
 ```{r}
 data <- investigadores_general |> count(posgrade) |> 
   arrange(desc(posgrade)) |> 
   rename(formacion = 1)
 p0 <- data |> 
   plot_ly(labels= ~formacion, values=~n, type = 'pie')
-p0 <- p0 %>% layout(title = 'Formacion',
+p0 <- p0 %>% layout(title = 'Formación',
          xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
          yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
 p0
@@ -225,7 +225,7 @@ p0 <- p0 %>% layout(
 p0
 ```
 
-### Formacion investigadores por grupo
+### Formación investigadores por grupo
 ```{r}
 p1 <- datos_compartidos |> 
   plot_ly(labels= ~clasification, values=~m, type = 'pie')
@@ -245,7 +245,7 @@ datos_anual <- crosstalk::SharedData$new(data7)
 filter_select("Produccion", "Produccion anual por Grupo", datos_anual, ~grupo)
 ```
 
-### produccion anual por grupos
+### producción anual por grupos
 ```{r}
 p1 <- datos_anual |> 
   plot_ly(x = ~ano, y = ~producciones, type = 'bar')
