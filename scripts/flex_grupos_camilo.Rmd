@@ -50,10 +50,10 @@ grupos_general |>
                      ">Link</a>")) |> 
   datatable(options = list(pageLength = 15),
             escape = FALSE,
-            colnames = c("Grupo", "ClasificaciÛn", "Cantidad Articulos",
+            colnames = c("Grupo", "Clasificaci?n", "Cantidad Articulos",
                          "Departamento","GrupLAC", 
-                         "Fecha CreaciÛn", "Lider", "Email", 
-                         "¡rea de Conocimiento"))
+                         "Fecha Creaci?n", "Lider", "Email", 
+                         "?rea de Conocimiento"))
 ```
 
 ### Investigadores
@@ -89,7 +89,7 @@ investigadores_general |>
          scholar) |> 
   datatable(options = list(pageLength = 15),
             escape = FALSE,
-            colnames = c("Investigador", "Categoria", "ProducciÛn", "H index", "FormaciÛn",
+            colnames = c("Investigador", "Categoria", "Producci?n", "H index", "Formaci?n",
                          "Grupo", "Inicio", "CvLAC", "Scholar"))
 ```
 
@@ -108,7 +108,7 @@ articulos_unicos_2016_2020 |>
             escape = FALSE,
             colnames = c("Grupo", "Categor√≠a", "Tipo producto",
                          "T√≠tulo", "Pa√≠s revista", "Revista", 
-                         "ISSN","CasiflicaciÛn Revista", "AÒo", "Volumen",
+                         "ISSN","Casiflicaci?n Revista", "A?o", "Volumen",
                          "Fasc",
                          "Paginas", "DOI", "Autores"))
 ```
@@ -248,7 +248,7 @@ filter_select("Produccion", "Produccion anual por Grupo", datos_anual, ~grupo)
 ### produccion anual por grupos
 ```{r}
 p1 <- datos_anual |> 
-  plot_ly(x = ~ano, y = ~producciones, type = 'scatter', mode = 'lines')
+  plot_ly(x = ~ano, y = ~producciones, type = 'bar')
 p1 <- p1 %>% layout(title = "Produccion articulos",
          xaxis = list(title = ""),
          yaxis = list(title = ""))
