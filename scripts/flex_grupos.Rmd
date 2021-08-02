@@ -80,17 +80,18 @@ investigadores_general |>
          Formacion = posgrade,
          ) |> 
   select(Investigador,
+         Grupo,
          Produccion,
          h_index,
+         clasification,
          Formacion,
-         Grupo,
          Inicio,
          CvLAC,
          scholar) |> 
   datatable(options = list(pageLength = 15),
             escape = FALSE,
-            colnames = c("Investigador", "Categoría", "Producción", "H index", "Formación",
-                         "Grupo", "Inicio", "CvLAC", "Scholar"))
+            colnames = c("Investigador", "Grupo", "Producción", "H index",
+                         "Categoría","Formación","Inicio", "CvLAC", "Scholar"))
 ```
 
 ### Articulos
@@ -103,7 +104,8 @@ articulos_unicos_2016_2020 |>
                          "https://doi.org/",
                          DOI,
                          "\"",
-                         ">Enlace</a>")) |>  
+                         ">Enlace</a>"),
+         clasificacion = if_else(is.na(clasificacion), "N/A", clasificacion)) |>  
   datatable(options = list(pageLength = 15),
             escape = FALSE,
             colnames = c("Grupo", "Categoría", "Tipo producto",
