@@ -2390,38 +2390,47 @@ get_posgrade_clasficitation_cvlac <- function(cvlac_url) {
 
 make_general_grupos <- function(produccion_actualizada){
   
-  # Count production of each group of active researchers
-  ## Identify active researchers with the group
-  researcher_active <-  
-    produccion_actualizada[[3]] |> 
-    select(grupo, integrantes) |> 
-    unique() |> 
-    mutate(integrantes = str_to_upper(integrantes),
-           integrantes = stri_trans_general(str = integrantes,
-                                            id = "Latin-ASCII"))
+  # # Count production of each group of active researchers
+  # ## Identify active researchers with the group
+  # researcher_active <-
+  #   produccion_actualizada[[3]] |>
+  #   select(grupo, integrantes) |>
+  #   unique() |>
+  #   mutate(integrantes = str_to_upper(integrantes),
+  #          integrantes = stri_trans_general(str = integrantes,
+  #                                           id = "Latin-ASCII"))
+  # 
+  # # Identify the production of each researcher and count
+  # group_production_general <-
+  #   produccion_actualizada[[2]][["articulos"]] |>
+  #   separate_rows(autores, sep = ", ") |>
+  #   group_by(grupo) |>
+  #   count(autores, sort = TRUE) |>
+  #   rename("integrantes" = autores)
+  # 
+  # # Merge active researches with production
+  # group_production <-
+  #   researcher_active |>
+  #   left_join(group_production_general,
+  #             by = c("grupo", "integrantes")) |>
+  #   mutate(count_papers = ifelse(is.na(n), 0, n)) |>
+  #   select(-integrantes, -n) |>
+  #   group_by(grupo) |>
+  #   summarize(sum_papers = sum(count_papers))
+  # 
+  # # Merge group production with produccion actualizada
+  # general_grupos <-
+  #   produccion_actualizada[[1]]  |>
+  #   left_join(group_production, by = "grupo") #<--- Datos elevados
   
-  # Identify the production of each researcher and count 
-  group_production_general <- 
-    produccion_actualizada[[2]][["articulos"]] |> 
-    separate_rows(autores, sep = ", ") |> 
-    group_by(grupo) |> 
-    count(autores, sort = TRUE) |> 
-    rename("integrantes" = autores)
+  ## Revisar cantidad de articulos (esta treayendo mas del timepo 2016/20)
   
-  # Merge active researches with production
-  group_production <- 
-    researcher_active |> 
-    left_join(group_production_general, 
-              by = c("grupo", "integrantes")) |> 
-    mutate(count_papers = ifelse(is.na(n), 0, n)) |> 
-    select(-integrantes, -n) |> 
-    group_by(grupo) |> 
-    summarize(sum_papers = sum(count_papers))
-  
-  # Merge group production with produccion actualizada
-  general_grupos <- 
-    produccion_actualizada[[1]]  |> 
-    left_join(group_production, by = "grupo")
+  general_grupos <- produccion_actualizada[[2]][["articulos"]] |> 
+    select(grupo, ano) |> 
+    filter(ano>=2016, ano<=2020) |> 
+    count(grupo, sort = T, name = "sum_papers") |> 
+    right_join(produccion_actualizada[[1]], by = "grupo") |> 
+    select(1,3:13,2)
   
   return(general_grupos)
 }
@@ -2441,6 +2450,7 @@ count_articles_researcher <- function(produccion_actualizada) {
   # Identify the production of each researcher and count 
   group_production_general <- 
     produccion_actualizada[[2]][["articulos"]] |> 
+    filter(ano>=2016, ano<=2020) |> 
     separate_rows(autores, sep = ", ") |> 
     group_by(grupo) |> 
     count(autores, sort = TRUE) |> 
