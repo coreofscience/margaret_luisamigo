@@ -105,7 +105,8 @@ articulos_unicos_2016_2020 |>
                          DOI,
                          "\"",
                          ">Enlace</a>"),
-         clasificacion = if_else(is.na(clasificacion), "N/A", clasificacion)) |>  
+         categoria_revista = if_else(is.na(categoria_revista), "N/A", 
+                                     categoria_revista)) |> 
   datatable(options = list(pageLength = 15),
             escape = FALSE,
             colnames = c("Grupo", "Categoría", "Tipo producto",
