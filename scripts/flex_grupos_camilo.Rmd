@@ -25,6 +25,40 @@ articulos_unicos_2016_2020 <-
   filter(ano >= 2016,
          ano <=2020)
 
+capitulos_2016_2020 <- 
+  read_csv(here("output",
+                "capitulos.csv")) |> 
+  filter(ano >= 2016,
+         ano <=2020)
+
+libros_2016_2020 <- 
+  read_csv(here("output",
+                "libros.csv")) |> 
+  filter(Ano >= 2016,
+         Ano <=2020)
+
+software_2016_2020 <- 
+  read_csv(here("output",
+                "softwares.csv")) |> 
+  filter(ano >= 2016,
+         ano <=2020)
+
+trabajo_2016_2020 <- 
+  read_csv(here("output",
+                "trabajos_dirigidos.csv")) |> 
+  mutate(hasta = str_remove(hasta, ".* "),
+         hasta = str_trim(hasta),
+         desde = str_remove(desde, "\\d.* "),
+         desde = str_trim(desde)) |> 
+  filter(desde >= 2016,
+         hasta <=2020)
+
+innovacion_2016_2020 <- 
+  read_csv(here("output",
+                "innovaciones_gestion.csv")) |> 
+  filter(ano >= 2016,
+         ano <=2020)
+
 grupos_general <- 
   read_csv(here("output",
                 "grupos_general.csv"))
@@ -93,25 +127,6 @@ investigadores_general |>
                          "Grupo", "Inicio", "CvLAC", "Scholar"))
 ```
 
-### Articulos
-
-```{r}
-articulos_unicos_2016_2020 |>
-  select(-id) |> 
-  mutate(DOI = str_extract(DOI, "\\d.*")) |> 
-  mutate(DOI =  str_c("<a href=","\"",
-                         "https://doi.org/",
-                         DOI,
-                         "\"",
-                         ">Enlace</a>")) |>  
-  datatable(options = list(pageLength = 15),
-            escape = FALSE,
-            colnames = c("Grupo", "Categoría", "Tipo producto",
-                         "Título", "País revista", "Revista", 
-                         "ISSN","Casiflicación Revista", "Año", "Volumen",
-                         "Fasc","Paginas", "Enlace artículo", "Autores"))
-```
-
 ### Paises
 ```{r}
 paises <- articulos_unicos_2016_2020 |> 
@@ -132,6 +147,93 @@ revistas |>
   mutate(porcentaje = str_c(porcentaje," %")) |> 
   datatable(options = list(pageLength = 20), 
             colnames = c('Revista', 'Cantidad', 'Porcentajes'))
+```
+
+# Produccion cientifica
+
+## Column {.tabset}
+
+### Articulos
+
+```{r}
+articulos_unicos_2016_2020 |>
+  select(-id) |> 
+  mutate(DOI = str_extract(DOI, "\\d.*")) |> 
+  mutate(DOI =  str_c("<a href=","\"",
+                         "https://doi.org/",
+                         DOI,
+                         "\"",
+                         ">Enlace</a>")) |>  
+  datatable(options = list(pageLength = 15),
+            escape = FALSE,
+            colnames = c("Grupo", "Categoría", "Tipo producto",
+                         "Título", "País revista", "Revista", 
+                         "ISSN","Casiflicación Revista", "Año", "Volumen",
+                         "Fasc","Paginas", "Enlace artículo", "Autores"))
+```
+
+### Capitulos
+
+```{r}
+capitulos_2016_2020 |>
+  select(-vol, -tipo_producto) |> 
+  datatable(options = list(pageLength = 15),
+            escape = FALSE,
+            colnames = c("Grupo", "Categoría",
+                         "Título capitulo", "País", "Año", 
+                         "Titulo libro","ISBN", "Paginas", "Editorial",
+                         "Autores"))
+```
+
+### Libros
+
+```{r}
+libros_2016_2020 |>
+  select(-Tipo_producto) |> 
+  datatable(options = list(pageLength = 15),
+            escape = FALSE,
+            colnames = c("Grupo", "Categoría",
+                         "Título libro", "País", "Año", 
+                         "ISBN","Editorial", "Autores"))
+```
+
+### Softwares
+
+```{r}
+software_2016_2020 |>
+  select(-nombre_proyecto, -tipo_producto) |> 
+  mutate(sitio_web= str_c("<a href=",
+                     sitio_web,
+                     ">Link</a>")) |>
+  datatable(options = list(pageLength = 15),
+            escape = FALSE,
+            colnames = c("Grupo", "Categoría",
+                         "Título", "País", "Año", 
+                         "Disponibilidad","Sitio web", "Nombre comercial", "Institución financiadora", 
+                         "Autores"))
+```
+
+### Innovaciones
+
+```{r}
+innovacion_2016_2020 |> 
+  datatable(options = list(pageLength = 15),
+            escape = FALSE,
+            colnames = c("Grupo", "Categoría", "Tipo Producto",
+                         "Título", "país", "Año", 
+                         "Disponibilidad","Institución financiadora", "Autores"))
+```
+
+### Trabajos de grado
+
+```{r}
+trabajo_2016_2020 |> 
+  datatable(options = list(pageLength = 15),
+            escape = FALSE,
+            colnames = c("Grupo", "Categoría", "Tipo Producto",
+                         "Título", "Desde", "hasta", 
+                         "Tipo orientación","Estudiante", "Programa académico","Páginas", 
+                         "Valoración","Institución", "Tutor coautor"))
 ```
 
 # Grupos e Investigadores en cifras
