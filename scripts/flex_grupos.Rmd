@@ -25,6 +25,40 @@ articulos_unicos_2016_2020 <-
   filter(ano >= 2016,
          ano <=2020)
 
+capitulos_2016_2020 <- 
+  read_csv(here("output",
+                "capitulos.csv")) |> 
+  filter(ano >= 2016,
+         ano <=2020)
+
+libros_2016_2020 <- 
+  read_csv(here("output",
+                "libros.csv")) |> 
+  filter(Ano >= 2016,
+         Ano <=2020)
+
+software_2016_2020 <- 
+  read_csv(here("output",
+                "softwares.csv")) |> 
+  filter(ano >= 2016,
+         ano <=2020)
+
+trabajo_2016_2020 <- 
+  read_csv(here("output",
+                "trabajos_dirigidos.csv")) |> 
+  mutate(hasta = str_remove(hasta, ".* "),
+         hasta = str_trim(hasta),
+         desde = str_remove(desde, "\\d.* "),
+         desde = str_trim(desde)) |> 
+  filter(desde >= 2016,
+         hasta <=2020)
+
+innovacion_2016_2020 <- 
+  read_csv(here("output",
+                "innovaciones_gestion.csv")) |> 
+  filter(ano >= 2016,
+         ano <=2020)
+
 grupos_general <- 
   read_csv(here("output",
                 "grupos_general.csv"))
@@ -94,26 +128,6 @@ investigadores_general |>
                          "Categoría","Formación","Inicio", "CvLAC", "Scholar"))
 ```
 
-### Articulos
-
-```{r}
-articulos_unicos_2016_2020 |>
-  select(-id) |> 
-  mutate(DOI = str_extract(DOI, "\\d.*")) |> 
-  mutate(DOI =  str_c("<a href=","\"",
-                         "https://doi.org/",
-                         DOI,
-                         "\"",
-                         ">Enlace</a>"),
-         categoria_revista = if_else(is.na(categoria_revista), "N/A", 
-                                     categoria_revista)) |> 
-  datatable(options = list(pageLength = 15),
-            escape = FALSE,
-            colnames = c("Grupo", "Categoría", "Tipo producto",
-                         "Título", "País revista", "Revista", 
-                         "ISSN","Casiflicación Revista", "Año", "Volumen",
-                         "Fasc","Paginas", "Enlace artículo", "Autores"))
-```
 
 ### Paises
 ```{r}
@@ -137,9 +151,96 @@ revistas |>
             colnames = c('Revista', 'Cantidad', 'Porcentajes'))
 ```
 
+# Producción científica
+
+## Column {.tabset}
+
+### Articulos
+
+```{r}
+articulos_unicos_2016_2020 |>
+  select(-id) |> 
+  mutate(DOI = str_extract(DOI, "\\d.*")) |> 
+  mutate(DOI =  str_c("<a href=","\"",
+                         "https://doi.org/",
+                         DOI,
+                         "\"",
+                         ">Enlace</a>")) |>  
+  datatable(options = list(pageLength = 15),
+            escape = FALSE,
+            colnames = c("Grupo", "Categoría", "Tipo producto",
+                         "Título", "País revista", "Revista", 
+                         "ISSN","Casiflicación Revista", "Año", "Volumen",
+                         "Fasc","Paginas", "Enlace artículo", "Autores"))
+```
+
+### Capítulos
+
+```{r}
+capitulos_2016_2020 |>
+  select(-vol, -tipo_producto) |> 
+  datatable(options = list(pageLength = 15),
+            escape = FALSE,
+            colnames = c("Grupo", "Categoría",
+                         "Título capitulo", "País", "Año", 
+                         "Titulo libro","ISBN", "Paginas", "Editorial",
+                         "Autores"))
+```
+
+### Libros
+
+```{r}
+libros_2016_2020 |>
+  select(-Tipo_producto) |> 
+  datatable(options = list(pageLength = 15),
+            escape = FALSE,
+            colnames = c("Grupo", "Categoría",
+                         "Título libro", "País", "Año", 
+                         "ISBN","Editorial", "Autores"))
+```
+
+### Softwares
+
+```{r}
+software_2016_2020 |>
+  select(-nombre_proyecto, -tipo_producto) |> 
+  mutate(sitio_web= str_c("<a href=",
+                     sitio_web,
+                     ">Link</a>")) |>
+  datatable(options = list(pageLength = 15),
+            escape = FALSE,
+            colnames = c("Grupo", "Categoría",
+                         "Título", "País", "Año", 
+                         "Disponibilidad","Sitio web", "Nombre comercial", "Institución financiadora", 
+                         "Autores"))
+```
+
+### Innovaciones
+
+```{r}
+innovacion_2016_2020 |> 
+  datatable(options = list(pageLength = 15),
+            escape = FALSE,
+            colnames = c("Grupo", "Categoría", "Tipo Producto",
+                         "Título", "país", "Año", 
+                         "Disponibilidad","Institución financiadora", "Autores"))
+```
+
+### Trabajos dirigidos/turorías
+
+```{r}
+trabajo_2016_2020 |> 
+  datatable(options = list(pageLength = 15),
+            escape = FALSE,
+            colnames = c("Grupo", "Categoría", "Tipo Producto",
+                         "Título", "Desde", "hasta", 
+                         "Tipo orientación","Estudiante", "Programa académico","Páginas", 
+                         "Valoración","Institución", "Tutor coautor"))
+```
+
 # Grupos e Investigadores en cifras
 
-Column {data-width=500}
+Column {data-width=300}
 --------------------------------------
 
 ### Clasificación Grupos de investigación
@@ -152,6 +253,10 @@ fig1 <- fig1 %>% layout(title = 'Clasificación',
 fig1
 ```
 
+
+Column {data-width=300}
+-----------------------------------
+
 ### Clasificación Investigadores general
 ```{r}
 datos <- investigadores_general |> count(clasification) |> arrange(desc(clasification)) 
@@ -163,7 +268,22 @@ p9 <- p9 %>% layout(title = 'Categorias',
 p9
 ```
 
-Column {data-width=500}
+### Categoria revistas
+```{r}
+dato2 <- articulos_unicos_2016_2020 |> count(categoria_revista) |>
+  arrange(desc(categoria_revista)) |> 
+  mutate(categoria_revista = 
+           ifelse(is.na(categoria_revista),"N/A",categoria_revista))
+p10 <- dato2 |> 
+  plot_ly(labels= ~categoria_revista, values=~n, type = 'pie')
+p10 <- p10 %>% layout(title = 'Categorias',
+         xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+         yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+p10
+```
+
+
+Column {data-width=300}
 -----------------------------------
 
 ### Evolución temporal
