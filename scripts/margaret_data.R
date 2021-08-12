@@ -42,17 +42,34 @@ source(here("scripts",
 
 articulos_unicos <- data_tidying_ucla(produccion_grupos)
 
+international_journals <- read_csv(here(
+  "output",
+  "journals_international_2016_2020.csv")) |> 
+  separate_rows(ISSN, sep = "; ")
+
 national_journals <- read_csv(here("output",
                                    "journals_2016_2020.csv"))
 
 national_journals <- transform(national_journals, ano=as.character(ano))
+international_journals <- transform(international_journals, ano=as.character(ano)) |> 
+  mutate(ISSN = str_remove(ISSN, "-"))
 
 articulos <- articulos_unicos |> 
   mutate(ISSN = str_remove(ISSN, "-"))|>
-  left_join(national_journals, by =c("ISSN", "ano")) |> 
-  select(1:7,16,8:14)
+  left_join(international_journals, by =c("ISSN", "ano"))|> 
+  select(1:7,16,8:14) |> 
+  rename(categoria = 2,
+         categoria_revista = 8)
 
-articulos_unicos <- articulos
+articulos_df <- articulos |> 
+  filter(is.na(categoria_revista)) |> 
+  left_join(national_journals, by =c("ISSN", "ano")) |> 
+  select(1:7,17,9:15) |> 
+  rename(categoria_revista = 8)
+  
+articulos <- articulos |> filter(!is.na(categoria_revista)) 
+
+articulos_unicos <- rbind(articulos, articulos_df)
 
 produccion_actualizada <- produccion_grupos
 produccion_actualizada[[2]][["articulos"]]<- articulos_unicos
