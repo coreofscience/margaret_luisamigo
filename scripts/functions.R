@@ -12,7 +12,7 @@ getting_scholar_h_index <- function(data_scholar) {
 data_cleaning_researcher <- function(grupo_df) {
   
   grupo_researcher_cleaned <- 
-    grupo_df[["grupo_researcher"]] |>
+    grupo_df[["grupo_researcher"]][1:3,] |>
     mutate(inicio_vinculacion = str_remove(inicio_fin_vinculacion,
                                            "-.*"),
            inicio_vinculacion = ym(inicio_vinculacion),
@@ -2319,7 +2319,7 @@ export_csv <- function(shiny_data) {
 
 get_posgrade_clasficitation_cvlac <- function(cvlac_url) {
   
-  cvlac_df = read_html(cvlac_url) |> 
+  cvlac_df = read_html("https://scienti.minciencias.gov.co/cvlac/visualizador/generarCurriculoCv.do?cod_rh=0001482462") |> 
     html_table()
   
   cvlac_posgrade = cvlac_df[[1]] |> 
@@ -2360,8 +2360,12 @@ get_posgrade_clasficitation_cvlac <- function(cvlac_url) {
                            "Maestría/Magister",
                            "Especialización",
                            "Pregrado/Universitario")) |> 
-    separate(end, into = c("Month", "year"), sep = " ") |> 
-    slice_max(year) |> 
+    separate(end, into = c("Month", "year"), sep = " ") |>
+    mutate(Month = str_remove(Month, "de"), 
+           end = str_c(Month, year, sep = " "), 
+           end = parse_date(end, "%B %Y", locale = locale("es"))) |> 
+    filter(end <= today()) |> 
+    slice_max(end) |> 
     select(posgrade) |> 
     slice(1) 
   
