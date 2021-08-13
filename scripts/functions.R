@@ -20,25 +20,25 @@ data_cleaning_researcher <- function(grupo_df) {
                                         ".*-")) |> 
     select(-inicio_fin_vinculacion) |> 
     filter(str_detect(fin_vinculacion, "Actual")) |> # Only active researchers
-    cvlac_url_1 <- 
-      cvlac_url |> 
     mutate(posgrade = map(.x = url, 
                           .f = safely(get_posgrade_clasficitation_cvlac))) |> 
     mutate(posgrade = map(posgrade, "result")) |> 
+    mutate(posgrade = map(posgrade, ~ replace(.x, is.null(.x), "CvLAC oculto"))) |> 
     unnest(posgrade) |> 
+    replace_na(list(clasification = "CvLAC oculto" )) |> 
     mutate(integrantes = str_to_upper(integrantes),
            integrantes = stri_trans_general(str = integrantes,
                                             id = "Latin-ASCII"),
            integrantes = str_squish(integrantes)) |> 
     left_join(researchers, by = c("integrantes" = "researcher")) |> 
     mutate(h_index = ifelse(is.na(h_index), 
-                             0, 
-                             h_index))
+                            0, 
+                            h_index))
   
   return(grupo_researcher_cleaned)
   
 }
- 
+
 
 data_cleaning_main <- function(grupo_df) {
   
@@ -2321,7 +2321,7 @@ export_csv <- function(shiny_data) {
 
 get_posgrade_clasficitation_cvlac <- function(cvlac_url) {
   
-  cvlac_df = read_html("https://scienti.minciencias.gov.co/cvlac/visualizador/generarCurriculoCv.do?cod_rh=0001660142") |> 
+  cvlac_df = read_html(cvlac_url) |> 
     html_table()
   
   cvlac_posgrade = cvlac_df[[1]] |> 
@@ -2358,6 +2358,7 @@ get_posgrade_clasficitation_cvlac <- function(cvlac_url) {
                            "Especialización",
                            "Pregrado/Universitario")) |> 
     separate(end, into = c("Month", "year"), sep = " ") |>
+    mutate(Month = if_else(Month == "de", "Enero", Month)) |> 
     mutate(Month = str_remove(Month, "de"), 
            end = str_c(Month, year, sep = " "), 
            end = parse_date(end, "%B %Y", locale = locale("es"))) |> 
@@ -2369,10 +2370,9 @@ get_posgrade_clasficitation_cvlac <- function(cvlac_url) {
   if (is_empty(cvlac_posgrade$posgrade)) {
     
     cvlac_posgrade <- 
-      tibble(posgrade = "Sin posgrado")
+      tibble(posgrade = "Técnico")
     
   }
-  
   
   cvlac_category <- cvlac_df[[1]] |>
     filter(X1 == "Categoría") |> 
