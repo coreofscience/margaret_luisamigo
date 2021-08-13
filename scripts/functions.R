@@ -23,20 +23,22 @@ data_cleaning_researcher <- function(grupo_df) {
     mutate(posgrade = map(.x = url, 
                           .f = safely(get_posgrade_clasficitation_cvlac))) |> 
     mutate(posgrade = map(posgrade, "result")) |> 
+    mutate(posgrade = map(posgrade, ~ replace(.x, is.null(.x), "CvLAC oculto"))) |> 
     unnest(posgrade) |> 
+    replace_na(list(clasification = "CvLAC oculto" )) |> 
     mutate(integrantes = str_to_upper(integrantes),
            integrantes = stri_trans_general(str = integrantes,
                                             id = "Latin-ASCII"),
            integrantes = str_squish(integrantes)) |> 
     left_join(researchers, by = c("integrantes" = "researcher")) |> 
     mutate(h_index = ifelse(is.na(h_index), 
-                             0, 
-                             h_index))
+                            0, 
+                            h_index))
   
   return(grupo_researcher_cleaned)
   
 }
- 
+
 
 data_cleaning_main <- function(grupo_df) {
   
@@ -2325,7 +2327,7 @@ get_posgrade_clasficitation_cvlac <- function(cvlac_url) {
   cvlac_posgrade = cvlac_df[[1]] |> 
     filter(str_detect(string = X1, 
                       pattern = "Formación Académica")) |> 
-    select(X5, X7, X9, X11) |> 
+    select(X5, X7, X9) |> 
     slice(1) |> 
     separate_rows(X5, sep = "\r\n") |> # X5
     slice(1,4) |> 
@@ -2342,12 +2344,7 @@ get_posgrade_clasficitation_cvlac <- function(cvlac_url) {
     mutate(X9 = str_trim(X9)) |> 
     nest(data = X9) |> 
     rename("X9" = data) |> 
-    separate_rows(X11, sep = "\r\n") |> 
-    slice(1,4) |> 
-    mutate(X11 = str_trim(X11)) |> 
-    nest(data = X11) |> 
-    rename("X11" = data) |> 
-    unnest(cols = c(X5, X7, X9, X11)) |> 
+    unnest(cols = c(X5, X7, X9)) |> 
     add_rownames() |> 
     gather(var, value, -rowname) |> 
     spread(rowname, value) |> 
@@ -2360,10 +2357,22 @@ get_posgrade_clasficitation_cvlac <- function(cvlac_url) {
                            "Maestría/Magister",
                            "Especialización",
                            "Pregrado/Universitario")) |> 
-    separate(end, into = c("Month", "year"), sep = " ") |> 
-    slice_max(year) |> 
+    separate(end, into = c("Month", "year"), sep = " ") |>
+    mutate(Month = if_else(Month == "de", "Enero", Month)) |> 
+    mutate(Month = str_remove(Month, "de"), 
+           end = str_c(Month, year, sep = " "), 
+           end = parse_date(end, "%B %Y", locale = locale("es"))) |> 
+    filter(end <= today()) |> 
+    slice_max(end) |> 
     select(posgrade) |> 
     slice(1) 
+  
+  if (is_empty(cvlac_posgrade$posgrade)) {
+    
+    cvlac_posgrade <- 
+      tibble(posgrade = "Técnico")
+    
+  }
   
   cvlac_category <- cvlac_df[[1]] |>
     filter(X1 == "Categoría") |> 
