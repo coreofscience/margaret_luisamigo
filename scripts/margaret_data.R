@@ -42,6 +42,8 @@ source(here("scripts",
 
 articulos_unicos <- data_tidying_ucla(produccion_grupos)
 
+articulos_unicos <- merge_quality_articles_ucla(articulos_unicos) 
+
 international_journals <- read_csv(here(
   "output",
   "journals_international_2016_2020.csv")) |> 
