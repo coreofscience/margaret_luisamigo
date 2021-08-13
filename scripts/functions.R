@@ -12,7 +12,7 @@ getting_scholar_h_index <- function(data_scholar) {
 data_cleaning_researcher <- function(grupo_df) {
   
   grupo_researcher_cleaned <- 
-    grupo_df[["grupo_researcher"]][1:3,] |>
+    grupo_df[["grupo_researcher"]] |>
     mutate(inicio_vinculacion = str_remove(inicio_fin_vinculacion,
                                            "-.*"),
            inicio_vinculacion = ym(inicio_vinculacion),
@@ -20,6 +20,8 @@ data_cleaning_researcher <- function(grupo_df) {
                                         ".*-")) |> 
     select(-inicio_fin_vinculacion) |> 
     filter(str_detect(fin_vinculacion, "Actual")) |> # Only active researchers
+    cvlac_url_1 <- 
+      cvlac_url |> 
     mutate(posgrade = map(.x = url, 
                           .f = safely(get_posgrade_clasficitation_cvlac))) |> 
     mutate(posgrade = map(posgrade, "result")) |> 
@@ -2319,13 +2321,13 @@ export_csv <- function(shiny_data) {
 
 get_posgrade_clasficitation_cvlac <- function(cvlac_url) {
   
-  cvlac_df = read_html("https://scienti.minciencias.gov.co/cvlac/visualizador/generarCurriculoCv.do?cod_rh=0001482462") |> 
+  cvlac_df = read_html("https://scienti.minciencias.gov.co/cvlac/visualizador/generarCurriculoCv.do?cod_rh=0001660142") |> 
     html_table()
   
   cvlac_posgrade = cvlac_df[[1]] |> 
     filter(str_detect(string = X1, 
                       pattern = "Formación Académica")) |> 
-    select(X5, X7, X9, X11) |> 
+    select(X5, X7, X9) |> 
     slice(1) |> 
     separate_rows(X5, sep = "\r\n") |> # X5
     slice(1,4) |> 
@@ -2342,12 +2344,7 @@ get_posgrade_clasficitation_cvlac <- function(cvlac_url) {
     mutate(X9 = str_trim(X9)) |> 
     nest(data = X9) |> 
     rename("X9" = data) |> 
-    separate_rows(X11, sep = "\r\n") |> 
-    slice(1,4) |> 
-    mutate(X11 = str_trim(X11)) |> 
-    nest(data = X11) |> 
-    rename("X11" = data) |> 
-    unnest(cols = c(X5, X7, X9, X11)) |> 
+    unnest(cols = c(X5, X7, X9)) |> 
     add_rownames() |> 
     gather(var, value, -rowname) |> 
     spread(rowname, value) |> 
@@ -2368,6 +2365,14 @@ get_posgrade_clasficitation_cvlac <- function(cvlac_url) {
     slice_max(end) |> 
     select(posgrade) |> 
     slice(1) 
+  
+  if (is_empty(cvlac_posgrade$posgrade)) {
+    
+    cvlac_posgrade <- 
+      tibble(posgrade = "Sin posgrado")
+    
+  }
+  
   
   cvlac_category <- cvlac_df[[1]] |>
     filter(X1 == "Categoría") |> 
