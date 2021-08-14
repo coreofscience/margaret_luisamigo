@@ -124,7 +124,7 @@ investigadores_general |>
          scholar) |> 
   datatable(options = list(pageLength = 15),
             escape = FALSE,
-            colnames = c("Investigador", "Grupo", "Producción", "H index",
+            colnames = c("Investigador", "Grupo", "Artículos", "H index",
                          "Categoría","Formación","Inicio", "CvLAC", "Scholar"))
 ```
 
@@ -143,7 +143,40 @@ paises |>
 ### Revistas
 ```{r}
 revistas <- articulos_unicos_2016_2020 |> 
-  count(revista, sort = TRUE)
+  count(ISSN, sort = TRUE)
+
+nombre <- articulos_unicos_2016_2020 |> 
+  select(revista, ISSN)
+
+categ <- read_csv("https://docs.google.com/spreadsheets/d/1ALPh_lgq6OtxgbKXRUEFEmoWcY37gfsnyTszFXbHvWw/export?format=csv&gid=758989915") |> 
+    unite(ISSN, c("issn_impreso","issn_electronico", "issn_l"), sep = ",", remove = TRUE) |> 
+    mutate(ano = "2021",
+           categoria = ifelse(categoria == "В","B",categoria)) |> 
+    select(-VIGENCIA) |> 
+    separate_rows(ISSN, sep = ",") |> 
+    filter(!str_detect(ISSN, "NA")) |> 
+    rename(revista = 1) |> 
+    select(1,2,4,3)
+
+revistas <- full_join(revistas, categ)
+
+revistas <- revistas |> full_join(nombre, by = "ISSN") |> 
+  unique() |> 
+  unite(revistas, c("revista.x","revista.y"),sep = ",", remove = TRUE)|> 
+  mutate(revistas = str_remove(revistas, "NA,"),
+         revistas = str_remove(revistas, ".*,"),
+         categoria = ifelse(is.na(categoria),"Sin Vigencia en 2021",categoria),
+         editora = ifelse(is.na(editora), "Sin información", editora))
+
+rev <- articulos_unicos_2016_2020 |> select(revista, ISSN)
+
+new <- full_join(rev, categ)
+
+count <- new |> count(ISSN) |> 
+  full_join(new, by="ISSN") |> 
+  unique(ISSN)
+
+
 revistas$porcentaje <- round(prop.table(revistas$n),3)*100 
 revistas |>
   mutate(porcentaje = str_c(porcentaje," %")) |> 
