@@ -140,15 +140,17 @@ paises |>
   datatable(options = list(pageLength = 20), 
             colnames = c('País revista', 'Cantidad', 'Porcentajes')) 
 ```
+
 ### Revistas
 ```{r}
-revistas <- articulos_unicos_2016_2020 |> 
-  count(ISSN, sort = TRUE)
+nombres <- articulos_unicos_2016_2020 |> 
+  select(ISSN, revista) |> 
+  unique()
 
-nombre <- articulos_unicos_2016_2020 |> 
-  select(revista, ISSN)
+cantidad <- articulos_unicos_2016_2020 |> 
+  select(ISSN) |> count(ISSN, sort=TRUE)
 
-categ <- read_csv("https://docs.google.com/spreadsheets/d/1ALPh_lgq6OtxgbKXRUEFEmoWcY37gfsnyTszFXbHvWw/export?format=csv&gid=758989915") |> 
+national_2021 <- read_csv("https://docs.google.com/spreadsheets/d/1ALPh_lgq6OtxgbKXRUEFEmoWcY37gfsnyTszFXbHvWw/export?format=csv&gid=758989915") |> 
     unite(ISSN, c("issn_impreso","issn_electronico", "issn_l"), sep = ",", remove = TRUE) |> 
     mutate(ano = "2021",
            categoria = ifelse(categoria == "В","B",categoria)) |> 
@@ -158,30 +160,37 @@ categ <- read_csv("https://docs.google.com/spreadsheets/d/1ALPh_lgq6OtxgbKXRUEFE
     rename(revista = 1) |> 
     select(1,2,4,3)
 
-revistas <- full_join(revistas, categ)
+international_j_2021 <- read_csv(here("output",
+                                          "international_journals_2021.csv")) |> 
+    separate_rows(ISSN, sep = "; ") |> 
+    mutate(ano = as.character(ano))
 
-revistas <- revistas |> full_join(nombre, by = "ISSN") |> 
-  unique() |> 
-  unite(revistas, c("revista.x","revista.y"),sep = ",", remove = TRUE)|> 
-  mutate(revistas = str_remove(revistas, "NA,"),
-         revistas = str_remove(revistas, ".*,"),
-         categoria = ifelse(is.na(categoria),"Sin Vigencia en 2021",categoria),
-         editora = ifelse(is.na(editora), "Sin información", editora))
+international <- left_join(cantidad,international_j_2021)
+national <- left_join(cantidad, national_2021)
 
-rev <- articulos_unicos_2016_2020 |> select(revista, ISSN)
+revistas <- left_join(national, international, by = "ISSN")|> 
+  mutate(revista.x = ifelse(is.na(revista.x),revista.y,revista.x),
+         categoria.x = ifelse(is.na(categoria.x),categoria.y,categoria.x)) |> 
+  select(3,1,4,2) |> 
+  rename(revista = 1, 
+         ISSN = 2, 
+         categoria = 3,
+         cantidad = 4) |> 
+  left_join(nombres, by = "ISSN") |> 
+  mutate(revista.x = ifelse(is.na(revista.x),revista.y,revista.x),
+         revista.x = str_to_upper(revista.x),
+         categoria = ifelse(is.na(categoria),"Sin clasificación en 2021",categoria)) |> 
+  rename(revista = 1) |> 
+  select(-5) |> 
+  unique()
 
-new <- full_join(rev, categ)
+revistas <- revistas[order(revistas$cantidad, decreasing = TRUE), ]
 
-count <- new |> count(ISSN) |> 
-  full_join(new, by="ISSN") |> 
-  unique(ISSN)
-
-
-revistas$porcentaje <- round(prop.table(revistas$n),3)*100 
+revistas$porcentaje <- round(prop.table(revistas$cantidad),3)*100 
 revistas |>
   mutate(porcentaje = str_c(porcentaje," %")) |> 
   datatable(options = list(pageLength = 20), 
-            colnames = c('Revista', 'Cantidad', 'Porcentajes'))
+            colnames = c('Revista', 'ISSN', 'Categoría','Cantidad', 'Porcentaje'))
 ```
 
 # Producción científica
@@ -295,13 +304,13 @@ Column {data-width=300}
 datos <- investigadores_general |> count(clasification) |> arrange(desc(clasification)) 
 p9 <- datos |> 
   plot_ly(labels= ~clasification, values=~n, type = 'pie')
-p9 <- p9 %>% layout(title = 'Categorias',
+p9 <- p9 %>% layout(title = 'Categorías',
          xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
          yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
 p9
 ```
 
-### Categoria revistas
+### Categoría revistas
 ```{r}
 dato2 <- articulos_unicos_2016_2020 |> count(categoria_revista) |>
   arrange(desc(categoria_revista)) |> 
@@ -309,7 +318,7 @@ dato2 <- articulos_unicos_2016_2020 |> count(categoria_revista) |>
            ifelse(is.na(categoria_revista),"N/A",categoria_revista))
 p10 <- dato2 |> 
   plot_ly(labels= ~categoria_revista, values=~n, type = 'pie')
-p10 <- p10 %>% layout(title = 'Categorias',
+p10 <- p10 %>% layout(title = 'Categorías',
          xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
          yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
 p10
@@ -371,7 +380,7 @@ datos_compartidos <- crosstalk::SharedData$new(data6)
 filter_select("clasification", "Grupo", datos_compartidos, ~grupo)
 ```
 
-### Categorias investigadores por grupo
+### Categorías investigadores por grupo
 ```{r}
 p0 <- datos_compartidos |> 
   plot_ly(labels= ~clasification, values=~n, type = 'pie')
