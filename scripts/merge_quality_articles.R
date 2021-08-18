@@ -2,7 +2,10 @@ merge_quality_articles_ucla <- function(articulos_unicos){
   
   journal_2016 <- read_csv("https://docs.google.com/spreadsheets/d/1ALPh_lgq6OtxgbKXRUEFEmoWcY37gfsnyTszFXbHvWw/export?format=csv&gid=1992863285") |> 
     mutate(ano = "2016",
-           categoria = ifelse(categoria == "В","B",categoria)) |> 
+           categoria = ifelse(categoria == "A1"|
+                              categoria == "A2"|
+                              categoria == "B"|
+                              categoria == "C",categoria,"B")) |> 
     unite(ISSN, c("issn_impreso","issn_electronico"), sep = ",", remove = TRUE) |> 
     separate_rows(ISSN, sep = ",") |> 
     filter(!str_detect(ISSN, "NA")) |> 
@@ -13,7 +16,10 @@ merge_quality_articles_ucla <- function(articulos_unicos){
   journal_2017_2018 <- read_csv("https://docs.google.com/spreadsheets/d/1ALPh_lgq6OtxgbKXRUEFEmoWcY37gfsnyTszFXbHvWw/export?format=csv&gid=219349269") |> 
     unite(ISSN, c("issn_impreso","issn_electronico"), sep = ",", remove = TRUE) |> 
     mutate(ano = "2017,2018,2019,2020",
-           categoria = ifelse(categoria == "В","B",categoria)) |> 
+           categoria = ifelse(categoria == "A1"|
+                                categoria == "A2"|
+                                categoria == "B"|
+                                categoria == "C",categoria,"B")) |> 
     select(-VIGENCIA) |> 
     separate_rows(ISSN, sep = ",") |> 
     separate_rows(ano , sep = ",") |> 
@@ -25,7 +31,10 @@ merge_quality_articles_ucla <- function(articulos_unicos){
   journal_2019_2020 <- read_csv("https://docs.google.com/spreadsheets/d/1ALPh_lgq6OtxgbKXRUEFEmoWcY37gfsnyTszFXbHvWw/export?format=csv&gid=758989915") |> 
     unite(ISSN, c("issn_impreso","issn_electronico", "issn_l"), sep = ",", remove = TRUE) |> 
     mutate(ano = "2019,2020,2021",
-           categoria = ifelse(categoria == "В","B",categoria)) |> 
+           categoria = ifelse(categoria == "A1"|
+                                categoria == "A2"|
+                                categoria == "B"|
+                                categoria == "C",categoria,"B")) |> 
     select(-VIGENCIA) |> 
     separate_rows(ISSN, sep = ",") |> 
     separate_rows(ano , sep = ",") |> 
