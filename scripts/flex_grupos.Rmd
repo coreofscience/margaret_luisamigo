@@ -152,11 +152,7 @@ cantidad <- articulos_unicos_2016_2020 |>
 
 national_2021 <- read_csv("https://docs.google.com/spreadsheets/d/1ALPh_lgq6OtxgbKXRUEFEmoWcY37gfsnyTszFXbHvWw/export?format=csv&gid=758989915") |> 
     unite(ISSN, c("issn_impreso","issn_electronico", "issn_l"), sep = ",", remove = TRUE) |> 
-    mutate(ano = "2021",
-           categoria = ifelse(categoria == "A1"|
-                              categoria == "A2"|
-                              categoria == "B"|
-                              categoria == "C",categoria,"B")) |> 
+    mutate(ano = "2021") |> 
     select(-VIGENCIA) |> 
     separate_rows(ISSN, sep = ",") |> 
     filter(!str_detect(ISSN, "NA")) |> 
