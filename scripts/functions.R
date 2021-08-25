@@ -2377,7 +2377,14 @@ get_posgrade_clasficitation_cvlac <- function(cvlac_url) {
            end = str_c(Month, year, sep = " "), 
            end = parse_date(end, "%B %Y", locale = locale("es"))) |> 
     filter(end <= today()) |> 
-    slice_max(end) |> 
+    mutate(ranking = if_else(posgrade == "Doctorado", 3, 
+                             if_else(posgrade == "Maestría/Magister", 2, 
+                                     if_else(posgrade == "Especialización", 1, 
+                                             0)
+                                     )
+                             )
+           ) |> 
+    slice_max(ranking) |> 
     select(posgrade) |> 
     slice(1) 
   
