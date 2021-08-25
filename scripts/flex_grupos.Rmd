@@ -129,7 +129,7 @@ investigadores_general |>
 ```
 
 
-### Paises
+### Países
 ```{r}
 paises <- articulos_unicos_2016_2020 |> 
   count(pais_revista, sort = TRUE)

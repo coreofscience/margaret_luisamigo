@@ -33,7 +33,21 @@ data_cleaning_researcher <- function(grupo_df) {
     left_join(researchers, by = c("integrantes" = "researcher")) |> 
     mutate(h_index = ifelse(is.na(h_index), 
                             0, 
-                            h_index))
+                            h_index)) |> 
+    group_by(integrantes, 
+             vinculacion, 
+             url, 
+             posgrade, 
+             clasification,
+             h_index,
+             id_scholar) |> 
+    mutate(grupo = paste0(grupo, 
+                          collapse = ", "), 
+           horas_dedicacion = paste0(horas_dedicacion, 
+                                     collapse = ", "),
+           inicio_vinculacion = paste0(inicio_vinculacion, 
+                                       collapse = "; ")) |>
+    unique()
   
   return(grupo_researcher_cleaned)
   
@@ -2363,7 +2377,14 @@ get_posgrade_clasficitation_cvlac <- function(cvlac_url) {
            end = str_c(Month, year, sep = " "), 
            end = parse_date(end, "%B %Y", locale = locale("es"))) |> 
     filter(end <= today()) |> 
-    slice_max(end) |> 
+    mutate(ranking = if_else(posgrade == "Doctorado", 3, 
+                             if_else(posgrade == "Maestría/Magister", 2, 
+                                     if_else(posgrade == "Especialización", 1, 
+                                             0)
+                                     )
+                             )
+           ) |> 
+    slice_max(ranking) |> 
     select(posgrade) |> 
     slice(1) 
   
