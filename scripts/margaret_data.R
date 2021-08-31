@@ -19,7 +19,7 @@ source(here("scripts",
 eval(parse(here("scripts/functions.R"), encoding = "UTF-8"))
 # Data outside
 
-grupos <- read_csv("https://docs.google.com/spreadsheets/d/1gBaXHFp1NTUTeXodb4JyHqY-P-AWV5yN5-p4L1O09gk/export?format=csv&gid=0") |> 
+grupos <- read_csv("https://docs.google.com/spreadsheets/d/1MT7BKbO7co8mtkuJWY6vQ1J1Vxnerkr998DmWU9hoPY/export?format=csv&gid=0") |> 
   mutate(grupo = str_to_upper(grupo),
          grupo = stri_trans_general(str = grupo,
                                     id = "Latin-ASCII"))
@@ -34,7 +34,6 @@ researchers <- read_csv("https://docs.google.com/spreadsheets/d/1gBaXHFp1NTUTeXo
   unnest_wider(result) |> 
   select(researcher, id_scholar, h_index) |> 
   mutate(h_index = if_else(is.na(h_index), 0, h_index))
-
 
 grupo_df <- data_getting_ucla(grupos)
 produccion_grupos <- data_cleaning_ucla(grupo_df)

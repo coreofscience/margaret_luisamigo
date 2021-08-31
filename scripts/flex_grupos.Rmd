@@ -23,25 +23,25 @@ articulos_unicos_2016_2020 <-
   read_csv(here("output",
                 "articulos.csv")) |> 
   filter(ano >= 2016,
-         ano <=2020)
+         ano <=2021)
 
 capitulos_2016_2020 <- 
   read_csv(here("output",
                 "capitulos.csv")) |> 
   filter(ano >= 2016,
-         ano <=2020)
+         ano <=2021)
 
 libros_2016_2020 <- 
   read_csv(here("output",
                 "libros.csv")) |> 
   filter(Ano >= 2016,
-         Ano <=2020)
+         Ano <=2021)
 
 software_2016_2020 <- 
   read_csv(here("output",
                 "softwares.csv")) |> 
   filter(ano >= 2016,
-         ano <=2020)
+         ano <=2021)
 
 trabajo_2016_2020 <- 
   read_csv(here("output",
@@ -51,13 +51,13 @@ trabajo_2016_2020 <-
          desde = str_remove(desde, "\\d.* "),
          desde = str_trim(desde)) |> 
   filter(desde >= 2016,
-         hasta <=2020)
+         hasta <=2021)
 
 innovacion_2016_2020 <- 
   read_csv(here("output",
                 "innovaciones_gestion.csv")) |> 
   filter(ano >= 2016,
-         ano <=2020)
+         ano <=2021)
 
 grupos_general <- 
   read_csv(here("output",
@@ -66,6 +66,14 @@ grupos_general <-
 investigadores_general <- 
   read_csv(here("output", 
                 "investigadores.csv"))
+
+researchers_unad <- 
+  read_csv("https://docs.google.com/spreadsheets/d/1MT7BKbO7co8mtkuJWY6vQ1J1Vxnerkr998DmWU9hoPY/export?format=csv&gid=688218271")  
+
+investigadores_general <- 
+  investigadores_general |> 
+  right_join(researchers_unad, 
+             by = c("integrantes" = "Docente"))
 ```
 
 
@@ -80,8 +88,8 @@ grupos_general |>
   select(grupo, clasificacion, sum_papers, departamento , url,
          fecha_creacion,lider, email, area_conocimiento_1) |> 
   mutate(url= str_c("<a href=",
-                     url,
-                     ">Link</a>")) |> 
+                    url,
+                    ">Link</a>")) |> 
   datatable(options = list(pageLength = 15),
             escape = FALSE,
             colnames = c("Grupo", "Clasificación", "Cantidad artículos",
@@ -112,8 +120,9 @@ investigadores_general |>
          Grupo = grupo,
          Inicio = inicio_vinculacion,
          Formacion = posgrade,
-         ) |> 
+  ) |> 
   select(Investigador,
+         centro,
          Grupo,
          Produccion,
          h_index,
@@ -124,7 +133,7 @@ investigadores_general |>
          scholar) |> 
   datatable(options = list(pageLength = 15),
             escape = FALSE,
-            colnames = c("Investigador", "Grupo", "Artículos", "H index",
+            colnames = c("Investigador", "Centro","Grupo", "Artículos", "H index",
                          "Categoría","Formación","Inicio", "CvLAC", "Scholar"))
 ```
 
@@ -151,18 +160,18 @@ cantidad <- articulos_unicos_2016_2020 |>
   select(ISSN) |> count(ISSN, sort=TRUE)
 
 national_2021 <- read_csv("https://docs.google.com/spreadsheets/d/1ALPh_lgq6OtxgbKXRUEFEmoWcY37gfsnyTszFXbHvWw/export?format=csv&gid=758989915") |> 
-    unite(ISSN, c("issn_impreso","issn_electronico", "issn_l"), sep = ",", remove = TRUE) |> 
-    mutate(ano = "2021") |> 
-    select(-VIGENCIA) |> 
-    separate_rows(ISSN, sep = ",") |> 
-    filter(!str_detect(ISSN, "NA")) |> 
-    rename(revista = 1) |> 
-    select(1,2,4,3)
+  unite(ISSN, c("issn_impreso","issn_electronico", "issn_l"), sep = ",", remove = TRUE) |> 
+  mutate(ano = "2021") |> 
+  select(-VIGENCIA) |> 
+  separate_rows(ISSN, sep = ",") |> 
+  filter(!str_detect(ISSN, "NA")) |> 
+  rename(revista = 1) |> 
+  select(1,2,4,3)
 
 international_j_2021 <- read_csv(here("output",
-                                          "international_journals_2021.csv")) |> 
-    separate_rows(ISSN, sep = "; ") |> 
-    mutate(ano = as.character(ano))
+                                      "international_journals_2021.csv")) |> 
+  separate_rows(ISSN, sep = "; ") |> 
+  mutate(ano = as.character(ano))
 
 international <- left_join(cantidad,international_j_2021)
 national <- left_join(cantidad, national_2021)
@@ -203,10 +212,10 @@ articulos_unicos_2016_2020 |>
   select(-id) |> 
   mutate(DOI = str_extract(DOI, "\\d.*")) |> 
   mutate(DOI =  str_c("<a href=","\"",
-                         "https://doi.org/",
-                         DOI,
-                         "\"",
-                         ">Enlace</a>")) |>  
+                      "https://doi.org/",
+                      DOI,
+                      "\"",
+                      ">Enlace</a>")) |>  
   datatable(options = list(pageLength = 15),
             escape = FALSE,
             colnames = c("Grupo", "Categoría", "Tipo producto",
@@ -246,8 +255,8 @@ libros_2016_2020 |>
 software_2016_2020 |>
   select(-nombre_proyecto, -tipo_producto) |> 
   mutate(sitio_web= str_c("<a href=",
-                     sitio_web,
-                     ">Link</a>")) |>
+                          sitio_web,
+                          ">Link</a>")) |>
   datatable(options = list(pageLength = 15),
             escape = FALSE,
             colnames = c("Grupo", "Categoría",
@@ -289,8 +298,8 @@ Column {data-width=300}
 data1 <- grupos_general |> count(clasificacion) |> arrange(desc(clasificacion))
 fig1 <- plot_ly(data1, x = ~clasificacion, y = ~n, type = 'bar')
 fig1 <- fig1 %>% layout(title = 'Clasificación',
-         xaxis = list(title = ""),
-         yaxis = list(title = ""))
+                        xaxis = list(title = ""),
+                        yaxis = list(title = ""))
 fig1
 ```
 
@@ -304,8 +313,8 @@ datos <- investigadores_general |> count(clasification) |> arrange(desc(clasific
 p9 <- datos |> 
   plot_ly(labels= ~clasification, values=~n, type = 'pie')
 p9 <- p9 %>% layout(title = 'Categorías',
-         xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
-         yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+                    xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+                    yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
 p9
 ```
 
@@ -317,8 +326,8 @@ dato2 <- articulos_unicos_2016_2020 |> count(categoria_revista) |>
 p10 <- dato2 |> 
   plot_ly(labels= ~categoria_revista, values=~n, type = 'pie')
 p10 <- p10 %>% layout(title = 'Categorías',
-         xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
-         yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+                      xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+                      yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
 p10
 ```
 
@@ -333,8 +342,8 @@ data3 <- articulos_unicos_2016_2020 |>
   count(ano, sort = FALSE, name = "producciones")
 fig3 <- plot_ly(data3, x = ~ano, y = ~producciones, type = 'scatter', mode = 'lines')
 fig3 <- fig3 %>% layout(title = "Producción articulos",
-         xaxis = list(title = ""),
-         yaxis = list(title = ""))
+                        xaxis = list(title = ""),
+                        yaxis = list(title = ""))
 
 fig3
 ```
@@ -347,8 +356,8 @@ data <- investigadores_general |> count(posgrade) |>
 p0 <- data |> 
   plot_ly(labels= ~formacion, values=~n, type = 'pie')
 p0 <- p0 %>% layout(title = 'Formación',
-         xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
-         yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+                    xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+                    yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
 p0
 ```
 
@@ -368,7 +377,7 @@ data5 <- investigadores_general |> select(grupo , posgrade) |>
 libre <- tibble(grupo= c("N/A","N/A","N/A","N/A","N/A"),
                 formacion = c("N/A","N/A","N/A","N/A","N/A"),
                 m = c(0,0,0,0,0))
-  
+
 data <- rbind(data5, libre) |> 
   rename(clasification = 2)
 
@@ -413,7 +422,7 @@ filter_select("Produccion", "Produccion anual por Grupo", datos_anual, ~grupo)
 p1 <- datos_anual |> 
   plot_ly(x = ~ano, y = ~producciones, type = 'bar')
 p1 <- p1 %>% layout(title = "Produccion articulos",
-         xaxis = list(title = ""),
-         yaxis = list(title = ""))
+                    xaxis = list(title = ""),
+                    yaxis = list(title = ""))
 p1
 ```

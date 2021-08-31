@@ -42,9 +42,9 @@ data_cleaning_researcher <- function(grupo_df) {
              h_index,
              id_scholar) |> 
     mutate(grupo = paste0(grupo, 
-                          collapse = ", "), 
+                          collapse = "; "), 
            horas_dedicacion = paste0(horas_dedicacion, 
-                                     collapse = ", "),
+                                     collapse = "; "),
            inicio_vinculacion = paste0(inicio_vinculacion, 
                                        collapse = "; ")) |>
     unique()
