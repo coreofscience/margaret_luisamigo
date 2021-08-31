@@ -1,5 +1,28 @@
 merge_quality_articles_ucla <- function(articulos_unicos){
   
+  devtools::install_github("ikashnitsky/sjrdata")
+  library(sjrdata)
+  
+  scimago_2020 <- read_csv2(here("output",
+                                "scimago2020.csv")) |> 
+    separate_rows(Issn, sep = ", ")|>
+    rename("ISSN" = Issn,
+           "SJR_Q"= 7) |> 
+    select(ISSN,SJR_Q) |> 
+    mutate(ano = 2020)
+  
+  scimago_data <-  sjr_journals |> 
+    filter(year>=2016) |> 
+    separate_rows(issn, sep = ", ") |> 
+    select(year, issn,sjr_best_quartile) |> 
+    rename("ISSN" = issn,
+           "ano" = year,
+           "SJR_Q"= sjr_best_quartile) |> 
+    rbind(scimago_2020) |> 
+    mutate(i1 = substr(ISSN, 1,4),
+           i2 = substr(ISSN, 5,8)) |>
+    unite(ISSN, c("i1","i2"), sep = "-", remove = TRUE)
+  
   journal_2016_2017 <- read_csv("https://docs.google.com/spreadsheets/d/1ALPh_lgq6OtxgbKXRUEFEmoWcY37gfsnyTszFXbHvWw/export?format=csv&gid=279750741") |> 
     mutate(ano = "2016,2017") |>
     separate_rows(ano, sep = ",") |> 
@@ -64,8 +87,12 @@ merge_quality_articles_ucla <- function(articulos_unicos){
            "categoria_revista" = categoria.y)
   
   articulos_national <- articulos |> filter(!is.na(categoria_revista)) 
-  articulos_unicos <- rbind(articulos_national, articulos_df) |> 
-    group_by(grupo) |> arrange(desc(grupo)) |> 
-    mutate(categoria_revista = ifelse(is.na(categoria_revista),"Sin categoria",categoria_revista))
+  articulos_unicos <- rbind(articulos_national, articulos_df)  |> 
+    left_join(scimago_data, by = c("ano", "ISSN")) |> 
+    select(1:8,16,8:15) |> 
+    group_by(grupo) |> arrange(desc(grupo))|> 
+    mutate(categoria_revista = ifelse(is.na(categoria_revista),"Sin categoria",categoria_revista),
+           SJR_Q = ifelse(is.na(SJR_Q),"Sin categoria",SJR_Q))
+  
   return(articulos_unicos)
 }
