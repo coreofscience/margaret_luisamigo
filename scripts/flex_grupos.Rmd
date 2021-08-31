@@ -66,6 +66,11 @@ grupos_general <-
 investigadores_general <- 
   read_csv(here("output", 
                 "investigadores.csv"))
+
+revistas_actuales <-
+  read_csv(here("output", 
+                "current_journals.csv"))
+
 ```
 
 
@@ -143,53 +148,11 @@ paises |>
 
 ### Revistas
 ```{r}
-nombres <- articulos_unicos_2016_2020 |> 
-  select(ISSN, revista) |> 
-  unique()
-
-cantidad <- articulos_unicos_2016_2020 |> 
-  select(ISSN) |> count(ISSN, sort=TRUE)
-
-national_2021 <- read_csv("https://docs.google.com/spreadsheets/d/1ALPh_lgq6OtxgbKXRUEFEmoWcY37gfsnyTszFXbHvWw/export?format=csv&gid=758989915") |> 
-    unite(ISSN, c("issn_impreso","issn_electronico", "issn_l"), sep = ",", remove = TRUE) |> 
-    mutate(ano = "2021") |> 
-    select(-VIGENCIA) |> 
-    separate_rows(ISSN, sep = ",") |> 
-    filter(!str_detect(ISSN, "NA")) |> 
-    rename(revista = 1) |> 
-    select(1,2,4,3)
-
-international_j_2021 <- read_csv(here("output",
-                                          "international_journals_2021.csv")) |> 
-    separate_rows(ISSN, sep = "; ") |> 
-    mutate(ano = as.character(ano))
-
-international <- left_join(cantidad,international_j_2021)
-national <- left_join(cantidad, national_2021)
-
-revistas <- left_join(national, international, by = "ISSN")|> 
-  mutate(revista.x = ifelse(is.na(revista.x),revista.y,revista.x),
-         categoria.x = ifelse(is.na(categoria.x),categoria.y,categoria.x)) |> 
-  select(3,1,4,2) |> 
-  rename(revista = 1, 
-         ISSN = 2, 
-         categoria = 3,
-         cantidad = 4) |> 
-  left_join(nombres, by = "ISSN") |> 
-  mutate(revista.x = ifelse(is.na(revista.x),revista.y,revista.x),
-         revista.x = str_to_upper(revista.x),
-         categoria = ifelse(is.na(categoria),"Sin clasificación en 2021",categoria)) |> 
-  rename(revista = 1) |> 
-  select(-5) |> 
-  unique()
-
-revistas <- revistas[order(revistas$cantidad, decreasing = TRUE), ]
-
-revistas$porcentaje <- round(prop.table(revistas$cantidad),3)*100 
-revistas |>
-  mutate(porcentaje = str_c(porcentaje," %")) |> 
+revistas_actuales |>
+  mutate(porcentaje = str_c(porcentaje," %")) |>  
   datatable(options = list(pageLength = 20), 
-            colnames = c('Revista', 'ISSN', 'Categoría','Cantidad', 'Porcentaje'))
+            colnames = c('Revista', 'ISSN', 'Categoría Publindex',
+                         'Categoría Scimago','Cantidad', 'Porcentaje'))
 ```
 
 # Producción científica
@@ -211,7 +174,7 @@ articulos_unicos_2016_2020 |>
             escape = FALSE,
             colnames = c("Grupo", "Categoría", "Tipo producto",
                          "Título", "País revista", "Revista", 
-                         "ISSN","Casiflicación Revista", "Año", "Volumen",
+                         "ISSN","Casiflicación Revista", "Clasificación Scimago", "Año", "Volumen",
                          "Fasc","Paginas", "Enlace artículo", "Autores"))
 ```
 
