@@ -55,6 +55,11 @@ shiny_data <- data_analysis_descriptive_ucla(produccion_actualizada)
 
 export_csv(shiny_data)
 
+# Current Journals categories for flex_dashboard
+source(here("scripts",
+            "current_categories.R"))
+
+
 # This code save produccion_grupos in an excel file
 
 wb <- createWorkbook()
