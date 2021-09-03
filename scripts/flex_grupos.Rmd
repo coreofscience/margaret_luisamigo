@@ -111,7 +111,7 @@ investigadores_general |>
   select(-vinculacion,
          -fin_vinculacion) |> 
   rename(Investigador = integrantes,
-         Produccion = total_papers,
+         Produccion = count_papers,
          Horas = horas_dedicacion,
          CvLAC = url,
          Grupo = grupo,
@@ -175,7 +175,7 @@ articulos_unicos_2016_2020 |>
             colnames = c("Grupo", "Categoría", "Tipo producto",
                          "Título", "País revista", "Revista", 
                          "ISSN","Casiflicación Revista", "Clasificación Scimago", "Año", "Volumen",
-                         "Fasc","Paginas", "Enlace artículo", "Autores"))
+                         "Fasc","Páginas", "Enlace artículo", "Autores"))
 ```
 
 ### Capítulos
@@ -187,7 +187,7 @@ capitulos_2016_2020 |>
             escape = FALSE,
             colnames = c("Grupo", "Categoría",
                          "Título capitulo", "País", "Año", 
-                         "Titulo libro","ISBN", "Paginas", "Editorial",
+                         "Titulo libro","ISBN", "Páginas", "Editorial",
                          "Autores"))
 ```
 
@@ -292,7 +292,7 @@ Column {data-width=300}
 ### Evolución temporal
 ```{r}
 data3 <- articulos_unicos_2016_2020 |> 
-  select(categoria, ano, grupo) |> 
+  select(categoria_revista, ano, grupo) |> 
   count(ano, sort = FALSE, name = "producciones")
 fig3 <- plot_ly(data3, x = ~ano, y = ~producciones, type = 'scatter', mode = 'lines')
 fig3 <- fig3 %>% layout(title = "Producción articulos",
@@ -365,7 +365,7 @@ column {data-width=500}
 -----------------------------------
 ```{r}
 data7 <- articulos_unicos_2016_2020 |> 
-  select(categoria, ano, grupo) |> 
+  select(categoria_revista, ano, grupo) |> 
   count(ano, grupo, sort = FALSE, name = "producciones")
 datos_anual <- crosstalk::SharedData$new(data7)
 filter_select("Produccion", "Produccion anual por Grupo", datos_anual, ~grupo)
