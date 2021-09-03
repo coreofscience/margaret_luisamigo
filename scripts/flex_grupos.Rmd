@@ -23,8 +23,7 @@ articulos_unicos_2016_2020 <-
   read_csv(here("output",
                 "articulos.csv")) |> 
   filter(ano >= 2016,
-         ano <=2020) |> 
-  rename(categoria_revista = categoria)
+         ano <=2020)
 
 capitulos_2016_2020 <- 
   read_csv(here("output",
@@ -176,7 +175,7 @@ articulos_unicos_2016_2020 |>
             colnames = c("Grupo", "Categoría", "Tipo producto",
                          "Título", "País revista", "Revista", 
                          "ISSN","Casiflicación Revista", "Clasificación Scimago", "Año", "Volumen",
-                         "Fasc","Paginas", "Enlace artículo", "Autores"))
+                         "Fasc","Páginas", "Enlace artículo", "Autores"))
 ```
 
 ### Capítulos
@@ -188,7 +187,7 @@ capitulos_2016_2020 |>
             escape = FALSE,
             colnames = c("Grupo", "Categoría",
                          "Título capitulo", "País", "Año", 
-                         "Titulo libro","ISBN", "Paginas", "Editorial",
+                         "Titulo libro","ISBN", "Páginas", "Editorial",
                          "Autores"))
 ```
 
