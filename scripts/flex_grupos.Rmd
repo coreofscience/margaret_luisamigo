@@ -47,7 +47,8 @@ capitulos_2016_2020_author <-
   right_join(researchers_unad, # Filtering authors from Vivi's file
              by = c("autores" = "Docente")) |> 
   filter(!is.na(grupo)) |> 
-  right_join(investigadores_general, 
+  right_join(investigadores_general |> 
+               separate_rows(grupo, sep = "; "), 
              by = c("grupo" = "grupo", 
                     "autores" = "integrantes")) |> # Filtering active users
   group_by(grupo, autores) |>
@@ -74,7 +75,8 @@ libros_2016_2020_author <-
   right_join(researchers_unad, # Filtering authors from Vivi's file
              by = c("Autores" = "Docente")) |> 
   filter(!is.na(grupo)) |> 
-  right_join(investigadores_general, 
+  right_join(investigadores_general |> 
+               separate_rows(grupo, sep = "; "), 
              by = c("grupo" = "grupo", 
                     "Autores" = "integrantes")) |> # Filtering active users
   group_by(grupo, Autores) |>
@@ -101,7 +103,8 @@ software_2016_2020_author <-
   right_join(researchers_unad, # Filtering authors from Vivi's file
              by = c("autores" = "Docente")) |> 
   filter(!is.na(grupo)) |> 
-  right_join(investigadores_general, 
+  right_join(investigadores_general |> 
+               separate_rows(grupo, sep = "; "), 
              by = c("grupo" = "grupo", 
                     "autores" = "integrantes")) |> # Filtering active users
   group_by(grupo, autores) |>
@@ -132,11 +135,13 @@ trabajo_2016_2020_author <-
   right_join(researchers_unad, # Filtering authors from Vivi's file
              by = c("tutor_coautor" = "Docente")) |> 
   filter(!is.na(grupo)) |> 
-  right_join(investigadores_general, 
+  right_join(investigadores_general |> 
+               separate_rows(grupo, sep = "; "), 
              by = c("grupo" = "grupo", 
                     "tutor_coautor" = "integrantes")) |> # Filtering active users
   group_by(grupo, tutor_coautor) |>
-  select(grupo, tutor_coautor, titulo) |> 
+  select(grupo, tutor_coautor, titulo) |>
+  filter(!is.na(titulo)) |> 
   unique() |> 
   select(grupo, tutor_coautor) |> 
   count(tutor_coautor) |> 
@@ -159,19 +164,19 @@ innovacion_2016_2020_author <-
   right_join(researchers_unad, # Filtering authors from Vivi's file
              by = c("autores" = "Docente")) |> 
   filter(!is.na(grupo)) |> 
-  right_join(investigadores_general, 
+  right_join(investigadores_general |> 
+               separate_rows(grupo, sep = "; "), 
              by = c("grupo" = "grupo", 
                     "autores" = "integrantes")) |> # Filtering active users
   group_by(grupo, autores) |>
   select(grupo, autores, titulo) |> 
+  mutate(titulo = replace_na(titulo, 
+                             replace = 0)) |>
   unique() |> 
-  select(grupo, autores) |> 
-  count(autores) |> 
-  group_by(autores) |> 
   mutate(grupo = paste0(grupo, collapse = "; "),
-         n = paste0(n, collapse = "; ")) |> 
+         titulo = paste0(titulo, collapse = "; ")) |> 
   unique() |> 
-  rename(innovaciones = n) 
+  rename(innovaciones = titulo) 
 
 grupos_general <- 
   read_csv(here("output",
@@ -181,23 +186,33 @@ revistas_actuales <-
   read_csv(here("output", 
                 "current_journals.csv"))
 
-investigadores_general_1 <- 
+investigadores_general <- 
   investigadores_general |> 
-  right_join(capitulos_2016_2020_author, 
+  separate_rows(grupo, sep = "; ") |> 
+  right_join(capitulos_2016_2020_author |> 
+               separate_rows(grupo, sep = "; "), 
              by = c("integrantes" = "autores", 
                     "grupo" = "grupo")) |> 
-  right_join(libros_2016_2020_author, 
+  right_join(libros_2016_2020_author |> 
+               separate_rows(grupo, sep = "; "), 
              by = c("integrantes" = "Autores", 
                     "grupo" = "grupo")) |> 
-  right_join(software_2016_2020_author, 
+  right_join(software_2016_2020_author |> 
+               separate_rows(grupo, sep = "; "), 
              by = c("integrantes" = "autores", 
                     "grupo" = "grupo"))  |> 
-  right_join(trabajo_2016_2020_author, 
+  right_join(trabajo_2016_2020_author |> 
+               separate_rows(grupo, sep = "; "), 
              by = c("integrantes" = "tutor_coautor", 
                     "grupo" = "grupo")) |> 
-  right_join(innovacion_2016_2020_author, 
+  right_join(innovacion_2016_2020_author |> 
+               separate_rows(grupo, sep = "; "), 
              by = c("integrantes" = "autores", 
-                    "grupo" = "grupo")) 
+                    "grupo" = "grupo")) |> 
+  group_by(integrantes) |> 
+  mutate(grupo = paste0(grupo, collapse = "; ")) |> 
+  unique() |> 
+  filter(!duplicated(integrantes))
 
 
 
@@ -241,7 +256,7 @@ investigadores_general |>
   select(-vinculacion,
          -fin_vinculacion) |> 
   rename(Investigador = integrantes,
-         Produccion = count_papers,
+         Articulos = count_papers,
          Horas = horas_dedicacion,
          CvLAC = url,
          Grupo = grupo,
@@ -250,7 +265,13 @@ investigadores_general |>
   ) |> 
   select(Investigador,
          Grupo,
-         Produccion,
+         centro,
+         Articulos,
+         capitulos, 
+         libros,
+         softwares,
+         trabajos_grado,
+         innovaciones,
          h_index,
          clasification,
          Formacion,
@@ -259,7 +280,7 @@ investigadores_general |>
          scholar) |> 
   datatable(options = list(pageLength = 15),
             escape = FALSE,
-            colnames = c("Investigador", "Grupo", "Artículos", "H index",
+            colnames = c("Investigador", "Grupo", "Centro","Artículos", "Capítulos", "Libros", "Softwares", "Trabajos de Grado", "Innovaciones", "H index",
                          "Categoría","Formación","Inicio", "CvLAC", "Scholar"))
 ```
 
