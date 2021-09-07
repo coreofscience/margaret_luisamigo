@@ -46,7 +46,7 @@ articulos_unicos <- data_tidying_ucla(produccion_grupos)
 articulos_unicos <- merge_quality_articles_ucla(articulos_unicos) 
 
 produccion_actualizada <- produccion_grupos
-produccion_actualizada[[2]][["articulos"]]<- articulos_unicos
+produccion_actualizada[[2]][["articulos"]] <- articulos_unicos
 produccion_actualizada[[2]][["Eliminados_por_grupo"]] <- df_eliminados_total
 produccion_actualizada[[2]][["Similares_entre_grupo"]] <- df_similares_total_grupos
 
