@@ -19,29 +19,101 @@ library(stringi)
 ```
 
 ```{r global}
+researchers_unad <- 
+  read_csv("https://docs.google.com/spreadsheets/d/1MT7BKbO7co8mtkuJWY6vQ1J1Vxnerkr998DmWU9hoPY/export?format=csv&gid=688218271")
+
+investigadores_general <- 
+  read_csv(here("output", 
+                "investigadores.csv")) |> 
+  right_join(researchers_unad, 
+             by = c("integrantes" = "Docente"))
+
 articulos_unicos_2016_2020 <- 
   read_csv(here("output",
                 "articulos.csv")) |> 
   filter(ano >= 2016,
-         ano <=2020)
+         ano <=2021)
 
 capitulos_2016_2020 <- 
   read_csv(here("output",
                 "capitulos.csv")) |> 
   filter(ano >= 2016,
-         ano <=2020)
+         ano <=2021)
+
+capitulos_2016_2020_author <- 
+  capitulos_2016_2020 |> 
+  separate_rows(autores, 
+                sep = ", ") |> 
+  right_join(researchers_unad, # Filtering authors from Vivi's file
+             by = c("autores" = "Docente")) |> 
+  filter(!is.na(grupo)) |> 
+  right_join(investigadores_general, 
+             by = c("grupo" = "grupo", 
+                    "autores" = "integrantes")) |> # Filtering active users
+  group_by(grupo, autores) |>
+  select(grupo, autores, titulo_capitulo) |> 
+  unique() |> 
+  select(grupo, autores) |> 
+  count(autores) |> 
+  group_by(autores) |> 
+  mutate(grupo = paste0(grupo, collapse = "; "),
+         n = paste0(n, collapse = "; ")) |> 
+  unique() |> 
+  rename(capitulos = n)
 
 libros_2016_2020 <- 
   read_csv(here("output",
                 "libros.csv")) |> 
   filter(Ano >= 2016,
-         Ano <=2020)
+         Ano <=2021)
+
+libros_2016_2020_author <- 
+  libros_2016_2020 |> 
+  separate_rows(Autores, 
+                sep = ", ") |> 
+  right_join(researchers_unad, # Filtering authors from Vivi's file
+             by = c("Autores" = "Docente")) |> 
+  filter(!is.na(grupo)) |> 
+  right_join(investigadores_general, 
+             by = c("grupo" = "grupo", 
+                    "Autores" = "integrantes")) |> # Filtering active users
+  group_by(grupo, Autores) |>
+  select(grupo, Autores, Titulo) |> 
+  unique() |> 
+  select(grupo, Autores) |> 
+  count(Autores) |> 
+  group_by(Autores) |> 
+  mutate(grupo = paste0(grupo, collapse = "; "),
+         n = paste0(n, collapse = "; ")) |> 
+  unique() |> 
+  rename(libros = n) 
 
 software_2016_2020 <- 
   read_csv(here("output",
                 "softwares.csv")) |> 
   filter(ano >= 2016,
-         ano <=2020)
+         ano <=2021)
+
+software_2016_2020_author <- 
+  software_2016_2020 |> 
+  separate_rows(autores, 
+                sep = ", ") |> 
+  right_join(researchers_unad, # Filtering authors from Vivi's file
+             by = c("autores" = "Docente")) |> 
+  filter(!is.na(grupo)) |> 
+  right_join(investigadores_general, 
+             by = c("grupo" = "grupo", 
+                    "autores" = "integrantes")) |> # Filtering active users
+  group_by(grupo, autores) |>
+  select(grupo, autores, titulo) |> 
+  unique() |> 
+  select(grupo, autores) |> 
+  count(autores) |> 
+  group_by(autores) |> 
+  mutate(grupo = paste0(grupo, collapse = "; "),
+         n = paste0(n, collapse = "; ")) |> 
+  unique() |> 
+  rename(softwares = n) 
 
 trabajo_2016_2020 <- 
   read_csv(here("output",
@@ -51,25 +123,83 @@ trabajo_2016_2020 <-
          desde = str_remove(desde, "\\d.* "),
          desde = str_trim(desde)) |> 
   filter(desde >= 2016,
-         hasta <=2020)
+         hasta <=2021)
+
+trabajo_2016_2020_author <- 
+  trabajo_2016_2020 |> 
+  separate_rows(tutor_coautor, 
+                sep = ", ") |> 
+  right_join(researchers_unad, # Filtering authors from Vivi's file
+             by = c("tutor_coautor" = "Docente")) |> 
+  filter(!is.na(grupo)) |> 
+  right_join(investigadores_general, 
+             by = c("grupo" = "grupo", 
+                    "tutor_coautor" = "integrantes")) |> # Filtering active users
+  group_by(grupo, tutor_coautor) |>
+  select(grupo, tutor_coautor, titulo) |> 
+  unique() |> 
+  select(grupo, tutor_coautor) |> 
+  count(tutor_coautor) |> 
+  group_by(tutor_coautor) |> 
+  mutate(grupo = paste0(grupo, collapse = "; "),
+         n = paste0(n, collapse = "; ")) |> 
+  unique() |> 
+  rename(trabajos_grado = n) 
 
 innovacion_2016_2020 <- 
   read_csv(here("output",
                 "innovaciones_gestion.csv")) |> 
   filter(ano >= 2016,
-         ano <=2020)
+         ano <=2021)
+
+innovacion_2016_2020_author <- 
+  innovacion_2016_2020 |> 
+  separate_rows(autores, 
+                sep = ", ") |> 
+  right_join(researchers_unad, # Filtering authors from Vivi's file
+             by = c("autores" = "Docente")) |> 
+  filter(!is.na(grupo)) |> 
+  right_join(investigadores_general, 
+             by = c("grupo" = "grupo", 
+                    "autores" = "integrantes")) |> # Filtering active users
+  group_by(grupo, autores) |>
+  select(grupo, autores, titulo) |> 
+  unique() |> 
+  select(grupo, autores) |> 
+  count(autores) |> 
+  group_by(autores) |> 
+  mutate(grupo = paste0(grupo, collapse = "; "),
+         n = paste0(n, collapse = "; ")) |> 
+  unique() |> 
+  rename(innovaciones = n) 
 
 grupos_general <- 
   read_csv(here("output",
                 "grupos_general.csv"))
 
-investigadores_general <- 
-  read_csv(here("output", 
-                "investigadores.csv"))
-
 revistas_actuales <-
   read_csv(here("output", 
                 "current_journals.csv"))
+
+investigadores_general_1 <- 
+  investigadores_general |> 
+  right_join(capitulos_2016_2020_author, 
+             by = c("integrantes" = "autores", 
+                    "grupo" = "grupo")) |> 
+  right_join(libros_2016_2020_author, 
+             by = c("integrantes" = "Autores", 
+                    "grupo" = "grupo")) |> 
+  right_join(software_2016_2020_author, 
+             by = c("integrantes" = "autores", 
+                    "grupo" = "grupo"))  |> 
+  right_join(trabajo_2016_2020_author, 
+             by = c("integrantes" = "tutor_coautor", 
+                    "grupo" = "grupo")) |> 
+  right_join(innovacion_2016_2020_author, 
+             by = c("integrantes" = "autores", 
+                    "grupo" = "grupo")) 
+
+
 
 ```
 
@@ -85,8 +215,8 @@ grupos_general |>
   select(grupo, clasificacion, sum_papers, departamento , url,
          fecha_creacion,lider, email, area_conocimiento_1) |> 
   mutate(url= str_c("<a href=",
-                     url,
-                     ">Link</a>")) |> 
+                    url,
+                    ">Link</a>")) |> 
   datatable(options = list(pageLength = 15),
             escape = FALSE,
             colnames = c("Grupo", "Clasificación", "Cantidad artículos",
@@ -117,7 +247,7 @@ investigadores_general |>
          Grupo = grupo,
          Inicio = inicio_vinculacion,
          Formacion = posgrade,
-         ) |> 
+  ) |> 
   select(Investigador,
          Grupo,
          Produccion,
@@ -166,10 +296,10 @@ articulos_unicos_2016_2020 |>
   select(-id) |> 
   mutate(DOI = str_extract(DOI, "\\d.*")) |> 
   mutate(DOI =  str_c("<a href=","\"",
-                         "https://doi.org/",
-                         DOI,
-                         "\"",
-                         ">Enlace</a>")) |>  
+                      "https://doi.org/",
+                      DOI,
+                      "\"",
+                      ">Enlace</a>")) |>  
   datatable(options = list(pageLength = 15),
             escape = FALSE,
             colnames = c("Grupo", "Categoría", "Tipo producto",
@@ -209,8 +339,8 @@ libros_2016_2020 |>
 software_2016_2020 |>
   select(-nombre_proyecto, -tipo_producto) |> 
   mutate(sitio_web= str_c("<a href=",
-                     sitio_web,
-                     ">Link</a>")) |>
+                          sitio_web,
+                          ">Link</a>")) |>
   datatable(options = list(pageLength = 15),
             escape = FALSE,
             colnames = c("Grupo", "Categoría",
@@ -252,8 +382,8 @@ Column {data-width=300}
 data1 <- grupos_general |> count(clasificacion) |> arrange(desc(clasificacion))
 fig1 <- plot_ly(data1, x = ~clasificacion, y = ~n, type = 'bar')
 fig1 <- fig1 %>% layout(title = 'Clasificación',
-         xaxis = list(title = ""),
-         yaxis = list(title = ""))
+                        xaxis = list(title = ""),
+                        yaxis = list(title = ""))
 fig1
 ```
 
@@ -267,8 +397,8 @@ datos <- investigadores_general |> count(clasification) |> arrange(desc(clasific
 p9 <- datos |> 
   plot_ly(labels= ~clasification, values=~n, type = 'pie')
 p9 <- p9 %>% layout(title = 'Categorías',
-         xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
-         yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+                    xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+                    yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
 p9
 ```
 
@@ -280,8 +410,8 @@ dato2 <- articulos_unicos_2016_2020 |> count(categoria_revista) |>
 p10 <- dato2 |> 
   plot_ly(labels= ~categoria_revista, values=~n, type = 'pie')
 p10 <- p10 %>% layout(title = 'Categorías',
-         xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
-         yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+                      xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+                      yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
 p10
 ```
 
@@ -296,8 +426,8 @@ data3 <- articulos_unicos_2016_2020 |>
   count(ano, sort = FALSE, name = "producciones")
 fig3 <- plot_ly(data3, x = ~ano, y = ~producciones, type = 'scatter', mode = 'lines')
 fig3 <- fig3 %>% layout(title = "Producción articulos",
-         xaxis = list(title = ""),
-         yaxis = list(title = ""))
+                        xaxis = list(title = ""),
+                        yaxis = list(title = ""))
 
 fig3
 ```
@@ -310,8 +440,8 @@ data <- investigadores_general |> count(posgrade) |>
 p0 <- data |> 
   plot_ly(labels= ~formacion, values=~n, type = 'pie')
 p0 <- p0 %>% layout(title = 'Formación',
-         xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
-         yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+                    xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+                    yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
 p0
 ```
 
@@ -331,7 +461,7 @@ data5 <- investigadores_general |> select(grupo , posgrade) |>
 libre <- tibble(grupo= c("N/A","N/A","N/A","N/A","N/A"),
                 formacion = c("N/A","N/A","N/A","N/A","N/A"),
                 m = c(0,0,0,0,0))
-  
+
 data <- rbind(data5, libre) |> 
   rename(clasification = 2)
 
@@ -376,7 +506,7 @@ filter_select("Produccion", "Produccion anual por Grupo", datos_anual, ~grupo)
 p1 <- datos_anual |> 
   plot_ly(x = ~ano, y = ~producciones, type = 'bar')
 p1 <- p1 %>% layout(title = "Produccion articulos",
-         xaxis = list(title = ""),
-         yaxis = list(title = ""))
+                    xaxis = list(title = ""),
+                    yaxis = list(title = ""))
 p1
 ```
