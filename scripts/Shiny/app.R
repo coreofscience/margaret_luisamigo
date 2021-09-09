@@ -64,18 +64,40 @@ innovacion_2016_2020 <-
 #fin
 
 #dataframe filtros
-grupos <- articulos_unicos_2016_2020 |> 
-    select(grupo) |> 
-    unique()
+#filtro grupo
+grupos <- articulos_unicos_2016_2020 |>
+  select(grupo) |>
+  unique()
+#filtro temporal, ya que solo funciona con 2 graficas
+data4 <- investigadores_general |> select(grupo , clasification) |> 
+  group_by(grupo, clasification) |> 
+  summarise(n = n())
 
+data5 <- investigadores_general |> select(grupo , posgrade) |> 
+  group_by(grupo, posgrade) |> 
+  summarise(n = n()) |> 
+  rename(m = n,
+         formacion = posgrade)
+libre <- tibble(grupo= c("N/A","N/A","N/A","N/A","N/A"),
+                formacion = c("N/A","N/A","N/A","N/A","N/A"),
+                m = c(0,0,0,0,0))
+
+data <- rbind(data5, libre) |> 
+  rename(clasification = 2)
+
+data6 <- merge(data, data4, by = c("grupo", "clasification"), all = TRUE) 
+
+datos_compartidos <- crosstalk::SharedData$new(data6)
 #-----------------------------------------------------------------------------------------------------
 #Inicio
 sidebar <- dashboardSidebar(
-    selectInput("grupos", "Grupos:", 
-                c(grupos$grupo)),
+  filter_select("clasification", "Grupo", datos_compartidos, ~grupo),
+  
+  # selectInput("grupos_input","Grupos:", 
+  #             c(grupos$grupo))
   sidebarMenu(
-    menuItem("General", tabName = "general", icon = icon("dashboard")),
-    menuItem("Producción cientifica", icon = icon("th"), tabName = "produccion"),
+    menuItem("General", tabName = "general", icon = icon("atlas")),
+    menuItem("Producción cientifica", icon = icon("book"), tabName = "produccion"),
     menuItem("Grupos en cifras", icon = icon("bar-chart-o"),
              menuSubItem("Clasificación grupos", tabName = "clasi_grupos"),
              menuSubItem("Clasificación investigadores", tabName = "clasi_inves"),
@@ -86,11 +108,14 @@ sidebar <- dashboardSidebar(
     menuItem("Rpubs", icon = icon("file-code-o"),
              href = "https://rpubs.com/srobledog/margaret_7"
     )
+  ),
+  mainPanel(
+    textOutput("grupos_input")
   )
 )
 
 setup <- dashboardBody(
-    tabItems(
+    tabItems( 
         tabItem(tabName = "general",
     tabsetPanel(type = "tabs",
                 tabPanel("Grupos", fluidPage((DT::dataTableOutput('ex1'))
@@ -139,8 +164,9 @@ ui <- dashboardPage(
 )
 
 server <- function(input, output) {
-    
+  
     output$graf1 <- renderPlotly({
+      
         data1 <- grupos_general |> 
             count(clasificacion) |> 
             arrange(desc(clasificacion))
@@ -155,8 +181,8 @@ server <- function(input, output) {
             count(clasification) |> 
             arrange(desc(clasification)) 
         
-        fig2 <- plot_ly(datos2, labels= ~clasification, values=~n, type = 'pie')
-        fig2 <- fig2 %>% layout(title = 'Clasificación investigadores general',
+        fig2 <- datos_compartidos |> plot_ly(labels= ~clasification, values=~n, type = 'pie')
+        fig2 <- fig2 %>% layout(title = 'Clasificación investigadores',
                                 xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
                                 yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
         
@@ -189,13 +215,12 @@ server <- function(input, output) {
             arrange(desc(posgrade)) |> 
             rename(formacion = 1)
         
-        fig5 <- plot_ly(data5,labels= ~formacion, values=~n, type = 'pie')
-        fig5 <- fig5 %>% layout(title = 'Formación investigadores general',
+        fig5 <- datos_compartidos |>  plot_ly(labels= ~clasification, values=~n, type = 'pie')
+        fig5 <- fig5 %>% layout(title = 'Formación investigadores',
                                 xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
                                 yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
         
     })
-    
     
     output$ex1 <- DT::renderDataTable({
         grupos_general <- grupos_general |> 
