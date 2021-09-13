@@ -319,11 +319,13 @@ p0
 column {data-width=500}
 -----------------------------------
 ```{r}
-data4 <- investigadores_general |> select(grupo , clasification) |> 
+data4 <- investigadores_general |> select(grupo , clasification)|> 
+  separate_rows(grupo, sep = "; ") |> 
   group_by(grupo, clasification) |> 
   summarise(n = n())
 
 data5 <- investigadores_general |> select(grupo , posgrade) |> 
+  separate_rows(grupo, sep = "; ") |>
   group_by(grupo, posgrade) |> 
   summarise(n = n()) |> 
   rename(m = n,
