@@ -229,13 +229,14 @@ server <- function(input, output) {
             mutate(url= str_c("<a href=",
                               url,
                               ">Link</a>")) |> 
-            datatable(filter = 'top', options = list(columnDefs = list(list(className = 'dt-center', targets = 5)),
-                                                     pageLength = 15),
+            datatable(filter = 'top', options = list(pageLength = 15, scrollX = TRUE),
                       escape = FALSE,
+                      rownames = FALSE,
                       colnames = c("Grupo", "Clasificación", "Cantidad artículos",
                                    "Departamento","GrupLAC", 
                                    "Fecha Creación", "Líder", "Email", 
-                                   "Área de Conocimiento"))
+                                   "Área de Conocimiento"),
+                      class = 'cell-border stripe')
     })
     
     output$ex2 <- DT::renderDataTable({
@@ -269,10 +270,12 @@ server <- function(input, output) {
                    Inicio,
                    CvLAC,
                    scholar) |> 
-            datatable(filter = 'top', options = list(pageLength = 15),
+            datatable(filter = 'top', options = list(pageLength = 15, scrollX = TRUE),
                       escape = FALSE,
+                      rownames = FALSE,
                       colnames = c("Investigador", "Grupo", "Artículos", "H index",
-                                   "Categoría","Formación","Inicio", "CvLAC", "Scholar"))
+                                   "Categoría","Formación","Inicio", "CvLAC", "Scholar"),
+                      class = 'cell-border stripe')
     })
     
     output$ex3 <- DT::renderDataTable({
@@ -282,16 +285,20 @@ server <- function(input, output) {
                    pais_revista = if_else(is.na(pais_revista), "No registra", pais_revista)) |> 
             datatable(options = list(pageLength = 15),
                       escape = FALSE,
-                      colnames = c("País", "Cantidad", "Porcentaje"))
+                      rownames = FALSE,
+                      colnames = c("País", "Cantidad", "Porcentaje"),
+                      class = 'cell-border stripe')
     })
     
     output$ex4 <- DT::renderDataTable({
         
         revistas_actuales <- revistas_actuales |> 
             mutate(porcentaje = str_c(porcentaje," %")) |>  
-            datatable(filter = 'top',options = list(pageLength = 20), 
+            datatable(filter = 'top',options = list(pageLength = 20, scrollX = TRUE), 
+                      rownames = FALSE,
                       colnames = c('Revista', 'ISSN', 'Categoría Publindex',
-                                   'Categoría Scimago','Cantidad', 'Porcentaje'))
+                                   'Categoría Scimago','Cantidad', 'Porcentaje'),
+                      class = 'cell-border stripe')
     })
     
     output$articulo <- DT::renderDataTable({
@@ -306,11 +313,12 @@ server <- function(input, output) {
                                 DOI,
                                 "\"",
                                 ">Enlace</a>")) |>  
-            datatable(filter = 'top',options = list(pageLength = 15),
+            datatable(filter = 'top',options = list(pageLength = 5, scrollX = TRUE),
                       escape = FALSE,
+                      class = ('cell-border stripe'),
                       colnames = c("Grupo", "Categoría", "Tipo producto",
                                    "Título", "País revista", "Revista", 
-                                   "ISSN","Casiflicación Revista", "Año", "Volumen",
+                                   "ISSN","Categoría Publindex", "Categoría Scimago", "Año", "Volumen",
                                    "Fasc","Paginas", "Enlace artículo", "Autores"))
         
     })
@@ -321,12 +329,14 @@ server <- function(input, output) {
             filter(ano >= 2016,
                    ano <=2020) |> 
             select(-vol, -tipo_producto) |> 
-            datatable(filter = 'top', options = list(pageLength = 15),
+            datatable(filter = 'top', options = list(pageLength = 15, scrollX = TRUE),
                       escape = FALSE,
+                      rownames = FALSE,
                       colnames = c("Grupo", "Categoría",
                                    "Título capitulo", "País", "Año", 
                                    "Titulo libro","ISBN", "Paginas", "Editorial",
-                                   "Autores"))
+                                   "Autores"),
+                      class = 'cell-border stripe')
     })
     
     output$libro <- DT::renderDataTable({
@@ -335,11 +345,13 @@ server <- function(input, output) {
             filter(Ano >= 2016,
                    Ano <=2020) |> 
             select(-Tipo_producto) |> 
-            datatable(filter = 'top', options = list(pageLength = 15),
+            datatable(filter = 'top', options = list(pageLength = 15, scrollX = TRUE),
                       escape = FALSE,
+                      rownames = FALSE,
                       colnames = c("Grupo", "Categoría",
                                    "Título libro", "País", "Año", 
-                                   "ISBN","Editorial", "Autores"))
+                                   "ISBN","Editorial", "Autores"),
+                      class = 'cell-border stripe')
     })
     
     output$software <- DT::renderDataTable({
@@ -349,22 +361,26 @@ server <- function(input, output) {
             mutate(sitio_web= str_c("<a href=",
                                     sitio_web,
                                     ">Link</a>")) |>
-            datatable(filter = 'top', options = list(pageLength = 15),
+            datatable(filter = 'top', options = list(pageLength = 15, scrollX = TRUE),
                       escape = FALSE,
+                      rownames = FALSE,
                       colnames = c("Grupo", "Categoría",
                                    "Título", "País", "Año", 
                                    "Disponibilidad","Sitio web", "Nombre comercial", "Institución financiadora", 
-                                   "Autores"))
+                                   "Autores"),
+                      class = 'cell-border stripe')
     })
     
     output$innovaciones <- DT::renderDataTable({
         
         innovacion_2016_2020 <- innovacion_2016_2020 |> 
-            datatable(filter = 'top', options = list(pageLength = 15),
+            datatable(filter = 'top', options = list(pageLength = 15, scrollX = TRUE),
                       escape = FALSE,
+                      rownames = FALSE,
                       colnames = c("Grupo", "Categoría", "Tipo Producto",
                                    "Título", "país", "Año", 
-                                   "Disponibilidad","Institución financiadora", "Autores"))
+                                   "Disponibilidad","Institución financiadora", "Autores"),
+                      class = 'cell-border stripe')
     })
     
     output$trabajosd <- DT::renderDataTable({
@@ -376,12 +392,14 @@ server <- function(input, output) {
                    desde = str_trim(desde)) |> 
             filter(desde >= 2016,
                    hasta <=2020) |> 
-            datatable(filter = 'top', options = list(pageLength = 15),
+            datatable(filter = 'top', options = list(pageLength = 15, scrollX = TRUE),
                       escape = FALSE,
+                      rownames = FALSE,
                       colnames = c("Grupo", "Categoría", "Tipo Producto",
                                    "Título", "Desde", "Hasta", 
                                    "Tipo de Orientación","Estudiante", "Programa académico",
-                                   "Páginas", "Valoración", "Institución", "Tutor Coautor"))
+                                   "Páginas", "Valoración", "Institución", "Tutor Coautor"),
+                      class = 'cell-border stripe')
     })
     
 } 
