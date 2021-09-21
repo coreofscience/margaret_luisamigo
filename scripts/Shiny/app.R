@@ -28,11 +28,9 @@ paises_general <- articulos_unicos_2016_2020 |>
     count(pais_revista, sort = TRUE)
 paises_general$porcentaje <- round(prop.table(paises_general$n),3)*100 
 
-#revistas
 revistas_actuales <-
     read_csv(here("output", 
                   "current_journals.csv")) 
-#fin revistas
 
 articulos_2016_2020 <- 
     read_csv(here("output",
@@ -61,43 +59,66 @@ innovacion_2016_2020 <-
                   "innovaciones_gestion.csv")) |> 
     filter(ano >= 2016,
            ano <=2020) 
-#fin
-
+#-----------------------------------------------------------------------------------------------------#
 #dataframe filtros
 #filtro grupo
+
 grupos <- articulos_unicos_2016_2020 |>
   select(grupo) |>
   unique()
-#filtro temporal, ya que solo funciona con 2 graficas
-data4 <- investigadores_general |> select(grupo , clasification) |> 
+
+datos_grupos <- crosstalk::SharedData$new(grupos)
+#-----------------------------------------------------------------------------------------------------#
+#filtros graficas individual
+cate_inves <- investigadores_general |> select(grupo , clasification) |> 
   group_by(grupo, clasification) |> 
   summarise(n = n())
 
-data5 <- investigadores_general |> select(grupo , posgrade) |> 
+datos_clasificacion <- crosstalk::SharedData$new(cate_inves)
+
+####################################################
+forma_inves <- investigadores_general |> select(grupo , posgrade) |> 
   group_by(grupo, posgrade) |> 
   summarise(n = n()) |> 
   rename(m = n,
          formacion = posgrade)
-libre <- tibble(grupo= c("N/A","N/A","N/A","N/A","N/A"),
-                formacion = c("N/A","N/A","N/A","N/A","N/A"),
-                m = c(0,0,0,0,0))
 
-data <- rbind(data5, libre) |> 
-  rename(clasification = 2)
+datos_formacion <- crosstalk::SharedData$new(forma_inves)
 
-data6 <- merge(data, data4, by = c("grupo", "clasification"), all = TRUE) 
+####################################################
+data_clasig <- grupos_general |> 
+  count(grupo, clasificacion) |> 
+  arrange(desc(clasificacion))
 
-datos_compartidos <- crosstalk::SharedData$new(data6)
-#-----------------------------------------------------------------------------------------------------
+datos_clasi <- crosstalk::SharedData$new(data_clasig)
+
+####################################################
+data_revis <- articulos_unicos_2016_2020 |> count(grupo, categoria_revista) |>
+  arrange(desc(categoria_revista)) |> 
+  mutate(categoria_revista = ifelse(is.na(categoria_revista),"N/A",categoria_revista))
+
+datos_revista <- crosstalk::SharedData$new(data_revis)
+
+####################################################
+data_evulu <- articulos_unicos_2016_2020 |> 
+  select(categoria, ano, grupo) |> 
+  count(grupo, ano, sort = FALSE, name = "producciones")
+
+datos_produccion <- crosstalk::SharedData$new(data_evulu)
+#-----------------------------------------------------------------------------------------------------#
 #Inicio
 sidebar <- dashboardSidebar(
-  filter_select("clasification", "Grupo", datos_compartidos, ~grupo),
-  
-  # selectInput("grupos_input","Grupos:", 
-  #             c(grupos$grupo))
   sidebarMenu(
     menuItem("General", tabName = "general", icon = icon("atlas")),
-    menuItem("Producción cientifica", icon = icon("book"), tabName = "produccion"),
+    menuItem("Producción cientifica", icon = icon("book"), 
+              menuSubItem("Datos", icon = icon("book-open"), tabName = ("produccion")),
+             conditionalPanel(condition = "input_prdu == 'produccion'",
+                              filter_select("clasification", "Grupo", datos_grupos, ~grupo),
+                             sliderInput ("ano", "Año:",
+                                          min = 2000, max = 2021, value = 2016),
+                             submitButton("Aplicar"))),
+    
+    
     menuItem("Grupos en cifras", icon = icon("bar-chart-o"),
              menuSubItem("Clasificación grupos", tabName = "clasi_grupos"),
              menuSubItem("Clasificación investigadores", tabName = "clasi_inves"),
@@ -145,83 +166,44 @@ setup <- dashboardBody(
                                  fluidPage((DT::dataTableOutput('trabajosd'))
                                  )))),
     tabItem(tabName = "clasi_grupos",
+            filter_select("clasification", "Grupo:", datos_clasi, ~grupo),
             fluidPage(plotlyOutput("graf1"))),
+    
     tabItem(tabName = "clasi_inves",
+            filter_select("clasification", "Grupo:", datos_clasificacion, ~grupo),
             fluidPage(plotlyOutput("graf2"))),
+    
     tabItem(tabName = "cate_revista",
+            filter_select("clasification", "Grupo:", datos_revista, ~grupo),
             fluidPage(plotlyOutput("graf3"))),
+            
     tabItem(tabName = "evolu_articulos",
+            filter_select("clasification", "Grupo:", datos_produccion, ~grupo),
             fluidPage(plotlyOutput("graf4"))),
+    
     tabItem(tabName = "forma_inves",
+            filter_select("clasification", "Grupo:", datos_formacion, ~grupo),
             fluidPage(plotlyOutput("graf5")))
     )
 )
 
 ui <- dashboardPage(
+  skin = "yellow",
   dashboardHeader(title = "Margaret"),
   sidebar,
-  setup
+  setup,
+  dashboardBody(
+    tags$head(tags$style(HTML('
+      .main-header .logo {
+        font-family: "Georgia", Times, "Times New Roman", serif;
+        font-weight: bold;
+        font-size: 24px;
+      }
+    '))))
 )
 
 server <- function(input, output) {
   
-    output$graf1 <- renderPlotly({
-      
-        data1 <- grupos_general |> 
-            count(clasificacion) |> 
-            arrange(desc(clasificacion))
-        
-        fig1 <- plot_ly(data1, x = ~clasificacion, y = ~n, type = 'bar')
-        fig1 <- fig1 %>% layout(title = 'Clasificación grupos de investigación')
-        
-    })
-    
-    output$graf2 <- renderPlotly ({
-        datos2 <- investigadores_general |> 
-            count(clasification) |> 
-            arrange(desc(clasification)) 
-        
-        fig2 <- datos_compartidos |> plot_ly(labels= ~clasification, values=~n, type = 'pie')
-        fig2 <- fig2 %>% layout(title = 'Clasificación investigadores',
-                                xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
-                                yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
-        
-    })
-    
-    output$graf3 <- renderPlotly({
-        data3 <- articulos_unicos_2016_2020 |> count(categoria_revista) |>
-            arrange(desc(categoria_revista)) |> 
-            mutate(categoria_revista = ifelse(is.na(categoria_revista),"N/A",categoria_revista))
-        
-        fig3 <- plot_ly(data3, labels= ~categoria_revista, values=~n, type = 'pie')
-        fig3 <- fig3 %>% layout(title = 'Categoría revistas',
-                                xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
-                                yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
-        
-    })
-    
-    output$graf4 <- renderPlotly({
-        data4 <- articulos_unicos_2016_2020 |> 
-            select(categoria, ano, grupo) |> 
-            count(ano, sort = FALSE, name = "producciones")
-        
-        fig4 <- plot_ly(data4, x = ~ano, y = ~producciones, type = 'scatter', mode = 'lines')
-        fig4 <- fig4 %>% layout(title = "Producción articulos")
-        
-    })
-    
-    output$graf5 <- renderPlotly({
-        data5 <- investigadores_general |> count(posgrade) |> 
-            arrange(desc(posgrade)) |> 
-            rename(formacion = 1)
-        
-        fig5 <- datos_compartidos |>  plot_ly(labels= ~clasification, values=~n, type = 'pie')
-        fig5 <- fig5 %>% layout(title = 'Formación investigadores',
-                                xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
-                                yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
-        
-    })
-    
     output$ex1 <- DT::renderDataTable({
         grupos_general <- grupos_general |> 
             select(grupo, clasificacion, sum_papers, departamento , url,
@@ -254,7 +236,7 @@ server <- function(input, output) {
             select(-vinculacion,
                    -fin_vinculacion) |> 
             rename(Investigador = integrantes,
-                   Produccion = total_papers,
+                   Produccion = count_papers,
                    Horas = horas_dedicacion,
                    CvLAC = url,
                    Grupo = grupo,
@@ -400,6 +382,62 @@ server <- function(input, output) {
                                    "Tipo de Orientación","Estudiante", "Programa académico",
                                    "Páginas", "Valoración", "Institución", "Tutor Coautor"),
                       class = 'cell-border stripe')
+    })
+    
+    output$graf1 <- renderPlotly({
+      
+      # data1 <- grupos_general |> 
+      #   count(clasificacion) |> 
+      #   arrange(desc(clasificacion))
+      
+      fig1 <- plot_ly(datos_clasi, x = ~clasificacion, y = ~n, type = 'bar')
+      fig1 <- fig1 %>% layout(title = 'Clasificación grupos de investigación')
+      
+    })
+    
+    output$graf2 <- renderPlotly ({
+      # datos2 <- investigadores_general |> 
+      #   count(clasification) |> 
+      #   arrange(desc(clasification)) 
+      
+      fig2 <- datos_clasificacion |> plot_ly(labels= ~clasification, values=~n, type = 'pie')
+      fig2 <- fig2 %>% layout(title = 'Clasificación investigadores',
+                              xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+                              yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+    fig2  
+    })
+    
+    output$graf3 <- renderPlotly({
+      # data3 <- articulos_unicos_2016_2020 |> count(categoria_revista) |>
+      #   arrange(desc(categoria_revista)) |> 
+      #   mutate(categoria_revista = ifelse(is.na(categoria_revista),"N/A",categoria_revista))
+      
+      fig3 <- plot_ly(datos_revista, labels= ~categoria_revista, values=~n, type = 'pie')
+      fig3 <- fig3 %>% layout(title = 'Categoría revistas',
+                              xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+                              yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+      
+    })
+    
+    output$graf4 <- renderPlotly({
+      # data4 <- articulos_unicos_2016_2020 |> 
+      #   select(categoria, ano, grupo) |> 
+      #   count(ano, sort = FALSE, name = "producciones")
+      
+      fig4 <- plot_ly(datos_produccion, x = ~ano, y = ~producciones, type = 'scatter', mode = 'lines')
+      fig4 <- fig4 %>% layout(title = "Producción articulos")
+      
+    })
+    
+    output$graf5 <- renderPlotly({
+      # data5 <- investigadores_general |> count(posgrade) |> 
+      #   arrange(desc(posgrade)) |> 
+      #   rename(formacion = 1)
+      
+      fig5 <- datos_formacion |>  plot_ly(labels= ~formacion, values=~m, type = 'pie')
+      fig5 <- fig5 %>% layout(title = 'Formación investigadores',
+                              xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+                              yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
     })
     
 } 
