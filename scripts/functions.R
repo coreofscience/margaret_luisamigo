@@ -331,6 +331,8 @@ data_getting_researcher <- function(data_grupos_all){
   return(df_researcher)
 }
 
+
+
 trabajos_dirigidos_ucla <- function(grupo_df) {
   
   trabajosdirigidos = 
@@ -2517,3 +2519,136 @@ count_articles_researcher <- function(produccion_actualizada) {
   return(researcher_general)
   
 } 
+
+researcher_product <- function(produccion_actualizada){
+  
+  articulos_author <- 
+    produccion_actualizada[[2]][["articulos"]] |> 
+    separate_rows(autores, sep = ", ") |> 
+    right_join(produccion_actualizada[[3]] |> 
+                 separate_rows(grupo, sep = "; "),
+               by = c("grupo" = "grupo",
+                      "autores" = "integrantes")) |> 
+    filter(!is.na(titulo)) |> 
+    group_by(grupo, autores) |> 
+    select(grupo, autores, titulo) |> 
+    unique() |> 
+    select(grupo, autores) |> 
+    count(autores) |> 
+    group_by(autores) |> 
+    mutate(grupo = paste0(grupo, collapse = "; "),
+           n = paste0(n, collapse = "; ")) |> 
+    unique() |> 
+    rename(articulos = n)
+  
+  capitulos_author <- 
+    produccion_actualizada[[2]][["capitulos"]] |> 
+    separate_rows(autores, sep = ", ") |> 
+    right_join(produccion_actualizada[[3]] |> 
+                 separate_rows(grupo, sep = "; "),
+               by = c("grupo" = "grupo",
+                      "autores" = "integrantes")) |> 
+    filter(!is.na(titulo_capitulo)) |> 
+    group_by(grupo, autores) |> 
+    select(grupo, autores, titulo_capitulo) |> 
+    unique() |> 
+    select(grupo, autores) |> 
+    count(autores) |> 
+    group_by(autores) |> 
+    mutate(grupo = paste0(grupo, collapse = "; "),
+           n = paste0(n, collapse = "; ")) |> 
+    unique() |> 
+    rename(capitulos = n)
+  
+  libros_author <- 
+    produccion_actualizada[[2]][["libros"]] |> 
+    separate_rows(Autores, sep = ", ") |> 
+    right_join(produccion_actualizada[[3]] |> 
+                 separate_rows(grupo, sep = "; "),
+               by = c("grupo" = "grupo",
+                      "Autores" = "integrantes")) |> 
+    filter(!is.na(Titulo)) |> 
+    group_by(grupo, Autores) |> 
+    select(grupo, Autores, Titulo) |> 
+    unique() |> 
+    select(grupo, Autores) |> 
+    count(Autores) |> 
+    group_by(Autores) |> 
+    mutate(grupo = paste0(grupo, collapse = "; "),
+           n = paste0(n, collapse = "; ")) |> 
+    unique() |> 
+    rename(libros = n)
+  
+  software_author <- 
+    produccion_actualizada[[2]][["softwares"]] |> 
+    separate_rows(autores, sep = ", ") |> 
+    right_join(produccion_actualizada[[3]] |> 
+                 separate_rows(grupo, sep = "; "),
+               by = c("grupo" = "grupo",
+                      "autores" = "integrantes")) |> 
+    filter(!is.na(titulo)) |> 
+    group_by(grupo, autores) |> 
+    select(grupo, autores, titulo) |> 
+    unique() |> 
+    select(grupo, autores) |> 
+    count(autores) |> 
+    group_by(autores) |> 
+    mutate(grupo = paste0(grupo, collapse = "; "),
+           n = paste0(n, collapse = "; ")) |> 
+    unique() |> 
+    rename(softwares = n)
+  
+  innovaciones_author <- 
+    produccion_actualizada[[2]][["innovaciones_gestion"]] |> 
+    separate_rows(autores, sep = ", ") |> 
+    right_join(produccion_actualizada[[3]] |> 
+                 separate_rows(grupo, sep = "; "),
+               by = c("grupo" = "grupo",
+                      "autores" = "integrantes")) |> 
+    filter(!is.na(titulo)) |> 
+    group_by(grupo, autores) |> 
+    select(grupo, autores, titulo) |> 
+    unique() |> 
+    select(grupo, autores) |> 
+    count(autores) |> 
+    group_by(autores) |> 
+    mutate(grupo = paste0(grupo, collapse = "; "),
+           n = paste0(n, collapse = "; ")) |> 
+    unique() |> 
+    rename(innovaciones = n)
+  
+  trabajos_dirigidos_author <- 
+    produccion_actualizada[[2]][["trabajos_dirigidos"]] |> 
+    separate_rows(tutor_coautor, sep = ", ") |> 
+    right_join(produccion_actualizada[[3]] |> 
+                 separate_rows(grupo, sep = "; "),
+               by = c("grupo" = "grupo",
+                      "tutor_coautor" = "integrantes")) |> 
+    filter(!is.na(titulo)) |> 
+    group_by(grupo, tutor_coautor) |> 
+    select(grupo, tutor_coautor, titulo) |> 
+    unique() |> 
+    select(grupo, tutor_coautor) |> 
+    count(tutor_coautor) |> 
+    group_by(tutor_coautor) |> 
+    mutate(grupo = paste0(grupo, collapse = "; "),
+           n = paste0(n, collapse = "; ")) |> 
+    unique() |> 
+    rename(trabajos_dirigidos = n)
+  
+  researcher_general <-
+    produccion_actualizada[[3]] |> 
+    separate_rows(grupo, sep = "; ") |> 
+    left_join(articulos_author |> 
+                separate_rows(grupo, sep = "; "),
+              by = c("integrantes" = "autores", 
+                     "grupo" = "grupo")) |> 
+    left_join(capitulos_author |> 
+                separate_rows(grupo, sep = "; "), 
+              by = c("integrantes" = "autores", 
+                     "grupo" = "grupo"))
+    
+  
+  
+  return(researcher_general)
+}

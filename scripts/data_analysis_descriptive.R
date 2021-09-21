@@ -6,9 +6,11 @@ data_analysis_descriptive_ucla <- function(produccion_actualizada) {
   
   # Added amount of produced papers per researcher to researcher df
   
-  produccion_actualizada[[3]] <- 
-    count_articles_researcher(produccion_actualizada)
+  # produccion_actualizada[[3]] <- 
+  #   count_articles_researcher(produccion_actualizada)
   
+  produccion_actualizada[[3]] <-
+    researcher_product(produccion_actualizada)
   
   produccion_actualizada
   
