@@ -11,112 +11,79 @@ library(stringi)
 library(shinydashboard)
 
 articulos_unicos_2016_2020 <- 
-    read_csv(here("output",
-                  "articulos.csv")) |> 
-    filter(ano >= 2016,
-           ano <=2020)
+  read_csv(here("output",
+                "articulos.csv")) |> 
+  filter(ano >= 2016,
+         ano <=2020)
 
 investigadores_general <- 
-    read_csv(here("output",
-                  "investigadores.csv")) 
+  read_csv(here("output",
+                "investigadores.csv")) 
 
 grupos_general <- 
-    read_csv(here("output",
-                  "grupos_general.csv")) 
+  read_csv(here("output",
+                "grupos_general.csv")) 
 
 paises_general <- articulos_unicos_2016_2020 |> 
-    count(pais_revista, sort = TRUE)
+  count(pais_revista, sort = TRUE)
 paises_general$porcentaje <- round(prop.table(paises_general$n),3)*100 
 
 revistas_actuales <-
-    read_csv(here("output", 
-                  "current_journals.csv")) 
+  read_csv(here("output", 
+                "current_journals.csv")) 
 
 articulos_2016_2020 <- 
-    read_csv(here("output",
-                  "articulos.csv")) 
+  read_csv(here("output",
+                "articulos.csv")) 
 
 capitulos_2016_2020 <- 
-    read_csv(here("output",
-                  "capitulos.csv")) 
+  read_csv(here("output",
+                "capitulos.csv")) 
 
 libros_2016_2020 <- 
-    read_csv(here("output",
-                  "libros.csv")) 
+  read_csv(here("output",
+                "libros.csv")) 
 
 software_2016_2020 <- 
-    read_csv(here("output",
-                  "softwares.csv")) |> 
-    filter(ano >= 2016,
-           ano <=2020) 
+  read_csv(here("output",
+                "softwares.csv")) |> 
+  filter(ano >= 2016,
+         ano <=2020) 
 
 trabajo_2016_2020 <- 
-    read_csv(here("output",
-                  "trabajos_dirigidos.csv")) 
+  read_csv(here("output",
+                "trabajos_dirigidos.csv")) 
 
 innovacion_2016_2020 <- 
-    read_csv(here("output",
-                  "innovaciones_gestion.csv")) |> 
-    filter(ano >= 2016,
-           ano <=2020) 
+  read_csv(here("output",
+                "innovaciones_gestion.csv")) |> 
+  filter(ano >= 2016,
+         ano <=2020) 
 #-----------------------------------------------------------------------------------------------------#
 #dataframe filtros
 #filtro grupo
 
-grupos <- articulos_unicos_2016_2020 |>
+grupos <- grupos_general |>
   select(grupo) |>
   unique()
 
-datos_grupos <- crosstalk::SharedData$new(grupos)
-#-----------------------------------------------------------------------------------------------------#
-#filtros graficas individual
-cate_inves <- investigadores_general |> select(grupo , clasification) |> 
-  group_by(grupo, clasification) |> 
-  summarise(n = n())
+general_grupos <- list(grupos$grupo)
 
-datos_clasificacion <- crosstalk::SharedData$new(cate_inves)
-
-####################################################
-forma_inves <- investigadores_general |> select(grupo , posgrade) |> 
-  group_by(grupo, posgrade) |> 
-  summarise(n = n()) |> 
-  rename(m = n,
-         formacion = posgrade)
-
-datos_formacion <- crosstalk::SharedData$new(forma_inves)
-
-####################################################
-data_clasig <- grupos_general |> 
-  count(grupo, clasificacion) |> 
-  arrange(desc(clasificacion))
-
-datos_clasi <- crosstalk::SharedData$new(data_clasig)
-
-####################################################
-data_revis <- articulos_unicos_2016_2020 |> count(grupo, categoria_revista) |>
-  arrange(desc(categoria_revista)) |> 
-  mutate(categoria_revista = ifelse(is.na(categoria_revista),"N/A",categoria_revista))
-
-datos_revista <- crosstalk::SharedData$new(data_revis)
-
-####################################################
-data_evulu <- articulos_unicos_2016_2020 |> 
-  select(categoria, ano, grupo) |> 
-  count(grupo, ano, sort = FALSE, name = "producciones")
-
-datos_produccion <- crosstalk::SharedData$new(data_evulu)
 #-----------------------------------------------------------------------------------------------------#
 #Inicio
+filterside <- selectInput("grupos_input","Grupos:", 
+                          c('General'= FALSE, grupos$grupo),
+                          selectize = FALSE)
+
+butonside <- actionButton("aplicar_input", "Aplicar")
+
 sidebar <- dashboardSidebar(
+  filterside,
+  butonside,
   sidebarMenu(
-    menuItem("General", tabName = "general", icon = icon("atlas")),
-    menuItem("Producción cientifica", icon = icon("book"), 
-              menuSubItem("Datos", icon = icon("book-open"), tabName = ("produccion")),
-             conditionalPanel(condition = "input_prdu == 'produccion'",
-                              filter_select("clasification", "Grupo", datos_grupos, ~grupo),
-                             sliderInput ("ano", "Año:",
-                                          min = 2000, max = 2021, value = 2016),
-                             submitButton("Aplicar"))),
+             menuItem("Datos", tabName = "general_datos", icon = icon("atlas")),
+    
+    menuItem("Producción cientifica", icon = icon("book"), tabName = ("produccion")),
     
     
     menuItem("Grupos en cifras", icon = icon("bar-chart-o"),
@@ -136,20 +103,20 @@ sidebar <- dashboardSidebar(
 )
 
 setup <- dashboardBody(
-    tabItems( 
-        tabItem(tabName = "general",
-    tabsetPanel(type = "tabs",
-                tabPanel("Grupos", fluidPage((DT::dataTableOutput('ex1'))
-                ),),
-                
-                tabPanel("Investigadores", fluidPage((DT::dataTableOutput('ex2'))
-                ),),
-                
-                tabPanel("Paises", fluidPage((DT::dataTableOutput('ex3'))
-                ),),
-                
-                tabPanel("Revistas", fluidPage((DT::dataTableOutput('ex4'))
-                )))),
+  tabItems( 
+    tabItem(tabName = "general_datos",
+            tabsetPanel(type = "tabs",
+                        tabPanel("Grupos", fluidPage((DT::dataTableOutput('ex1'))
+                        ),),
+                        
+                        tabPanel("Investigadores", fluidPage((DT::dataTableOutput('ex2'))
+                        ),),
+                        
+                        tabPanel("Paises", fluidPage((DT::dataTableOutput('ex3'))
+                        ),),
+                        
+                        tabPanel("Revistas", fluidPage((DT::dataTableOutput('ex4'))
+                        )))),
     tabItem(tabName = "produccion",
             tabsetPanel(type = "tabs",
                         tabPanel("Articulos", fluidPage((DT::dataTableOutput('articulo'))
@@ -166,25 +133,20 @@ setup <- dashboardBody(
                                  fluidPage((DT::dataTableOutput('trabajosd'))
                                  )))),
     tabItem(tabName = "clasi_grupos",
-            filter_select("clasification", "Grupo:", datos_clasi, ~grupo),
             fluidPage(plotlyOutput("graf1"))),
     
     tabItem(tabName = "clasi_inves",
-            filter_select("clasification", "Grupo:", datos_clasificacion, ~grupo),
             fluidPage(plotlyOutput("graf2"))),
     
     tabItem(tabName = "cate_revista",
-            filter_select("clasification", "Grupo:", datos_revista, ~grupo),
             fluidPage(plotlyOutput("graf3"))),
-            
+    
     tabItem(tabName = "evolu_articulos",
-            filter_select("clasification", "Grupo:", datos_produccion, ~grupo),
             fluidPage(plotlyOutput("graf4"))),
     
     tabItem(tabName = "forma_inves",
-            filter_select("clasification", "Grupo:", datos_formacion, ~grupo),
             fluidPage(plotlyOutput("graf5")))
-    )
+  )
 )
 
 ui <- dashboardPage(
@@ -204,242 +166,405 @@ ui <- dashboardPage(
 
 server <- function(input, output) {
   
-    output$ex1 <- DT::renderDataTable({
-        grupos_general <- grupos_general |> 
-            select(grupo, clasificacion, sum_papers, departamento , url,
-                   fecha_creacion,lider, email, area_conocimiento_1) |> 
-            mutate(url= str_c("<a href=",
-                              url,
-                              ">Link</a>")) |> 
-            datatable(filter = 'top', options = list(pageLength = 15, scrollX = TRUE),
-                      escape = FALSE,
-                      rownames = FALSE,
-                      colnames = c("Grupo", "Clasificación", "Cantidad artículos",
-                                   "Departamento","GrupLAC", 
-                                   "Fecha Creación", "Líder", "Email", 
-                                   "Área de Conocimiento"),
-                      class = 'cell-border stripe')
-    })
+  filtro <- eventReactive(input$aplicar_input,
+                          input$grupos_input,
+                          ignoreNULL = FALSE,ignoreInit = FALSE)
+  
+  output$ex1 <- DT::renderDataTable({
+    grupos_general <- grupos_general |> 
+      select(grupo, clasificacion, sum_papers, departamento , url,
+             fecha_creacion,lider, email, area_conocimiento_1) |> 
+      mutate(url= str_c("<a href=",
+                        url,
+                        ">Link</a>"))
+    if (filtro()==FALSE)
+    {
+      datatable(grupos_general, filter = 'top', options = list(pageLength = 15, scrollX = TRUE),
+                escape = FALSE,
+                rownames = FALSE,
+                colnames = c("Grupo", "Clasificación", "Cantidad artículos",
+                             "Departamento","GrupLAC", 
+                             "Fecha Creación", "Líder", "Email", 
+                             "Área de Conocimiento"),
+                class = 'cell-border stripe')
+    }
+    else
+    {
+      grupos_general |> 
+        filter(grupo == filtro()) |> 
+        datatable(filter = 'top', options = list(pageLength = 15, scrollX = TRUE),
+                  escape = FALSE,
+                  rownames = FALSE,
+                  colnames = c("Grupo", "Clasificación", "Cantidad artículos",
+                               "Departamento","GrupLAC", 
+                               "Fecha Creación", "Líder", "Email", 
+                               "Área de Conocimiento"),
+                  class = 'cell-border stripe')
+    }
+  })
+  
+  output$ex2 <- DT::renderDataTable({
     
-    output$ex2 <- DT::renderDataTable({
-        
-        investigadores_general <- investigadores_general |> 
-            mutate(url = str_c("<a href=","\"",
-                               url,
-                               "\"",
-                               ">Link</a>"),
-                   scholar = str_c("<a href=","\"",
-                                   "https://scholar.google.com/citations?user=",
-                                   id_scholar,
-                                   "\"",
-                                   ">Scholar</a>")) |>
-            select(-vinculacion,
-                   -fin_vinculacion) |> 
-            rename(Investigador = integrantes,
-                   Produccion = count_papers,
-                   Horas = horas_dedicacion,
-                   CvLAC = url,
-                   Grupo = grupo,
-                   Inicio = inicio_vinculacion,
-                   Formacion = posgrade,
-            ) |> 
-            select(Investigador,
-                   Grupo,
-                   Produccion,
-                   h_index,
-                   clasification,
-                   Formacion,
-                   Inicio,
-                   CvLAC,
-                   scholar) |> 
-            datatable(filter = 'top', options = list(pageLength = 15, scrollX = TRUE),
-                      escape = FALSE,
-                      rownames = FALSE,
-                      colnames = c("Investigador", "Grupo", "Artículos", "H index",
-                                   "Categoría","Formación","Inicio", "CvLAC", "Scholar"),
-                      class = 'cell-border stripe')
-    })
+    investigadores_general <- investigadores_general |> 
+      mutate(url = str_c("<a href=","\"",
+                         url,
+                         "\"",
+                         ">Link</a>"),
+             scholar = str_c("<a href=","\"",
+                             "https://scholar.google.com/citations?user=",
+                             id_scholar,
+                             "\"",
+                             ">Scholar</a>")) |>
+      select(-vinculacion,
+             -fin_vinculacion) |> 
+      rename(Investigador = integrantes,
+             Produccion = count_papers,
+             Horas = horas_dedicacion,
+             CvLAC = url,
+             Grupo = grupo,
+             Inicio = inicio_vinculacion,
+             Formacion = posgrade,
+      ) |> 
+      select(Investigador,
+             Grupo,
+             Produccion,
+             h_index,
+             clasification,
+             Formacion,
+             Inicio,
+             CvLAC,
+             scholar) 
+    if (filtro()==FALSE)
+    {
+      datatable(investigadores_general,filter = 'top', options = list(pageLength = 15, scrollX = TRUE),
+                escape = FALSE,
+                rownames = FALSE,
+                colnames = c("Investigador", "Grupo", "Artículos", "H index",
+                             "Categoría","Formación","Inicio", "CvLAC", "Scholar"),
+                class = 'cell-border stripe')
+    }
+    else 
+    {
+      investigadores_general |> 
+        filter(str_detect(grupo , filtro() )) |> 
+        datatable(filter = 'top', options = list(pageLength = 15, scrollX = TRUE),
+                  escape = FALSE,
+                  rownames = FALSE,
+                  colnames = c("Investigador", "Grupo", "Artículos", "H index",
+                               "Categoría","Formación","Inicio", "CvLAC", "Scholar"),
+                  class = 'cell-border stripe')
+    }
+  })
+  
+  output$ex3 <- DT::renderDataTable({
     
-    output$ex3 <- DT::renderDataTable({
-        
-        paises_general <- paises_general |>  
-            mutate(porcentaje = str_c(porcentaje," %"),
-                   pais_revista = if_else(is.na(pais_revista), "No registra", pais_revista)) |> 
-            datatable(options = list(pageLength = 15),
-                      escape = FALSE,
-                      rownames = FALSE,
-                      colnames = c("País", "Cantidad", "Porcentaje"),
-                      class = 'cell-border stripe')
-    })
+    paises_general <- paises_general |>  
+      mutate(porcentaje = str_c(porcentaje," %"),
+             pais_revista = if_else(is.na(pais_revista), "No registra", pais_revista)) |> 
+      datatable(options = list(pageLength = 15),
+                escape = FALSE,
+                rownames = FALSE,
+                colnames = c("País", "Cantidad", "Porcentaje"),
+                class = 'cell-border stripe')
     
-    output$ex4 <- DT::renderDataTable({
-        
-        revistas_actuales <- revistas_actuales |> 
-            mutate(porcentaje = str_c(porcentaje," %")) |>  
-            datatable(filter = 'top',options = list(pageLength = 20, scrollX = TRUE), 
-                      rownames = FALSE,
-                      colnames = c('Revista', 'ISSN', 'Categoría Publindex',
-                                   'Categoría Scimago','Cantidad', 'Porcentaje'),
-                      class = 'cell-border stripe')
-    })
+  })
+  
+  output$ex4 <- DT::renderDataTable({
     
-    output$articulo <- DT::renderDataTable({
-        
-        articulos_2016_2020 <- articulos_2016_2020 |> 
-            filter(ano >= 2016,
-                   ano <=2020) |> 
-            select(-id) |> 
-            mutate(DOI = str_extract(DOI, "\\d.*")) |> 
-            mutate(DOI =  str_c("<a href=","\"",
-                                "https://doi.org/",
-                                DOI,
-                                "\"",
-                                ">Enlace</a>")) |>  
-            datatable(filter = 'top',options = list(pageLength = 5, scrollX = TRUE),
-                      escape = FALSE,
-                      class = ('cell-border stripe'),
-                      colnames = c("Grupo", "Categoría", "Tipo producto",
-                                   "Título", "País revista", "Revista", 
-                                   "ISSN","Categoría Publindex", "Categoría Scimago", "Año", "Volumen",
-                                   "Fasc","Paginas", "Enlace artículo", "Autores"))
-        
-    })
+    revistas_actuales <- revistas_actuales |> 
+      mutate(porcentaje = str_c(porcentaje," %")) |>  
+      datatable(filter = 'top',options = list(pageLength = 20, scrollX = TRUE), 
+                rownames = FALSE,
+                colnames = c('Revista', 'ISSN', 'Categoría Publindex',
+                             'Categoría Scimago','Cantidad', 'Porcentaje'),
+                class = 'cell-border stripe')
+  })
+  
+  output$articulo <- DT::renderDataTable({
     
-    output$capitulo <- DT::renderDataTable({
-        
-        capitulos_2016_2020 <- capitulos_2016_2020 |> 
-            filter(ano >= 2016,
-                   ano <=2020) |> 
-            select(-vol, -tipo_producto) |> 
-            datatable(filter = 'top', options = list(pageLength = 15, scrollX = TRUE),
-                      escape = FALSE,
-                      rownames = FALSE,
-                      colnames = c("Grupo", "Categoría",
-                                   "Título capitulo", "País", "Año", 
-                                   "Titulo libro","ISBN", "Paginas", "Editorial",
-                                   "Autores"),
-                      class = 'cell-border stripe')
-    })
+    articulos_2016_2020 <- articulos_2016_2020 |> 
+      filter(ano >= 2016,
+             ano <=2020) |> 
+      select(-id) |> 
+      mutate(DOI = str_extract(DOI, "\\d.*")) |> 
+      mutate(DOI =  str_c("<a href=","\"",
+                          "https://doi.org/",
+                          DOI,
+                          "\"",
+                          ">Enlace</a>")) 
+    if (filtro()==FALSE)
+    {
+      datatable(articulos_2016_2020 ,filter = 'top',options = list(pageLength = 5, scrollX = TRUE),
+                escape = FALSE,
+                class = ('cell-border stripe'),
+                colnames = c("Grupo", "Categoría", "Tipo producto",
+                             "Título", "País revista", "Revista", 
+                             "ISSN","Categoría Publindex", "Categoría Scimago", "Año", "Volumen",
+                             "Fasc","Paginas", "Enlace artículo", "Autores"))
+    }
+    else
+    {
+      articulos_2016_2020 |> 
+        filter(grupo == filtro()) |> 
+        datatable(filter = 'top',options = list(pageLength = 5, scrollX = TRUE),
+                  escape = FALSE,
+                  class = ('cell-border stripe'),
+                  colnames = c("Grupo", "Categoría", "Tipo producto",
+                               "Título", "País revista", "Revista", 
+                               "ISSN","Categoría Publindex", "Categoría Scimago", "Año", "Volumen",
+                               "Fasc","Paginas", "Enlace artículo", "Autores"))
+    }
+  })
+  
+  output$capitulo <- DT::renderDataTable({
     
-    output$libro <- DT::renderDataTable({
-        
-        libros_2016_2020 <- libros_2016_2020 |> 
-            filter(Ano >= 2016,
-                   Ano <=2020) |> 
-            select(-Tipo_producto) |> 
-            datatable(filter = 'top', options = list(pageLength = 15, scrollX = TRUE),
-                      escape = FALSE,
-                      rownames = FALSE,
-                      colnames = c("Grupo", "Categoría",
-                                   "Título libro", "País", "Año", 
-                                   "ISBN","Editorial", "Autores"),
-                      class = 'cell-border stripe')
-    })
+    capitulos_2016_2020 <- capitulos_2016_2020 |> 
+      filter(ano >= 2016,
+             ano <=2020) |> 
+      select(-vol, -tipo_producto)
+    if(filtro()==FALSE)
+    {
+      datatable(capitulos_2016_2020 ,filter = 'top', options = list(pageLength = 15, scrollX = TRUE),
+                escape = FALSE,
+                rownames = FALSE,
+                colnames = c("Grupo", "Categoría",
+                             "Título capitulo", "País", "Año", 
+                             "Titulo libro","ISBN", "Paginas", "Editorial",
+                             "Autores"),
+                class = 'cell-border stripe')
+    }
+    else
+    {
+      capitulos_2016_2020 |> 
+        filter(grupo == filtro()) |> 
+        datatable(filter = 'top', options = list(pageLength = 15, scrollX = TRUE),
+                  escape = FALSE,
+                  rownames = FALSE,
+                  colnames = c("Grupo", "Categoría",
+                               "Título capitulo", "País", "Año", 
+                               "Titulo libro","ISBN", "Paginas", "Editorial",
+                               "Autores"),
+                  class = 'cell-border stripe')
+    }
+  })
+  
+  output$libro <- DT::renderDataTable({
     
-    output$software <- DT::renderDataTable({
-        
-        software_2016_2020 <- software_2016_2020 |> 
-            select(-nombre_proyecto, -tipo_producto) |> 
-            mutate(sitio_web= str_c("<a href=",
-                                    sitio_web,
-                                    ">Link</a>")) |>
-            datatable(filter = 'top', options = list(pageLength = 15, scrollX = TRUE),
-                      escape = FALSE,
-                      rownames = FALSE,
-                      colnames = c("Grupo", "Categoría",
-                                   "Título", "País", "Año", 
-                                   "Disponibilidad","Sitio web", "Nombre comercial", "Institución financiadora", 
-                                   "Autores"),
-                      class = 'cell-border stripe')
-    })
+    libros_2016_2020 <- libros_2016_2020 |> 
+      filter(Ano >= 2016,
+             Ano <=2020) |> 
+      select(-Tipo_producto)  
+    if (filtro()==FALSE)
+    {
+      datatable(libros_2016_2020 ,filter = 'top', options = list(pageLength = 15, scrollX = TRUE),
+                escape = FALSE,
+                rownames = FALSE,
+                colnames = c("Grupo", "Categoría",
+                             "Título libro", "País", "Año", 
+                             "ISBN","Editorial", "Autores"),
+                class = 'cell-border stripe')
+    }
+    else
+    {
+      libros_2016_2020 |> 
+        filter(grupo == filtro()) |> 
+        datatable(filter = 'top', options = list(pageLength = 15, scrollX = TRUE),
+                  escape = FALSE,
+                  rownames = FALSE,
+                  colnames = c("Grupo", "Categoría",
+                               "Título libro", "País", "Año", 
+                               "ISBN","Editorial", "Autores"),
+                  class = 'cell-border stripe')
+    }
+  })
+  
+  output$software <- DT::renderDataTable({
     
-    output$innovaciones <- DT::renderDataTable({
-        
-        innovacion_2016_2020 <- innovacion_2016_2020 |> 
-            datatable(filter = 'top', options = list(pageLength = 15, scrollX = TRUE),
-                      escape = FALSE,
-                      rownames = FALSE,
-                      colnames = c("Grupo", "Categoría", "Tipo Producto",
-                                   "Título", "país", "Año", 
-                                   "Disponibilidad","Institución financiadora", "Autores"),
-                      class = 'cell-border stripe')
-    })
+    software_2016_2020 <- software_2016_2020 |> 
+      select(-nombre_proyecto, -tipo_producto) |> 
+      mutate(sitio_web= str_c("<a href=",
+                              sitio_web,
+                              ">Link</a>")) 
+    if (filtro()==FALSE)
+    {
+      datatable(software_2016_2020 ,filter = 'top', options = list(pageLength = 15, scrollX = TRUE),
+                escape = FALSE,
+                rownames = FALSE,
+                colnames = c("Grupo", "Categoría",
+                             "Título", "País", "Año", 
+                             "Disponibilidad","Sitio web", "Nombre comercial", "Institución financiadora", 
+                             "Autores"),
+                class = 'cell-border stripe')
+    }
+    else
+    {
+      software_2016_2020 |> 
+        filter(grupo==filtro()) |> 
+        datatable(filter = 'top', options = list(pageLength = 15, scrollX = TRUE),
+                  escape = FALSE,
+                  rownames = FALSE,
+                  colnames = c("Grupo", "Categoría",
+                               "Título", "País", "Año", 
+                               "Disponibilidad","Sitio web", "Nombre comercial", "Institución financiadora", 
+                               "Autores"),
+                  class = 'cell-border stripe')
+    }
+  })
+  
+  output$innovaciones <- DT::renderDataTable({
     
-    output$trabajosd <- DT::renderDataTable({
-        
-        trabajo_2016_2020 <- trabajo_2016_2020 |> 
-            mutate(hasta = str_remove(hasta, ".* "),
-                   hasta = str_trim(hasta),
-                   desde = str_remove(desde, "\\d.* "),
-                   desde = str_trim(desde)) |> 
-            filter(desde >= 2016,
-                   hasta <=2020) |> 
-            datatable(filter = 'top', options = list(pageLength = 15, scrollX = TRUE),
-                      escape = FALSE,
-                      rownames = FALSE,
-                      colnames = c("Grupo", "Categoría", "Tipo Producto",
-                                   "Título", "Desde", "Hasta", 
-                                   "Tipo de Orientación","Estudiante", "Programa académico",
-                                   "Páginas", "Valoración", "Institución", "Tutor Coautor"),
-                      class = 'cell-border stripe')
-    })
+    innovacion_2016_2020 <- innovacion_2016_2020  
+    if (filtro()==FALSE)
+    {
+      datatable(innovacion_2016_2020 ,filter = 'top', options = list(pageLength = 15, scrollX = TRUE),
+                escape = FALSE,
+                rownames = FALSE,
+                colnames = c("Grupo", "Categoría", "Tipo Producto",
+                             "Título", "país", "Año", 
+                             "Disponibilidad","Institución financiadora", "Autores"),
+                class = 'cell-border stripe')
+    }
+    else
+    {
+      innovacion_2016_2020 |> 
+        filter(grupo==filtro()) |> 
+        datatable(filter = 'top', options = list(pageLength = 15, scrollX = TRUE),
+                  escape = FALSE,
+                  rownames = FALSE,
+                  colnames = c("Grupo", "Categoría", "Tipo Producto",
+                               "Título", "país", "Año", 
+                               "Disponibilidad","Institución financiadora", "Autores"),
+                  class = 'cell-border stripe')
+    }
+  })
+  
+  output$trabajosd <- DT::renderDataTable({
     
-    output$graf1 <- renderPlotly({
-      
-      # data1 <- grupos_general |> 
-      #   count(clasificacion) |> 
-      #   arrange(desc(clasificacion))
-      
-      fig1 <- plot_ly(datos_clasi, x = ~clasificacion, y = ~n, type = 'bar')
-      fig1 <- fig1 %>% layout(title = 'Clasificación grupos de investigación')
-      
-    })
+    trabajo_2016_2020 <- trabajo_2016_2020 |> 
+      mutate(hasta = str_remove(hasta, ".* "),
+             hasta = str_trim(hasta),
+             desde = str_remove(desde, "\\d.* "),
+             desde = str_trim(desde)) |> 
+      filter(desde >= 2016,
+             hasta <=2020) 
+    if (filtro()==FALSE)
+    {
+      datatable(trabajo_2016_2020 ,filter = 'top', options = list(pageLength = 15, scrollX = TRUE),
+                escape = FALSE,
+                rownames = FALSE,
+                colnames = c("Grupo", "Categoría", "Tipo Producto",
+                             "Título", "Desde", "Hasta", 
+                             "Tipo de Orientación","Estudiante", "Programa académico",
+                             "Páginas", "Valoración", "Institución", "Tutor Coautor"),
+                class = 'cell-border stripe')
+    }
+    else
+    {
+      trabajo_2016_2020 |> 
+        filter(grupo==filtro()) |> 
+        datatable(filter = 'top', options = list(pageLength = 15, scrollX = TRUE),
+                  escape = FALSE,
+                  rownames = FALSE,
+                  colnames = c("Grupo", "Categoría", "Tipo Producto",
+                               "Título", "Desde", "Hasta", 
+                               "Tipo de Orientación","Estudiante", "Programa académico",
+                               "Páginas", "Valoración", "Institución", "Tutor Coautor"),
+                  class = 'cell-border stripe')
+    }
+  })
+  
+  
+  output$graf1 <- renderPlotly({
     
-    output$graf2 <- renderPlotly ({
-      # datos2 <- investigadores_general |> 
-      #   count(clasification) |> 
-      #   arrange(desc(clasification)) 
-      
-      fig2 <- datos_clasificacion |> plot_ly(labels= ~clasification, values=~n, type = 'pie')
-      fig2 <- fig2 %>% layout(title = 'Clasificación investigadores',
-                              xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
-                              yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
-    fig2  
-    })
+    datos_clasi <- grupos_general |> 
+      count(grupo, clasificacion) |> 
+      arrange(desc(clasificacion))
     
-    output$graf3 <- renderPlotly({
-      # data3 <- articulos_unicos_2016_2020 |> count(categoria_revista) |>
-      #   arrange(desc(categoria_revista)) |> 
-      #   mutate(categoria_revista = ifelse(is.na(categoria_revista),"N/A",categoria_revista))
-      
-      fig3 <- plot_ly(datos_revista, labels= ~categoria_revista, values=~n, type = 'pie')
-      fig3 <- fig3 %>% layout(title = 'Categoría revistas',
-                              xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
-                              yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
-      
-    })
+    if(filtro()==FALSE)
+    {
+      plot_ly(datos_clasi, x = ~clasificacion, y = ~n, type = 'bar')
+    }
+    else
+    {
+      datos_clasi |> 
+        filter(grupo==filtro()) |> 
+        plot_ly(x = ~clasificacion, y = ~n, type = 'bar')
+    }
     
-    output$graf4 <- renderPlotly({
-      # data4 <- articulos_unicos_2016_2020 |> 
-      #   select(categoria, ano, grupo) |> 
-      #   count(ano, sort = FALSE, name = "producciones")
-      
-      fig4 <- plot_ly(datos_produccion, x = ~ano, y = ~producciones, type = 'scatter', mode = 'lines')
-      fig4 <- fig4 %>% layout(title = "Producción articulos")
-      
-    })
+  })
+  
+  
+  output$graf2 <- renderPlotly ({
+     datos_clasificacion <- investigadores_general |> 
+       count(grupo ,clasification) |> 
+       arrange(desc(clasification)) 
+     
+     if(filtro()==FALSE)
+     {
+       plot_ly(datos_clasificacion ,labels= ~clasification, values=~n, type = 'pie')
+     }
+     else
+     {
+       datos_clasificacion |> 
+         filter(grupo==filtro()) |> 
+         plot_ly(labels= ~clasification, values=~n, type = 'pie')
+     }
     
-    output$graf5 <- renderPlotly({
-      # data5 <- investigadores_general |> count(posgrade) |> 
-      #   arrange(desc(posgrade)) |> 
-      #   rename(formacion = 1)
-      
-      fig5 <- datos_formacion |>  plot_ly(labels= ~formacion, values=~m, type = 'pie')
-      fig5 <- fig5 %>% layout(title = 'Formación investigadores',
-                              xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
-                              yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
-    })
+  })
+  
+  output$graf3 <- renderPlotly({
+     datos_revista <- articulos_unicos_2016_2020 |> count(grupo ,categoria_revista) |>
+       arrange(desc(categoria_revista)) |> 
+       mutate(categoria_revista = ifelse(is.na(categoria_revista),"N/A",categoria_revista))
     
+     if(filtro()==FALSE)
+     {
+       plot_ly(datos_revista, labels= ~categoria_revista, values=~n, type = 'pie')
+     }
+     else
+     {
+       datos_revista |> 
+         filter(grupo==filtro()) |> 
+         plot_ly(labels= ~categoria_revista, values=~n, type = 'pie')
+     }
+    
+  })
+  
+  output$graf4 <- renderPlotly({
+     datos_produccion <- articulos_unicos_2016_2020 |> 
+       select(categoria, ano, grupo) |> 
+       count(grupo ,ano, sort = FALSE, name = "producciones")
+     
+     if(filtro()==FALSE)
+     {
+       plot_ly(datos_produccion, x = ~ano, y = ~producciones, type = 'scatter', mode = 'lines')
+     }
+     else
+     {
+       datos_produccion |> 
+         filter(grupo==filtro()) |> 
+         plot_ly(x = ~ano, y = ~producciones, type = 'scatter', mode = 'lines')
+     }
+    
+  })
+  
+  output$graf5 <- renderPlotly({
+     datos_formacion <- investigadores_general |> count(grupo, posgrade) |> 
+       arrange(desc(posgrade)) 
+     
+     if(filtro()==FALSE)
+     {
+       plot_ly(datos_formacion, labels= ~posgrade, values=~n, type = 'pie')
+     }
+     else
+     {
+       datos_formacion |> 
+         filter(grupo==filtro()) |> 
+         plot_ly(labels= ~posgrade, values=~n, type = 'pie')
+     }
+    
+  })
+  
 } 
 
 shinyApp(ui = ui , server = server)
