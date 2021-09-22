@@ -111,7 +111,6 @@ investigadores_general |>
   select(-vinculacion,
          -fin_vinculacion) |> 
   rename(Investigador = integrantes,
-         Produccion = count_papers,
          Horas = horas_dedicacion,
          CvLAC = url,
          Grupo = grupo,
@@ -120,7 +119,12 @@ investigadores_general |>
          ) |> 
   select(Investigador,
          Grupo,
-         Produccion,
+         articulos,
+         capitulos,
+         libros,
+         softwares,
+         trabajos_dirigidos,
+         innovaciones,
          h_index,
          clasification,
          Formacion,
@@ -129,8 +133,10 @@ investigadores_general |>
          scholar) |> 
   datatable(options = list(pageLength = 15),
             escape = FALSE,
-            colnames = c("Investigador", "Grupo", "Artículos", "H index",
-                         "Categoría","Formación","Inicio", "CvLAC", "Scholar"))
+            colnames = c("Investigador", "Grupo","Artículos", "Capítulos", 
+                         "Libros", "Softwares", "Trabajos Dirigidos", 
+                         "Innovaciones", "H index", "Categoría",
+                         "Formación","Inicio", "CvLAC", "Scholar"))
 ```
 
 

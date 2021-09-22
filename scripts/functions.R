@@ -2539,7 +2539,8 @@ researcher_product <- function(produccion_actualizada){
     mutate(grupo = paste0(grupo, collapse = "; "),
            n = paste0(n, collapse = "; ")) |> 
     unique() |> 
-    rename(articulos = n)
+    rename(articulos = n) |> 
+    separate_rows(c(grupo,articulos), sep = "; ") 
   
   capitulos_author <- 
     produccion_actualizada[[2]][["capitulos"]] |> 
@@ -2558,7 +2559,8 @@ researcher_product <- function(produccion_actualizada){
     mutate(grupo = paste0(grupo, collapse = "; "),
            n = paste0(n, collapse = "; ")) |> 
     unique() |> 
-    rename(capitulos = n)
+    rename(capitulos = n)|> 
+    separate_rows(c(grupo,capitulos), sep = "; ")
   
   libros_author <- 
     produccion_actualizada[[2]][["libros"]] |> 
@@ -2577,7 +2579,8 @@ researcher_product <- function(produccion_actualizada){
     mutate(grupo = paste0(grupo, collapse = "; "),
            n = paste0(n, collapse = "; ")) |> 
     unique() |> 
-    rename(libros = n)
+    rename(libros = n)|> 
+    separate_rows(c(grupo,libros), sep = "; ")
   
   software_author <- 
     produccion_actualizada[[2]][["softwares"]] |> 
@@ -2596,7 +2599,8 @@ researcher_product <- function(produccion_actualizada){
     mutate(grupo = paste0(grupo, collapse = "; "),
            n = paste0(n, collapse = "; ")) |> 
     unique() |> 
-    rename(softwares = n)
+    rename(softwares = n) |>  
+    separate_rows(c(grupo, softwares), sep = "; ")
   
   innovaciones_author <- 
     produccion_actualizada[[2]][["innovaciones_gestion"]] |> 
@@ -2615,7 +2619,8 @@ researcher_product <- function(produccion_actualizada){
     mutate(grupo = paste0(grupo, collapse = "; "),
            n = paste0(n, collapse = "; ")) |> 
     unique() |> 
-    rename(innovaciones = n)
+    rename(innovaciones = n) |>  
+    separate_rows(c(grupo, innovaciones), sep = "; ")
   
   trabajos_dirigidos_author <- 
     produccion_actualizada[[2]][["trabajos_dirigidos"]] |> 
@@ -2634,21 +2639,48 @@ researcher_product <- function(produccion_actualizada){
     mutate(grupo = paste0(grupo, collapse = "; "),
            n = paste0(n, collapse = "; ")) |> 
     unique() |> 
-    rename(trabajos_dirigidos = n)
+    rename(trabajos_dirigidos = n) |>  
+    separate_rows(c(grupo, trabajos_dirigidos), sep = "; ")
   
   researcher_general <-
     produccion_actualizada[[3]] |> 
     separate_rows(grupo, sep = "; ") |> 
-    left_join(articulos_author |> 
-                separate_rows(grupo, sep = "; "),
+    left_join(articulos_author,
               by = c("integrantes" = "autores", 
                      "grupo" = "grupo")) |> 
-    left_join(capitulos_author |> 
-                separate_rows(grupo, sep = "; "), 
+    left_join(capitulos_author,
               by = c("integrantes" = "autores", 
-                     "grupo" = "grupo"))
-    
-  
+                     "grupo" = "grupo")) |> 
+    left_join(libros_author |> 
+                separate_rows(grupo, sep = "; "), 
+              by = c("integrantes" = "Autores", 
+                     "grupo" = "grupo")) |> 
+    left_join(software_author,
+              by = c("integrantes" = "autores", 
+                     "grupo" = "grupo")) |> 
+    left_join(innovaciones_author,
+              by = c("integrantes" = "autores", 
+                     "grupo" = "grupo")) |> 
+    left_join(trabajos_dirigidos_author,
+              by = c("integrantes" = "tutor_coautor", 
+                     "grupo" = "grupo")) |> 
+    mutate(articulos = replace_na(articulos, 0),
+           capitulos = replace_na(capitulos, 0),
+           libros = replace_na(libros, 0),
+           softwares = replace_na(softwares, 0),
+           trabajos_dirigidos = replace_na(trabajos_dirigidos,0),
+           innovaciones = replace_na(innovaciones, 0)) |> 
+    group_by(integrantes) |> 
+    mutate(grupo = paste0(grupo, collapse = "; "),
+           articulos = paste0(articulos, collapse = "; "),
+           capitulos = paste0(capitulos, collapse = "; "),
+           libros = paste0(libros, collapse = "; "),
+           softwares = paste0(softwares, collapse = "; "),
+           trabajos_dirigidos = paste0(trabajos_dirigidos, collapse = "; "),
+           innovaciones = paste0(innovaciones, collapse = "; "),
+           horas_dedicacion = paste0(horas_dedicacion, collapse = "; ")) |> 
+    unique() |> 
+    filter(!duplicated(integrantes))
   
   return(researcher_general)
 }
