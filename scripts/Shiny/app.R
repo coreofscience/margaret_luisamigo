@@ -246,7 +246,7 @@ server <- function(input, output) {
     else 
     {
       investigadores_general |> 
-        filter(str_detect(grupo , filtro() )) |> 
+        filter(str_detect(Grupo , filtro() )) |> 
         datatable(filter = 'top', options = list(pageLength = 15, scrollX = TRUE),
                   escape = FALSE,
                   rownames = FALSE,
