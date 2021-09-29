@@ -15,6 +15,8 @@ source(here("scripts",
 source(here("scripts/data_analysis_descriptive.R"))
 source(here("scripts",
             "merge_quality_articles.R"))
+source(here("scripts",
+            "researcher_information.R"))
 
 eval(parse(here("scripts/functions.R"), encoding = "UTF-8"))
 # Data outside
@@ -52,6 +54,8 @@ produccion_actualizada[[2]][["Eliminados_por_grupo"]] <- df_eliminados_total
 produccion_actualizada[[2]][["Similares_entre_grupo"]] <- df_similares_total_grupos
 
 shiny_data <- data_analysis_descriptive_ucla(produccion_actualizada)
+
+shiny_data[[3]] <- researcher_information_ucla(shiny_data)
 
 export_csv(shiny_data)
 

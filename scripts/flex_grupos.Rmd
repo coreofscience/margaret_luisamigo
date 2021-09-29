@@ -119,6 +119,8 @@ investigadores_general |>
          ) |> 
   select(Investigador,
          Grupo,
+         unidad,
+         programa,
          articulos,
          capitulos,
          libros,
@@ -133,7 +135,7 @@ investigadores_general |>
          scholar) |> 
   datatable(options = list(pageLength = 15),
             escape = FALSE,
-            colnames = c("Investigador", "Grupo","Artículos", "Capítulos", 
+            colnames = c("Investigador", "Grupo","Unidad","Programa" , "Artículos", "Capítulos", 
                          "Libros", "Softwares", "Trabajos Dirigidos", 
                          "Innovaciones", "H index", "Categoría",
                          "Formación","Inicio", "CvLAC", "Scholar"))
