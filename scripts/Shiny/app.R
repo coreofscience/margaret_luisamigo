@@ -77,8 +77,11 @@ filterside <- selectInput("grupos_input","Grupos:",
 
 butonside <- actionButton("aplicar_input", "Aplicar")
 
+sliderside <- sliderInput("fechas_input", "Años:", min = 1995, max = 2020, value = c(2016,2020))
+
 sidebar <- dashboardSidebar(
   filterside,
+  #sliderside,
   butonside,
   sidebarMenu(
              menuItem("Datos", tabName = "general_datos", icon = icon("atlas")),
@@ -157,16 +160,24 @@ ui <- dashboardPage(
   dashboardBody(
     tags$head(tags$style(HTML('
       .main-header .logo {
+        background-color: #007b99;
+        color: #007b99;
+        style="color: #007b99;
         font-family: "Georgia", Times, "Times New Roman", serif;
         font-weight: bold;
         font-size: 24px;
+      }
+      .shiny-input-container {
+        color: white;
       }
     '))))
 )
 
 server <- function(input, output) {
   
+  
   filtro <- eventReactive(input$aplicar_input,
+                          #input$fechas_input,
                           input$grupos_input,
                           ignoreNULL = FALSE,ignoreInit = FALSE)
   
@@ -179,7 +190,9 @@ server <- function(input, output) {
                         ">Link</a>"))
     if (filtro()==FALSE)
     {
-      datatable(grupos_general, filter = 'top', options = list(pageLength = 15, scrollX = TRUE),
+      datatable(grupos_general, filter = 'top', 
+                options = list(pageLength = 15, scrollX = TRUE, columnDefs = 
+                                 list(list(className = 'dt-center', targets = 0:4))),
                 escape = FALSE,
                 rownames = FALSE,
                 colnames = c("Grupo", "Clasificación", "Cantidad artículos",
@@ -192,7 +205,8 @@ server <- function(input, output) {
     {
       grupos_general |> 
         filter(grupo == filtro()) |> 
-        datatable(filter = 'top', options = list(pageLength = 15, scrollX = TRUE),
+        datatable(filter = 'top', options = list(pageLength = 15, scrollX = TRUE, columnDefs = 
+                                                   list(list(className = 'dt-center', targets = 0:4))),
                   escape = FALSE,
                   rownames = FALSE,
                   colnames = c("Grupo", "Clasificación", "Cantidad artículos",
@@ -236,7 +250,10 @@ server <- function(input, output) {
              scholar) 
     if (filtro()==FALSE)
     {
-      datatable(investigadores_general,filter = 'top', options = list(pageLength = 15, scrollX = TRUE),
+      datatable(investigadores_general,filter = 'top', options = list(pageLength = 15, scrollX = TRUE,
+                                                                      columnDefs = 
+                                                                        list(list(className = 'dt-center', 
+                                                                                  targets = 0:4))),
                 escape = FALSE,
                 rownames = FALSE,
                 colnames = c("Investigador", "Grupo", "Artículos", "H index",
@@ -247,7 +264,8 @@ server <- function(input, output) {
     {
       investigadores_general |> 
         filter(str_detect(Grupo , filtro() )) |> 
-        datatable(filter = 'top', options = list(pageLength = 15, scrollX = TRUE),
+        datatable(filter = 'top', options = list(pageLength = 15, scrollX = TRUE, columnDefs = 
+                                                   list(list(className = 'dt-center', targets = 0:4))),
                   escape = FALSE,
                   rownames = FALSE,
                   colnames = c("Investigador", "Grupo", "Artículos", "H index",
@@ -261,7 +279,8 @@ server <- function(input, output) {
     paises_general <- paises_general |>  
       mutate(porcentaje = str_c(porcentaje," %"),
              pais_revista = if_else(is.na(pais_revista), "No registra", pais_revista)) |> 
-      datatable(options = list(pageLength = 15),
+      datatable(options = list(pageLength = 15, scrollx = TRUE, columnDefs = 
+                                 list(list(className = 'dt-center', targets = 0:2))),
                 escape = FALSE,
                 rownames = FALSE,
                 colnames = c("País", "Cantidad", "Porcentaje"),
@@ -273,7 +292,9 @@ server <- function(input, output) {
     
     revistas_actuales <- revistas_actuales |> 
       mutate(porcentaje = str_c(porcentaje," %")) |>  
-      datatable(filter = 'top',options = list(pageLength = 20, scrollX = TRUE), 
+      datatable(filter = 'top',options = list(pageLength = 20, scrollX = TRUE,
+                                              columnDefs = 
+                                                list(list(className = 'dt-center', targets = 0:5))), 
                 rownames = FALSE,
                 colnames = c('Revista', 'ISSN', 'Categoría Publindex',
                              'Categoría Scimago','Cantidad', 'Porcentaje'),
@@ -294,7 +315,10 @@ server <- function(input, output) {
                           ">Enlace</a>")) 
     if (filtro()==FALSE)
     {
-      datatable(articulos_2016_2020 ,filter = 'top',options = list(pageLength = 5, scrollX = TRUE),
+      datatable(articulos_2016_2020 ,filter = 'top',options = list(pageLength = 5, scrollX = TRUE,
+                                                                   columnDefs = 
+                                                                     list(list(className = 'dt-center', 
+                                                                               targets = 0:4))),
                 escape = FALSE,
                 class = ('cell-border stripe'),
                 colnames = c("Grupo", "Categoría", "Tipo producto",
@@ -306,7 +330,8 @@ server <- function(input, output) {
     {
       articulos_2016_2020 |> 
         filter(grupo == filtro()) |> 
-        datatable(filter = 'top',options = list(pageLength = 5, scrollX = TRUE),
+        datatable(filter = 'top',options = list(pageLength = 5, scrollX = TRUE,columnDefs = 
+                                                  list(list(className = 'dt-center', targets = 0:4))),
                   escape = FALSE,
                   class = ('cell-border stripe'),
                   colnames = c("Grupo", "Categoría", "Tipo producto",
@@ -324,7 +349,10 @@ server <- function(input, output) {
       select(-vol, -tipo_producto)
     if(filtro()==FALSE)
     {
-      datatable(capitulos_2016_2020 ,filter = 'top', options = list(pageLength = 15, scrollX = TRUE),
+      datatable(capitulos_2016_2020 ,filter = 'top', options = list(pageLength = 15, scrollX = TRUE,
+                                                                    columnDefs = 
+                                                                      list(list(className = 'dt-center', 
+                                                                                targets = 0:4))),
                 escape = FALSE,
                 rownames = FALSE,
                 colnames = c("Grupo", "Categoría",
@@ -337,7 +365,9 @@ server <- function(input, output) {
     {
       capitulos_2016_2020 |> 
         filter(grupo == filtro()) |> 
-        datatable(filter = 'top', options = list(pageLength = 15, scrollX = TRUE),
+        datatable(filter = 'top', options = list(pageLength = 15, scrollX = TRUE,
+                                                 columnDefs = 
+                                                   list(list(className = 'dt-center', targets = 0:4))),
                   escape = FALSE,
                   rownames = FALSE,
                   colnames = c("Grupo", "Categoría",
@@ -356,7 +386,10 @@ server <- function(input, output) {
       select(-Tipo_producto)  
     if (filtro()==FALSE)
     {
-      datatable(libros_2016_2020 ,filter = 'top', options = list(pageLength = 15, scrollX = TRUE),
+      datatable(libros_2016_2020 ,filter = 'top', options = list(pageLength = 15, scrollX = TRUE,
+                                                                 columnDefs = 
+                                                                   list(list(className = 'dt-center', 
+                                                                             targets = 0:4))),
                 escape = FALSE,
                 rownames = FALSE,
                 colnames = c("Grupo", "Categoría",
@@ -368,7 +401,8 @@ server <- function(input, output) {
     {
       libros_2016_2020 |> 
         filter(grupo == filtro()) |> 
-        datatable(filter = 'top', options = list(pageLength = 15, scrollX = TRUE),
+        datatable(filter = 'top', options = list(pageLength = 15, scrollX = TRUE, columnDefs = 
+                                                   list(list(className = 'dt-center', targets = 0:4))),
                   escape = FALSE,
                   rownames = FALSE,
                   colnames = c("Grupo", "Categoría",
@@ -400,7 +434,9 @@ server <- function(input, output) {
     {
       software_2016_2020 |> 
         filter(grupo==filtro()) |> 
-        datatable(filter = 'top', options = list(pageLength = 15, scrollX = TRUE),
+        datatable(filter = 'top', options = list(pageLength = 15, scrollX = TRUE,
+                                                 columnDefs = 
+                                                   list(list(className = 'dt-center', targets = 0:4))),
                   escape = FALSE,
                   rownames = FALSE,
                   colnames = c("Grupo", "Categoría",
@@ -416,7 +452,10 @@ server <- function(input, output) {
     innovacion_2016_2020 <- innovacion_2016_2020  
     if (filtro()==FALSE)
     {
-      datatable(innovacion_2016_2020 ,filter = 'top', options = list(pageLength = 15, scrollX = TRUE),
+      datatable(innovacion_2016_2020 ,filter = 'top', options = list(pageLength = 15, scrollX = TRUE,
+                                                                     columnDefs = 
+                                                                       list(list(className = 'dt-center', 
+                                                                                 targets = 0:4))),
                 escape = FALSE,
                 rownames = FALSE,
                 colnames = c("Grupo", "Categoría", "Tipo Producto",
@@ -428,7 +467,9 @@ server <- function(input, output) {
     {
       innovacion_2016_2020 |> 
         filter(grupo==filtro()) |> 
-        datatable(filter = 'top', options = list(pageLength = 15, scrollX = TRUE),
+        datatable(filter = 'top', options = list(pageLength = 15, scrollX = TRUE,
+                                                 columnDefs = 
+                                                   list(list(className = 'dt-center', targets = 0:4))),
                   escape = FALSE,
                   rownames = FALSE,
                   colnames = c("Grupo", "Categoría", "Tipo Producto",
@@ -449,7 +490,10 @@ server <- function(input, output) {
              hasta <=2020) 
     if (filtro()==FALSE)
     {
-      datatable(trabajo_2016_2020 ,filter = 'top', options = list(pageLength = 15, scrollX = TRUE),
+      datatable(trabajo_2016_2020 ,filter = 'top', options = list(pageLength = 15, scrollX = TRUE,
+                                                                  columnDefs = 
+                                                                    list(list(className = 'dt-center'
+                                                                              , targets = 0:4))),
                 escape = FALSE,
                 rownames = FALSE,
                 colnames = c("Grupo", "Categoría", "Tipo Producto",
@@ -462,7 +506,9 @@ server <- function(input, output) {
     {
       trabajo_2016_2020 |> 
         filter(grupo==filtro()) |> 
-        datatable(filter = 'top', options = list(pageLength = 15, scrollX = TRUE),
+        datatable(filter = 'top', options = list(pageLength = 15, scrollX = TRUE,
+                                                 columnDefs = 
+                                                   list(list(className = 'dt-center', targets = 0:4))),
                   escape = FALSE,
                   rownames = FALSE,
                   colnames = c("Grupo", "Categoría", "Tipo Producto",
