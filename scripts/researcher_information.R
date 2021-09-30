@@ -45,7 +45,8 @@ researcher_information_ucla <- function(shiny_data){
     mutate(UNIDAD = ifelse(is.na(UNIDAD), "Otro", UNIDAD),
            PROGRAMA = ifelse(is.na(PROGRAMA), "Otro", PROGRAMA)) |> 
     rename(unidad = UNIDAD, 
-           programa = PROGRAMA)
+           programa = PROGRAMA) |> 
+    arrange(grupo)
   
   return(grupo_researcher_cleaned)
 }
