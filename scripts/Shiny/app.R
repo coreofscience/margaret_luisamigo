@@ -12,9 +12,7 @@ library(shinydashboard)
 
 articulos_unicos_2016_2020 <- 
   read_csv(here("output",
-                "articulos.csv")) |> 
-  filter(ano >= 2016,
-         ano <=2020)
+                "articulos.csv"))
 
 investigadores_general <- 
   read_csv(here("output",
@@ -46,9 +44,7 @@ libros_2016_2020 <-
 
 software_2016_2020 <- 
   read_csv(here("output",
-                "softwares.csv")) |> 
-  filter(ano >= 2016,
-         ano <=2020) 
+                "softwares.csv")) 
 
 trabajo_2016_2020 <- 
   read_csv(here("output",
@@ -56,9 +52,7 @@ trabajo_2016_2020 <-
 
 innovacion_2016_2020 <- 
   read_csv(here("output",
-                "innovaciones_gestion.csv")) |> 
-  filter(ano >= 2016,
-         ano <=2020) 
+                "innovaciones_gestion.csv"))
 #-----------------------------------------------------------------------------------------------------#
 #dataframe filtros
 #filtro grupo
@@ -77,11 +71,11 @@ filterside <- selectInput("grupos_input","Grupos:",
 
 butonside <- actionButton("aplicar_input", "Aplicar")
 
-sliderside <- sliderInput("fechas_input", "Años:", min = 1995, max = 2020, value = c(2016,2020))
+sliderside <- sliderInput("fechas_input", "Años:", min = 1995, max = 2020, value = c(2016,2020), sep = "")
 
 sidebar <- dashboardSidebar(
   filterside,
-  #sliderside,
+  sliderside,
   butonside,
   sidebarMenu(
              menuItem("Datos", tabName = "general_datos", icon = icon("atlas")),
@@ -175,11 +169,13 @@ ui <- dashboardPage(
 
 server <- function(input, output) {
   
-  
   filtro <- eventReactive(input$aplicar_input,
-                          #input$fechas_input,
                           input$grupos_input,
                           ignoreNULL = FALSE,ignoreInit = FALSE)
+  
+  filtro_fecha_min <- reactive({input$fechas_input[1]})
+  
+  filtro_fecha_max <- reactive({input$fechas_input[2]})
   
   output$ex1 <- DT::renderDataTable({
     grupos_general <- grupos_general |> 
@@ -232,7 +228,6 @@ server <- function(input, output) {
       select(-vinculacion,
              -fin_vinculacion) |> 
       rename(Investigador = integrantes,
-             Produccion = count_papers,
              Horas = horas_dedicacion,
              CvLAC = url,
              Grupo = grupo,
@@ -241,7 +236,14 @@ server <- function(input, output) {
       ) |> 
       select(Investigador,
              Grupo,
-             Produccion,
+             unidad,
+             programa,
+             articulos,
+             capitulos,
+             libros,
+             softwares,
+             trabajos_dirigidos,
+             innovaciones,
              h_index,
              clasification,
              Formacion,
@@ -256,8 +258,10 @@ server <- function(input, output) {
                                                                                   targets = 0:4))),
                 escape = FALSE,
                 rownames = FALSE,
-                colnames = c("Investigador", "Grupo", "Artículos", "H index",
-                             "Categoría","Formación","Inicio", "CvLAC", "Scholar"),
+                colnames = c("Investigador", "Grupo","Unidad","Programa" , "Artículos", "Capítulos", 
+                             "Libros", "Softwares", "Trabajos Dirigidos", 
+                             "Innovaciones", "H index", "Categoría",
+                             "Formación","Inicio", "CvLAC", "Scholar"),
                 class = 'cell-border stripe')
     }
     else 
@@ -268,8 +272,10 @@ server <- function(input, output) {
                                                    list(list(className = 'dt-center', targets = 0:4))),
                   escape = FALSE,
                   rownames = FALSE,
-                  colnames = c("Investigador", "Grupo", "Artículos", "H index",
-                               "Categoría","Formación","Inicio", "CvLAC", "Scholar"),
+                  colnames = c("Investigador", "Grupo","Unidad","Programa" , "Artículos", "Capítulos", 
+                               "Libros", "Softwares", "Trabajos Dirigidos", 
+                               "Innovaciones", "H index", "Categoría",
+                               "Formación","Inicio", "CvLAC", "Scholar"),
                   class = 'cell-border stripe')
     }
   })
@@ -304,8 +310,8 @@ server <- function(input, output) {
   output$articulo <- DT::renderDataTable({
     
     articulos_2016_2020 <- articulos_2016_2020 |> 
-      filter(ano >= 2016,
-             ano <=2020) |> 
+      filter(ano >= filtro_fecha_min(),
+             ano <=filtro_fecha_max()) |> 
       select(-id) |> 
       mutate(DOI = str_extract(DOI, "\\d.*")) |> 
       mutate(DOI =  str_c("<a href=","\"",
@@ -344,8 +350,8 @@ server <- function(input, output) {
   output$capitulo <- DT::renderDataTable({
     
     capitulos_2016_2020 <- capitulos_2016_2020 |> 
-      filter(ano >= 2016,
-             ano <=2020) |> 
+      filter(ano >= filtro_fecha_min(),
+             ano <=filtro_fecha_max()) |> 
       select(-vol, -tipo_producto)
     if(filtro()==FALSE)
     {
@@ -381,8 +387,8 @@ server <- function(input, output) {
   output$libro <- DT::renderDataTable({
     
     libros_2016_2020 <- libros_2016_2020 |> 
-      filter(Ano >= 2016,
-             Ano <=2020) |> 
+      filter(Ano >= filtro_fecha_min(),
+             Ano <=filtro_fecha_max()) |> 
       select(-Tipo_producto)  
     if (filtro()==FALSE)
     {
@@ -415,6 +421,8 @@ server <- function(input, output) {
   output$software <- DT::renderDataTable({
     
     software_2016_2020 <- software_2016_2020 |> 
+      filter(ano >= filtro_fecha_min(),
+             ano <=filtro_fecha_max()) |> 
       select(-nombre_proyecto, -tipo_producto) |> 
       mutate(sitio_web= str_c("<a href=",
                               sitio_web,
@@ -449,7 +457,9 @@ server <- function(input, output) {
   
   output$innovaciones <- DT::renderDataTable({
     
-    innovacion_2016_2020 <- innovacion_2016_2020  
+    innovacion_2016_2020 <- innovacion_2016_2020 |> 
+      filter(ano >= filtro_fecha_min(),
+             ano <=filtro_fecha_max())
     if (filtro()==FALSE)
     {
       datatable(innovacion_2016_2020 ,filter = 'top', options = list(pageLength = 15, scrollX = TRUE,
@@ -486,8 +496,8 @@ server <- function(input, output) {
              hasta = str_trim(hasta),
              desde = str_remove(desde, "\\d.* "),
              desde = str_trim(desde)) |> 
-      filter(desde >= 2016,
-             hasta <=2020) 
+      filter(desde >= filtro_fecha_min(),
+             hasta <= filtro_fecha_max()) 
     if (filtro()==FALSE)
     {
       datatable(trabajo_2016_2020 ,filter = 'top', options = list(pageLength = 15, scrollX = TRUE,
@@ -528,13 +538,19 @@ server <- function(input, output) {
     
     if(filtro()==FALSE)
     {
-      plot_ly(datos_clasi, x = ~clasificacion, y = ~n, type = 'bar')
+      plot_ly(datos_clasi, x = ~clasificacion, y = ~n, type = 'bar') |> 
+        layout(title = 'Clasificación Grupos de investigación',
+               xaxis = list(title = ""),
+               yaxis = list(title = ""))
     }
     else
     {
       datos_clasi |> 
         filter(grupo==filtro()) |> 
-        plot_ly(x = ~clasificacion, y = ~n, type = 'bar')
+        plot_ly(x = ~clasificacion, y = ~n, type = 'bar') |> 
+          layout(title = 'Clasificación Grupos de investigación',
+                 xaxis = list(title = ""),
+                 yaxis = list(title = ""))
     }
     
   })
@@ -547,13 +563,19 @@ server <- function(input, output) {
      
      if(filtro()==FALSE)
      {
-       plot_ly(datos_clasificacion ,labels= ~clasification, values=~n, type = 'pie')
+       plot_ly(datos_clasificacion ,labels= ~clasification, values=~n, type = 'pie') |> 
+         layout(title = 'Categorías investigadores',
+                xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+                yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
      }
      else
      {
        datos_clasificacion |> 
          filter(grupo==filtro()) |> 
-         plot_ly(labels= ~clasification, values=~n, type = 'pie')
+         plot_ly(labels= ~clasification, values=~n, type = 'pie') |> 
+         layout(title = 'Categorías investigadores',
+                xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+                yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
      }
     
   })
@@ -565,13 +587,19 @@ server <- function(input, output) {
     
      if(filtro()==FALSE)
      {
-       plot_ly(datos_revista, labels= ~categoria_revista, values=~n, type = 'pie')
+       plot_ly(datos_revista, labels= ~categoria_revista, values=~n, type = 'pie') |> 
+         layout(title = 'Categorías revistas',
+                xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+                yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
      }
      else
      {
        datos_revista |> 
          filter(grupo==filtro()) |> 
-         plot_ly(labels= ~categoria_revista, values=~n, type = 'pie')
+         plot_ly(labels= ~categoria_revista, values=~n, type = 'pie') |> 
+          layout(title = 'Categorías revistas',
+                xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+                yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
      }
     
   })
@@ -583,13 +611,22 @@ server <- function(input, output) {
      
      if(filtro()==FALSE)
      {
-       plot_ly(datos_produccion, x = ~ano, y = ~producciones, type = 'scatter', mode = 'lines')
+       datos_produccion1 <- articulos_unicos_2016_2020 |> 
+         select(categoria, ano, grupo) |> 
+         count(ano, sort = FALSE, name = "producciones") |> 
+       plot_ly(x = ~ano, y = ~producciones, type = 'scatter', mode = 'lines') |> 
+         layout(title = "Producción articulos",
+                xaxis = list(title = "Año"),
+                yaxis = list(title = "Producción"))
      }
      else
      {
        datos_produccion |> 
          filter(grupo==filtro()) |> 
-         plot_ly(x = ~ano, y = ~producciones, type = 'scatter', mode = 'lines')
+         plot_ly(x = ~ano, y = ~producciones, type = 'scatter', mode = 'lines') |> 
+          layout(title = "Producción articulos",
+                xaxis = list(title = "Año"),
+                yaxis = list(title = "Producción"))
      }
     
   })
@@ -600,13 +637,19 @@ server <- function(input, output) {
      
      if(filtro()==FALSE)
      {
-       plot_ly(datos_formacion, labels= ~posgrade, values=~n, type = 'pie')
+       plot_ly(datos_formacion, labels= ~posgrade, values=~n, type = 'pie') |> 
+         layout(title = 'Formación investigadores',
+                xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+                yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
      }
      else
      {
        datos_formacion |> 
          filter(grupo==filtro()) |> 
-         plot_ly(labels= ~posgrade, values=~n, type = 'pie')
+         plot_ly(labels= ~posgrade, values=~n, type = 'pie') |> 
+         layout(title = 'Formación investigadores',
+                xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+                yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
      }
     
   })
