@@ -184,8 +184,15 @@ server <- function(input, output) {
                         ">Link</a>"))
     if (filtro()==FALSE)
     {
-      datatable(grupos_general, filter = 'top',extensions = 'Scroller',
-                options = list(deferRender = TRUE,
+      datatable(grupos_general, filter = 'top',extensions = c('Scroller','Buttons'),
+                options = list(dom = 'Bfrtip',
+                               buttons = 
+                                 list('copy', list(
+                                   extend = 'collection',
+                                   buttons = c('csv', 'excel', 'pdf'),
+                                   text = 'Download'
+                                 )),
+                               deferRender = TRUE,
                                scrollY = 420,
                                scroller = TRUE,
                                scrollX = TRUE),
@@ -201,8 +208,15 @@ server <- function(input, output) {
     {
       grupos_general |> 
         filter(grupo == filtro()) |> 
-        datatable(filter = 'top',extensions = 'Scroller',
-                  options = list(deferRender = TRUE,
+        datatable(filter = 'top',extensions = c('Scroller','Buttons'),
+                  options = list(dom = 'Bfrtip',
+                                 buttons = 
+                                   list('copy', list(
+                                     extend = 'collection',
+                                     buttons = c('csv', 'excel', 'pdf'),
+                                     text = 'Download'
+                                   )),
+                                 deferRender = TRUE,
                                  scrollY = 420,
                                  scroller = TRUE,
                                  scrollX = TRUE),
@@ -255,8 +269,15 @@ server <- function(input, output) {
              scholar) 
     if (filtro()==FALSE)
     {
-      datatable(investigadores_general,filter = 'top',extensions = 'Scroller',
-                options = list(deferRender = TRUE,
+      datatable(investigadores_general,filter = 'top',extensions = c('Scroller','Buttons'),
+                options = list(dom = 'Bfrtip',
+                               buttons = 
+                                 list('copy', list(
+                                   extend = 'collection',
+                                   buttons = c('csv', 'excel', 'pdf'),
+                                   text = 'Download'
+                                 )),
+                               deferRender = TRUE,
                                scrollY = 420,
                                scroller = TRUE,
                                scrollX = TRUE),
@@ -272,8 +293,15 @@ server <- function(input, output) {
     {
       investigadores_general |> 
         filter(str_detect(Grupo , filtro() )) |> 
-        datatable(filter = 'top',extensions = 'Scroller',
-                  options = list(deferRender = TRUE,
+        datatable(filter = 'top',extensions = c('Scroller','Buttons'),
+                  options = list(dom = 'Bfrtip',
+                                 buttons = 
+                                   list('copy', list(
+                                     extend = 'collection',
+                                     buttons = c('csv', 'excel', 'pdf'),
+                                     text = 'Download'
+                                   )),
+                                 deferRender = TRUE,
                                  scrollY = 420,
                                  scroller = TRUE,
                                  scrollX = TRUE),
@@ -292,8 +320,15 @@ server <- function(input, output) {
     paises_general <- paises_general |>  
       mutate(porcentaje = str_c(porcentaje," %"),
              pais_revista = if_else(is.na(pais_revista), "No registra", pais_revista)) |> 
-      datatable(extensions = 'Scroller',
-                options = list(deferRender = TRUE,
+      datatable(extensions = c('Scroller','Buttons'),
+                options = list(dom = 'Bfrtip',
+                               buttons = 
+                                 list('copy', list(
+                                   extend = 'collection',
+                                   buttons = c('csv', 'excel', 'pdf'),
+                                   text = 'Download'
+                                 )),
+                               deferRender = TRUE,
                                scrollY = 420,
                                scroller = TRUE,
                                scrollX = TRUE),
@@ -308,8 +343,15 @@ server <- function(input, output) {
     
     revistas_actuales <- revistas_actuales |> 
       mutate(porcentaje = str_c(porcentaje," %")) |>  
-      datatable(filter = 'top',extensions = 'Scroller',
-                options = list(deferRender = TRUE,
+      datatable(filter = 'top',extensions = c('Scroller','Buttons'),
+                options = list(dom = 'Bfrtip',
+                               buttons = 
+                                 list('copy', list(
+                                   extend = 'collection',
+                                   buttons = c('csv', 'excel', 'pdf'),
+                                   text = 'Download'
+                                 )),
+                               deferRender = TRUE,
                                scrollY = 420,
                                scroller = TRUE,
                                scrollX = TRUE), 
@@ -333,8 +375,15 @@ server <- function(input, output) {
                           ">Enlace</a>")) 
     if (filtro()==FALSE)
     {
-      datatable(articulos_2016_2020 ,filter = 'top',extensions = 'Scroller',
-                options = list(deferRender = TRUE,
+      datatable(articulos_2016_2020 ,filter = 'top',extensions = c('Scroller','Buttons'),
+                options = list(dom = 'Bfrtip',
+                               buttons = 
+                                 list('copy', list(
+                                   extend = 'collection',
+                                   buttons = c('csv', 'excel', 'pdf'),
+                                   text = 'Download'
+                                 )),
+                               deferRender = TRUE,
                                scrollY = 420,
                                scroller = TRUE,
                                scrollX = TRUE),
@@ -349,8 +398,15 @@ server <- function(input, output) {
     {
       articulos_2016_2020 |> 
         filter(grupo == filtro()) |> 
-        datatable(filter = 'top' ,extensions = 'Scroller',
-                  options = list(deferRender = TRUE,
+        datatable(filter = 'top' ,extensions = c('Scroller','Buttons'),
+                  options = list(dom = 'Bfrtip',
+                                 buttons = 
+                                   list('copy', list(
+                                     extend = 'collection',
+                                     buttons = c('csv', 'excel', 'pdf'),
+                                     text = 'Download'
+                                   )),
+                                 deferRender = TRUE,
                                  scrollY = 420,
                                  scroller = TRUE,
                                  scrollX = TRUE),
@@ -371,8 +427,15 @@ server <- function(input, output) {
       select(-vol, -tipo_producto)
     if(filtro()==FALSE)
     {
-      datatable(capitulos_2016_2020 ,filter = 'top',extensions = 'Scroller',
-                options = list(deferRender = TRUE,
+      datatable(capitulos_2016_2020 ,filter = 'top',extensions = c('Scroller','Buttons'),
+                options = list(dom = 'Bfrtip',
+                               buttons = 
+                                 list('copy', list(
+                                   extend = 'collection',
+                                   buttons = c('csv', 'excel', 'pdf'),
+                                   text = 'Download'
+                                 )),
+                               deferRender = TRUE,
                                scrollY = 420,
                                scroller = TRUE,
                                scrollX = TRUE),
@@ -388,8 +451,15 @@ server <- function(input, output) {
     {
       capitulos_2016_2020 |> 
         filter(grupo == filtro()) |> 
-        datatable(filter = 'top', extensions = 'Scroller',
-                  options = list(deferRender = TRUE,
+        datatable(filter = 'top', extensions = c('Scroller','Buttons'),
+                  options = list(dom = 'Bfrtip',
+                                 buttons = 
+                                   list('copy', list(
+                                     extend = 'collection',
+                                     buttons = c('csv', 'excel', 'pdf'),
+                                     text = 'Download'
+                                   )),
+                                 deferRender = TRUE,
                                  scrollY = 420,
                                  scroller = TRUE,
                                  scrollX = TRUE),
@@ -411,8 +481,15 @@ server <- function(input, output) {
       select(-Tipo_producto)  
     if (filtro()==FALSE)
     {
-      datatable(libros_2016_2020 ,filter = 'top', extensions = 'Scroller',
-                options = list(deferRender = TRUE,
+      datatable(libros_2016_2020 ,filter = 'top', extensions = c('Scroller','Buttons'),
+                options = list(dom = 'Bfrtip',
+                               buttons = 
+                                 list('copy', list(
+                                   extend = 'collection',
+                                   buttons = c('csv', 'excel', 'pdf'),
+                                   text = 'Download'
+                                 )),
+                               deferRender = TRUE,
                                scrollY = 420,
                                scroller = TRUE,
                                scrollX = TRUE),
@@ -427,8 +504,15 @@ server <- function(input, output) {
     {
       libros_2016_2020 |> 
         filter(grupo == filtro()) |> 
-        datatable(filter = 'top', extensions = 'Scroller',
-                  options = list(deferRender = TRUE,
+        datatable(filter = 'top', extensions = c('Scroller','Buttons'),
+                  options = list(dom = 'Bfrtip',
+                                 buttons = 
+                                   list('copy', list(
+                                     extend = 'collection',
+                                     buttons = c('csv', 'excel', 'pdf'),
+                                     text = 'Download'
+                                   )),
+                                 deferRender = TRUE,
                                  scrollY = 420,
                                  scroller = TRUE,
                                  scrollX = TRUE),
@@ -452,8 +536,15 @@ server <- function(input, output) {
                               ">Link</a>")) 
     if (filtro()==FALSE)
     {
-      datatable(software_2016_2020 ,filter = 'top', extensions = 'Scroller',
-                options = list(deferRender = TRUE,
+      datatable(software_2016_2020 ,filter = 'top', extensions = c('Scroller','Buttons'),
+                options = list(dom = 'Bfrtip',
+                               buttons = 
+                                 list('copy', list(
+                                   extend = 'collection',
+                                   buttons = c('csv', 'excel', 'pdf'),
+                                   text = 'Download'
+                                 )),
+                               deferRender = TRUE,
                                scrollY = 420,
                                scroller = TRUE,
                                scrollX = TRUE),
@@ -469,8 +560,15 @@ server <- function(input, output) {
     {
       software_2016_2020 |> 
         filter(grupo==filtro()) |> 
-        datatable(filter = 'top',extensions = 'Scroller',
-                  options = list(deferRender = TRUE,
+        datatable(filter = 'top',extensions = c('Scroller','Buttons'),
+                  options = list(dom = 'Bfrtip',
+                                 buttons = 
+                                   list('copy', list(
+                                     extend = 'collection',
+                                     buttons = c('csv', 'excel', 'pdf'),
+                                     text = 'Download'
+                                   )),
+                                 deferRender = TRUE,
                                  scrollY = 420,
                                  scroller = TRUE,
                                  scrollX = TRUE),
@@ -491,8 +589,15 @@ server <- function(input, output) {
              ano <=filtro_fecha_max())
     if (filtro()==FALSE)
     {
-      datatable(innovacion_2016_2020 ,filter = 'top',extensions = 'Scroller',
-                options = list(deferRender = TRUE,
+      datatable(innovacion_2016_2020 ,filter = 'top',extensions = c('Scroller','Buttons'),
+                options = list(dom = 'Bfrtip',
+                               buttons = 
+                                 list('copy', list(
+                                   extend = 'collection',
+                                   buttons = c('csv', 'excel', 'pdf'),
+                                   text = 'Download'
+                                 )),
+                               deferRender = TRUE,
                                scrollY = 420,
                                scroller = TRUE,
                                scrollX = TRUE),
@@ -507,8 +612,15 @@ server <- function(input, output) {
     {
       innovacion_2016_2020 |> 
         filter(grupo==filtro()) |> 
-        datatable(filter = 'top', extensions = 'Scroller',
-                  options = list(deferRender = TRUE,
+        datatable(filter = 'top', extensions = c('Scroller','Buttons'),
+                  options = list(dom = 'Bfrtip',
+                                 buttons = 
+                                   list('copy', list(
+                                     extend = 'collection',
+                                     buttons = c('csv', 'excel', 'pdf'),
+                                     text = 'Download'
+                                   )),
+                                 deferRender = TRUE,
                                  scrollY = 420,
                                  scroller = TRUE,
                                  scrollX = TRUE),
@@ -532,8 +644,15 @@ server <- function(input, output) {
              hasta <= filtro_fecha_max()) 
     if (filtro()==FALSE)
     {
-      datatable(trabajo_2016_2020 ,filter = 'top', extensions = 'Scroller',
-                options = list(deferRender = TRUE,
+      datatable(trabajo_2016_2020 ,filter = 'top', extensions = c('Scroller','Buttons'),
+                options = list(dom = 'Bfrtip',
+                               buttons = 
+                                 list('copy', list(
+                                   extend = 'collection',
+                                   buttons = c('csv', 'excel', 'pdf'),
+                                   text = 'Download'
+                                 )),
+                               deferRender = TRUE,
                                scrollY = 420,
                                scroller = TRUE,
                                scrollX = TRUE),
@@ -549,8 +668,15 @@ server <- function(input, output) {
     {
       trabajo_2016_2020 |> 
         filter(grupo==filtro()) |> 
-        datatable(filter = 'top', extensions = 'Scroller',
-                  options = list(deferRender = TRUE,
+        datatable(filter = 'top', extensions = c('Scroller','Buttons'),
+                  options = list(dom = 'Bfrtip',
+                                 buttons = 
+                                   list('copy', list(
+                                     extend = 'collection',
+                                     buttons = c('csv', 'excel', 'pdf'),
+                                     text = 'Download'
+                                   )),
+                                 deferRender = TRUE,
                                  scrollY = 420,
                                  scroller = TRUE,
                                  scrollX = TRUE),
