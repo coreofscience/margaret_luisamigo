@@ -21,12 +21,14 @@ source(here("scripts",
 eval(parse(here("scripts/functions.R"), encoding = "UTF-8"))
 # Data outside
 
-grupos <- read_csv("https://docs.google.com/spreadsheets/d/1gBaXHFp1NTUTeXodb4JyHqY-P-AWV5yN5-p4L1O09gk/export?format=csv&gid=0") |> 
+grupos <- read_csv("https://docs.google.com/spreadsheets/d/1MT7BKbO7co8mtkuJWY6vQ1J1Vxnerkr998DmWU9hoPY/export?format=csv&gid=0") |> 
   mutate(grupo = str_to_upper(grupo),
          grupo = stri_trans_general(str = grupo,
                                     id = "Latin-ASCII"))
 
-researchers <- read_csv("https://docs.google.com/spreadsheets/d/1gBaXHFp1NTUTeXodb4JyHqY-P-AWV5yN5-p4L1O09gk/export?format=csv&gid=347194763") |> 
+researchers <- read_csv("https://docs.google.com/spreadsheets/d/1MT7BKbO7co8mtkuJWY6vQ1J1Vxnerkr998DmWU9hoPY/export?format=csv&gid=688218271") |> 
+  select(researcher, id_scholar) |> 
+  filter(id_scholar != "NA") |> 
   unique() |> 
   mutate(researcher = str_to_upper(researcher),
          researcher = stri_trans_general(str = researcher,

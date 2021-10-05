@@ -1,7 +1,22 @@
 researcher_information_ucla <- function(shiny_data){
   
-  researcher_data_all <- read_csv("https://docs.google.com/spreadsheets/d/15piQ_UOC6TtSCc-aa5Erdl_L5A2ct695Bi9SS9b7tuI/export?format=csv&gid=0") |> 
+  researcher_data_1 <- read_csv("https://docs.google.com/spreadsheets/d/1MT7BKbO7co8mtkuJWY6vQ1J1Vxnerkr998DmWU9hoPY/export?format=csv&gid=848891811") |> 
+    mutate(DOCENTE = str_to_upper(DOCENTE),
+           DOCENTE = stri_trans_general(str = DOCENTE,
+                                      id = "Latin-ASCII")) |> 
     unique() 
+  
+  researcher_data_all <- read_csv("https://docs.google.com/spreadsheets/d/1MT7BKbO7co8mtkuJWY6vQ1J1Vxnerkr998DmWU9hoPY/export?format=csv&gid=988287821") |> 
+    select(X11, X12, escuela) |> 
+    rename(DOCENTE = 1,
+           apellido = 2)|> 
+    unite(DOCENTE,"DOCENTE",c("DOCENTE","apellido"),sep = " ",remove = TRUE) |> 
+    unique() |> 
+    right_join(researcher_data_1, by = c("DOCENTE"="DOCENTE")) |> 
+    select(DOCENTE, UNIDAD, escuela) |> 
+    rename(PROGRAMA = 3)
+    
+  
   
   researcher_data <- researcher_data_all|> 
     mutate(id = 1:length(researcher_data_all$DOCENTE),
