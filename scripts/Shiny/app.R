@@ -136,7 +136,18 @@ setup <- dashboardBody(
             fluidPage(plotlyOutput("graf2"))),
     
     tabItem(tabName = "cate_revista",
-            fluidPage(plotlyOutput("graf3"))),
+            fluidPage(
+              fluidRow(box(
+              title = "PUBLINDEX",width = 8, status = "warning", solidHeader = TRUE,
+              collapsible = TRUE, collapsed = T,
+              plotlyOutput("graf3", height = 300)
+            )),
+            fluidRow(box(
+              title = "SCIMAGO", width = 8, status = "warning", solidHeader = TRUE,
+              collapsible = TRUE,collapsed = T,
+              plotlyOutput("graf3_1", height = 300)
+            ))
+              )),
     
     tabItem(tabName = "evolu_articulos",
             fluidPage(plotlyOutput("graf4"))),
@@ -762,6 +773,30 @@ server <- function(input, output) {
                 xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
                 yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
      }
+    
+  })
+  
+  output$graf3_1 <- renderPlotly({
+    datos_revista <- articulos_unicos_2016_2020 |> count(grupo ,SJR_Q) |>
+      arrange(desc(SJR_Q)) |> 
+      mutate(SJR_Q = ifelse(is.na(SJR_Q),"N/A",SJR_Q))
+    
+    if(filtro()==FALSE)
+    {
+      plot_ly(datos_revista, labels= ~SJR_Q, values=~n, type = 'pie') |> 
+        layout(title = 'Categorías revistas',
+               xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+               yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+    }
+    else
+    {
+      datos_revista |> 
+        filter(grupo==filtro()) |> 
+        plot_ly(labels= ~SJR_Q, values=~n, type = 'pie') |> 
+        layout(title = 'Categorías revistas',
+               xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+               yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+    }
     
   })
   
