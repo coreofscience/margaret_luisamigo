@@ -710,10 +710,13 @@ server <- function(input, output) {
     
     if(filtro()==FALSE)
     {
-      plot_ly(datos_clasi, x = ~clasificacion, y = ~n, type = 'bar') |> 
-        layout(title = 'Clasificación Grupos de investigación',
-               xaxis = list(title = ""),
-               yaxis = list(title = ""))
+      datos_clasi1 <- grupos_general |> 
+        count(clasificacion) |> 
+        arrange(desc(clasificacion)) |> 
+        plot_ly(x = ~clasificacion, y = ~n, type = 'bar') |> 
+          layout(title = 'Clasificación Grupos de investigación',
+                 xaxis = list(title = ""),
+                 yaxis = list(title = ""))
     }
     else
     {
