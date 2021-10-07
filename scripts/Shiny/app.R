@@ -6,7 +6,6 @@ library(here)
 library(DT)
 library(plotly)
 library(readxl)
-library(crosstalk)
 library(stringi)
 library(shinydashboard)
 
@@ -161,21 +160,7 @@ ui <- dashboardPage(
   skin = "yellow",
   dashboardHeader(title = "Margaret"),
   sidebar,
-  setup,
-  dashboardBody(
-    tags$head(tags$style(HTML('
-      .main-header .logo {
-        background-color: #007b99;
-        color: #007b99;
-        style="color: #007b99;
-        font-family: "Georgia", Times, "Times New Roman", serif;
-        font-weight: bold;
-        font-size: 24px;
-      }
-      .shiny-input-container {
-        color: white;
-      }
-    '))))
+  setup
 )
 
 server <- function(input, output) {
