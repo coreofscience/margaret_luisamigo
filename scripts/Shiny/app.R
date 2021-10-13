@@ -8,6 +8,49 @@ library(plotly)
 library(readxl)
 library(stringi)
 library(shinydashboard)
+library(shiny)
+library(shinydashboard)
+library(dplyr)
+library(glue)
+library(shinyauthr)
+library(RSQLite)
+library(DBI)
+library(lubridate)
+
+
+# How many days should sessions last?
+cookie_expiry <- 7
+
+# This function must return a data.frame with columns user and sessionid.  Other columns are also okay
+# and will be made available to the app after log in.
+
+get_sessions_from_db <- function(conn = db, expiry = cookie_expiry) {
+  dbReadTable(conn, "sessions") %>%
+    mutate(login_time = ymd_hms(login_time)) %>%
+    as_tibble() %>%
+    filter(login_time > now() - days(expiry))
+}
+
+# This function must accept two parameters: user and sessionid. It will be called whenever the user
+# successfully logs in with a password.
+
+add_session_to_db <- function(user, sessionid, conn = db) {
+  tibble(user = user, sessionid = sessionid, login_time = as.character(now())) %>%
+    dbWriteTable(conn, "sessions", ., append = TRUE)
+}
+
+db <- dbConnect(SQLite(), ":memory:")
+dbCreateTable(db, "sessions", c(user = "TEXT", sessionid = "TEXT", login_time = "TEXT"))
+
+user_base <- tibble(
+  user = c("user1", "user2"),
+  password = c("pass1", "pass2"),
+  password_hash = sapply(c("pass1", "pass2"), sodium::password_store),
+  permissions = c("admin", "standard"),
+  name = c("User One", "User Two")
+)
+
+#----------------------------------------------------------------------------------------------
 
 articulos_unicos_2016_2020 <- 
   read_csv(here("output",
@@ -77,7 +120,7 @@ sidebar <- dashboardSidebar(
   sliderside,
   #butonside,
   sidebarMenu(
-             menuItem("Datos", tabName = "general_datos", icon = icon("atlas")),
+    menuItem("Datos", tabName = "general_datos", icon = icon("atlas")),
     
     menuItem("Producción cientifica", icon = icon("book"), tabName = ("produccion")),
     
@@ -98,45 +141,44 @@ sidebar <- dashboardSidebar(
   )
 )
 
-setup <- dashboardBody(
-  tabItems( 
-    tabItem(tabName = "general_datos",
-            tabsetPanel(type = "tabs",
-                        tabPanel("Grupos", fluidPage((DT::dataTableOutput('ex1'))
-                        ),),
-                        
-                        tabPanel("Investigadores", fluidPage((DT::dataTableOutput('ex2'))
-                        ),),
-                        
-                        tabPanel("Paises", fluidPage((DT::dataTableOutput('ex3'))
-                        ),),
-                        
-                        tabPanel("Revistas", fluidPage((DT::dataTableOutput('ex4'))
-                        )))),
-    tabItem(tabName = "produccion",
-            tabsetPanel(type = "tabs",
-                        tabPanel("Articulos", fluidPage((DT::dataTableOutput('articulo'))
-                        )),
-                        tabPanel("Capitulos", fluidPage((DT::dataTableOutput('capitulo'))
-                        )),
-                        tabPanel("Libros", fluidPage((DT::dataTableOutput('libro'))
-                        )),
-                        tabPanel("Software", fluidPage((DT::dataTableOutput('software'))
-                        )),
-                        tabPanel("Innovaciones", fluidPage((DT::dataTableOutput('innovaciones'))
-                        )),
-                        tabPanel("Trabajos dirigidos/Tutorías",
-                                 fluidPage((DT::dataTableOutput('trabajosd'))
-                                 )))),
-    tabItem(tabName = "clasi_grupos",
-            fluidPage(plotlyOutput("graf1"))),
-    
-    tabItem(tabName = "clasi_inves",
-            fluidPage(plotlyOutput("graf2"))),
-    
-    tabItem(tabName = "cate_revista",
-            fluidPage(
-              fluidRow(box(
+setup <- tabItems( 
+  tabItem(tabName = "general_datos",
+          tabsetPanel(type = "tabs",
+                      tabPanel("Grupos", fluidPage((DT::dataTableOutput('ex1'))
+                      ),),
+                      
+                      tabPanel("Investigadores", fluidPage((DT::dataTableOutput('ex2'))
+                      ),),
+                      
+                      tabPanel("Paises", fluidPage((DT::dataTableOutput('ex3'))
+                      ),),
+                      
+                      tabPanel("Revistas", fluidPage((DT::dataTableOutput('ex4'))
+                      )))),
+  tabItem(tabName = "produccion",
+          tabsetPanel(type = "tabs",
+                      tabPanel("Articulos", fluidPage((DT::dataTableOutput('articulo'))
+                      )),
+                      tabPanel("Capitulos", fluidPage((DT::dataTableOutput('capitulo'))
+                      )),
+                      tabPanel("Libros", fluidPage((DT::dataTableOutput('libro'))
+                      )),
+                      tabPanel("Software", fluidPage((DT::dataTableOutput('software'))
+                      )),
+                      tabPanel("Innovaciones", fluidPage((DT::dataTableOutput('innovaciones'))
+                      )),
+                      tabPanel("Trabajos dirigidos/Tutorías",
+                               fluidPage((DT::dataTableOutput('trabajosd'))
+                               )))),
+  tabItem(tabName = "clasi_grupos",
+          fluidPage(plotlyOutput("graf1"))),
+  
+  tabItem(tabName = "clasi_inves",
+          fluidPage(plotlyOutput("graf2"))),
+  
+  tabItem(tabName = "cate_revista",
+          fluidPage(
+            fluidRow(box(
               title = "PUBLINDEX",width = 8, status = "warning", solidHeader = TRUE,
               collapsible = TRUE, collapsed = T,
               plotlyOutput("graf3", height = 300)
@@ -146,21 +188,41 @@ setup <- dashboardBody(
               collapsible = TRUE,collapsed = T,
               plotlyOutput("graf3_1", height = 300)
             ))
-              )),
-    
-    tabItem(tabName = "evolu_articulos",
-            fluidPage(plotlyOutput("graf4"))),
-    
-    tabItem(tabName = "forma_inves",
-            fluidPage(plotlyOutput("graf5")))
-  )
+          )),
+  
+  tabItem(tabName = "evolu_articulos",
+          fluidPage(plotlyOutput("graf4"))),
+  
+  tabItem(tabName = "forma_inves",
+          fluidPage(plotlyOutput("graf5")))
 )
 
-ui <- dashboardPage(
-  skin = "yellow",
-  dashboardHeader(title = "Margaret"),
-  sidebar,
+
+ui_app <- 
   setup
+
+ui_app2 <-
+  setup
+
+
+
+ui <- dashboardPage(
+  dashboardHeader(
+    title = "margaret",
+    tags$li(
+      class = "dropdown",
+      style = "padding: 8px;",
+      shinyauthr::logoutUI("logout")
+    )
+  ),
+  sidebar,
+  dashboardBody(
+    shinyauthr::loginUI(
+      "login", 
+      cookie_expiry = cookie_expiry
+    ),
+    uiOutput("testUI")
+  )
 )
 
 server <- function(input, output) {
@@ -699,68 +761,68 @@ server <- function(input, output) {
         count(clasificacion) |> 
         arrange(desc(clasificacion)) |> 
         plot_ly(x = ~clasificacion, y = ~n, type = 'bar') |> 
-          layout(title = 'Clasificación Grupos de investigación',
-                 xaxis = list(title = ""),
-                 yaxis = list(title = ""))
+        layout(title = 'Clasificación Grupos de investigación',
+               xaxis = list(title = ""),
+               yaxis = list(title = ""))
     }
     else
     {
       datos_clasi |> 
         filter(grupo==filtro()) |> 
         plot_ly(x = ~clasificacion, y = ~n, type = 'bar') |> 
-          layout(title = 'Clasificación Grupos de investigación',
-                 xaxis = list(title = ""),
-                 yaxis = list(title = ""))
+        layout(title = 'Clasificación Grupos de investigación',
+               xaxis = list(title = ""),
+               yaxis = list(title = ""))
     }
     
   })
   
   
   output$graf2 <- renderPlotly ({
-     datos_clasificacion <- investigadores_general |> 
-       count(grupo ,clasification) |> 
-       arrange(desc(clasification)) 
-     
-     if(filtro()==FALSE)
-     {
-       plot_ly(datos_clasificacion ,labels= ~clasification, values=~n, type = 'pie') |> 
-         layout(title = 'Categorías investigadores',
-                xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
-                yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
-     }
-     else
-     {
-       datos_clasificacion |> 
-         filter(grupo==filtro()) |> 
-         plot_ly(labels= ~clasification, values=~n, type = 'pie') |> 
-         layout(title = 'Categorías investigadores',
-                xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
-                yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
-     }
+    datos_clasificacion <- investigadores_general |> 
+      count(grupo ,clasification) |> 
+      arrange(desc(clasification)) 
+    
+    if(filtro()==FALSE)
+    {
+      plot_ly(datos_clasificacion ,labels= ~clasification, values=~n, type = 'pie') |> 
+        layout(title = 'Categorías investigadores',
+               xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+               yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+    }
+    else
+    {
+      datos_clasificacion |> 
+        filter(grupo==filtro()) |> 
+        plot_ly(labels= ~clasification, values=~n, type = 'pie') |> 
+        layout(title = 'Categorías investigadores',
+               xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+               yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+    }
     
   })
   
   output$graf3 <- renderPlotly({
-     datos_revista <- articulos_unicos_2016_2020 |> count(grupo ,categoria_revista) |>
-       arrange(desc(categoria_revista)) |> 
-       mutate(categoria_revista = ifelse(is.na(categoria_revista),"N/A",categoria_revista))
+    datos_revista <- articulos_unicos_2016_2020 |> count(grupo ,categoria_revista) |>
+      arrange(desc(categoria_revista)) |> 
+      mutate(categoria_revista = ifelse(is.na(categoria_revista),"N/A",categoria_revista))
     
-     if(filtro()==FALSE)
-     {
-       plot_ly(datos_revista, labels= ~categoria_revista, values=~n, type = 'pie') |> 
-         layout(title = 'Categorías revistas',
-                xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
-                yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
-     }
-     else
-     {
-       datos_revista |> 
-         filter(grupo==filtro()) |> 
-         plot_ly(labels= ~categoria_revista, values=~n, type = 'pie') |> 
-          layout(title = 'Categorías revistas',
-                xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
-                yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
-     }
+    if(filtro()==FALSE)
+    {
+      plot_ly(datos_revista, labels= ~categoria_revista, values=~n, type = 'pie') |> 
+        layout(title = 'Categorías revistas',
+               xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+               yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+    }
+    else
+    {
+      datos_revista |> 
+        filter(grupo==filtro()) |> 
+        plot_ly(labels= ~categoria_revista, values=~n, type = 'pie') |> 
+        layout(title = 'Categorías revistas',
+               xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+               yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+    }
     
   })
   
@@ -789,53 +851,107 @@ server <- function(input, output) {
   })
   
   output$graf4 <- renderPlotly({
-     datos_produccion <- articulos_unicos_2016_2020 |> 
-       select(categoria, ano, grupo) |> 
-       count(grupo ,ano, sort = FALSE, name = "producciones")
-     
-     if(filtro()==FALSE)
-     {
-       datos_produccion1 <- articulos_unicos_2016_2020 |> 
-         select(categoria, ano, grupo) |> 
-         count(ano, sort = FALSE, name = "producciones") |> 
-       plot_ly(x = ~ano, y = ~producciones, type = 'scatter', mode = 'lines') |> 
-         layout(title = "Producción articulos",
-                xaxis = list(title = "Año"),
-                yaxis = list(title = "Producción"))
-     }
-     else
-     {
-       datos_produccion |> 
-         filter(grupo==filtro()) |> 
-         plot_ly(x = ~ano, y = ~producciones, type = 'scatter', mode = 'lines') |> 
-          layout(title = "Producción articulos",
-                xaxis = list(title = "Año"),
-                yaxis = list(title = "Producción"))
-     }
+    datos_produccion <- articulos_unicos_2016_2020 |> 
+      select(categoria, ano, grupo) |> 
+      count(grupo ,ano, sort = FALSE, name = "producciones")
+    
+    if(filtro()==FALSE)
+    {
+      datos_produccion1 <- articulos_unicos_2016_2020 |> 
+        select(categoria, ano, grupo) |> 
+        count(ano, sort = FALSE, name = "producciones") |> 
+        plot_ly(x = ~ano, y = ~producciones, type = 'scatter', mode = 'lines') |> 
+        layout(title = "Producción articulos",
+               xaxis = list(title = "Año"),
+               yaxis = list(title = "Producción"))
+    }
+    else
+    {
+      datos_produccion |> 
+        filter(grupo==filtro()) |> 
+        plot_ly(x = ~ano, y = ~producciones, type = 'scatter', mode = 'lines') |> 
+        layout(title = "Producción articulos",
+               xaxis = list(title = "Año"),
+               yaxis = list(title = "Producción"))
+    }
     
   })
   
   output$graf5 <- renderPlotly({
-     datos_formacion <- investigadores_general |> count(grupo, posgrade) |> 
-       arrange(desc(posgrade)) 
-     
-     if(filtro()==FALSE)
-     {
-       plot_ly(datos_formacion, labels= ~posgrade, values=~n, type = 'pie') |> 
-         layout(title = 'Formación investigadores',
-                xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
-                yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
-     }
-     else
-     {
-       datos_formacion |> 
-         filter(grupo==filtro()) |> 
-         plot_ly(labels= ~posgrade, values=~n, type = 'pie') |> 
-         layout(title = 'Formación investigadores',
-                xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
-                yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
-     }
+    datos_formacion <- investigadores_general |> count(grupo, posgrade) |> 
+      arrange(desc(posgrade)) 
     
+    if(filtro()==FALSE)
+    {
+      plot_ly(datos_formacion, labels= ~posgrade, values=~n, type = 'pie') |> 
+        layout(title = 'Formación investigadores',
+               xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+               yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+    }
+    else
+    {
+      datos_formacion |> 
+        filter(grupo==filtro()) |> 
+        plot_ly(labels= ~posgrade, values=~n, type = 'pie') |> 
+        layout(title = 'Formación investigadores',
+               xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+               yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+    }
+    
+  })
+  
+  
+  # call login module supplying data frame, user and password cols and reactive trigger
+  credentials <- shinyauthr::loginServer(
+    id = "login",
+    data = user_base,
+    user_col = user,
+    pwd_col = password_hash,
+    sodium_hashed = TRUE,
+    cookie_logins = TRUE,
+    sessionid_col = sessionid,
+    cookie_getter = get_sessions_from_db,
+    cookie_setter = add_session_to_db,
+    log_out = reactive(logout_init())
+  )
+  
+  # call the logout module with reactive trigger to hide/show
+  logout_init <- shinyauthr::logoutServer(
+    id = "logout",
+    active = reactive(credentials()$user_auth)
+  )
+  
+  observe({
+    if (credentials()$user_auth) {
+      shinyjs::removeClass(selector = "body", class = "sidebar-collapse")
+    } else {
+      shinyjs::addClass(selector = "body", class = "sidebar-collapse")
+    }
+  })
+  
+  user_info <- reactive({
+    credentials()$info
+  })
+  
+  # user_data <- reactive({
+  #   req(credentials()$user_auth)
+  #   
+  #   if (user_info()$permissions == "admin") {
+  #     #rederUI(ui_app)
+  #   } else if (user_info()$permissions == "standard") {
+  #     dplyr::storms[, 1:11]
+  #   }
+  # })
+  
+  
+  output$testUI <- renderUI({
+    req(credentials()$user_auth)
+    
+    if (user_info()$permissions == "admin") {
+      ui_app
+    } else if (user_info()$permissions == "standard") {
+      ui_app2
+    }
   })
   
 } 
