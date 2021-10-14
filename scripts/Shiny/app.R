@@ -123,8 +123,6 @@ sidebar <- dashboardSidebar(
     menuItem("Datos", tabName = "general_datos", icon = icon("atlas")),
     
     menuItem("Producción cientifica", icon = icon("book"), tabName = ("produccion")),
-    
-    
     menuItem("Grupos en cifras", icon = icon("bar-chart-o"),
              menuSubItem("Clasificación grupos", tabName = "clasi_grupos"),
              menuSubItem("Clasificación investigadores", tabName = "clasi_inves"),
@@ -141,7 +139,7 @@ sidebar <- dashboardSidebar(
   )
 )
 
-setup <- tabItems( 
+setup <- tabItems(
   tabItem(tabName = "general_datos",
           tabsetPanel(type = "tabs",
                       tabPanel("Grupos", fluidPage((DT::dataTableOutput('ex1'))
@@ -201,10 +199,10 @@ setup <- tabItems(
 ui_app <- 
   setup
 
-ui_app2 <-
+ui_app2 <- 
   setup
 
-
+#ui_inicio <- h1("inicio")
 
 ui <- dashboardPage(
   dashboardHeader(
@@ -933,25 +931,20 @@ server <- function(input, output) {
     credentials()$info
   })
   
-  # user_data <- reactive({
-  #   req(credentials()$user_auth)
-  #   
-  #   if (user_info()$permissions == "admin") {
-  #     #rederUI(ui_app)
-  #   } else if (user_info()$permissions == "standard") {
-  #     dplyr::storms[, 1:11]
-  #   }
-  # })
+  user_data <- reactive({
+    req(credentials()$user_auth)
+
+    if (user_info()$permissions == "admin") {
+        ui_app
+    } else if (user_info()$permissions == "standard") {
+      dplyr::storms[, 1:11]
+    }
+  })
   
   
   output$testUI <- renderUI({
     req(credentials()$user_auth)
-    
-    if (user_info()$permissions == "admin") {
-      ui_app
-    } else if (user_info()$permissions == "standard") {
-      ui_app2
-    }
+      user_data()
   })
   
 } 
