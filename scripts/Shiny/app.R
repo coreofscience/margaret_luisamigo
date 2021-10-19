@@ -70,7 +70,7 @@ filterside <- selectInput("grupos_input","Grupos:",
 
 #butonside <- actionButton("aplicar_input", "Aplicar")
 
-sliderside <- sliderInput("fechas_input", "Años:", min = 1995, max = 2020, value = c(2016,2020), sep = "")
+sliderside <- sliderInput("fechas_input", "Años:", min = 1995, max = 2021, value = c(2016,2020), sep = "")
 
 sidebar <- dashboardSidebar(
   filterside,
