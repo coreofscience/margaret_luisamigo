@@ -104,31 +104,31 @@ setup <- dashboardBody(
   tabItems( 
     tabItem(tabName = "general_datos",
             tabsetPanel(type = "tabs",
-                        tabPanel("Grupos", fluidPage((DT::dataTableOutput('ex1'))
+                        tabPanel("Grupos", fluidPage(br(),(DT::dataTableOutput('ex1'))
                         ),),
                         
-                        tabPanel("Investigadores", fluidPage((DT::dataTableOutput('ex2'))
+                        tabPanel("Investigadores", fluidPage(br(),(DT::dataTableOutput('ex2'))
                         ),),
                         
-                        tabPanel("Paises", fluidPage((DT::dataTableOutput('ex3'))
+                        tabPanel("Paises", fluidPage(br(),(DT::dataTableOutput('ex3'))
                         ),),
                         
-                        tabPanel("Revistas", fluidPage((DT::dataTableOutput('ex4'))
+                        tabPanel("Revistas", fluidPage(br(),(DT::dataTableOutput('ex4'))
                         )))),
     tabItem(tabName = "produccion",
             tabsetPanel(type = "tabs",
-                        tabPanel("Articulos", fluidPage((DT::dataTableOutput('articulo'))
+                        tabPanel("Articulos", fluidPage(br(),(DT::dataTableOutput('articulo'))
                         )),
-                        tabPanel("Capitulos", fluidPage((DT::dataTableOutput('capitulo'))
+                        tabPanel("Capitulos", fluidPage(br(),(DT::dataTableOutput('capitulo'))
                         )),
-                        tabPanel("Libros", fluidPage((DT::dataTableOutput('libro'))
+                        tabPanel("Libros", fluidPage(br(),(DT::dataTableOutput('libro'))
                         )),
-                        tabPanel("Software", fluidPage((DT::dataTableOutput('software'))
+                        tabPanel("Software", fluidPage(br(),(DT::dataTableOutput('software'))
                         )),
-                        tabPanel("Innovaciones", fluidPage((DT::dataTableOutput('innovaciones'))
+                        tabPanel("Innovaciones", fluidPage(br(),(DT::dataTableOutput('innovaciones'))
                         )),
                         tabPanel("Trabajos dirigidos/Tutorías",
-                                 fluidPage((DT::dataTableOutput('trabajosd'))
+                                 fluidPage(br(),(DT::dataTableOutput('trabajosd'))
                                  )))),
     tabItem(tabName = "clasi_grupos",
             fluidPage(plotlyOutput("graf1"))),
