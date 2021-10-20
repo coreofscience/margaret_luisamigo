@@ -11,7 +11,9 @@ library(shinydashboard)
 
 articulos_unicos_2016_2020 <- 
   read_csv(here("output",
-                "articulos.csv"))
+                "articulos.csv")) |> 
+  mutate(SJR_Q = ifelse(SJR_Q == '-', "Sin categoria",
+         SJR_Q))
 
 investigadores_general <- 
   read_csv(here("output",
@@ -90,7 +92,7 @@ sidebar <- dashboardSidebar(
              menuSubItem("Formación investigadores", tabName = "forma_inves")
     ),
     menuItem("Rpubs", icon = icon("file-code-o"),
-             href = "https://rpubs.com/srobledog/margaret_7"
+             href = "https://rpubs.com/srobledog/margaret"
     )
   ),
   mainPanel(
