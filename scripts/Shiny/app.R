@@ -120,6 +120,7 @@ sidebar <- dashboardSidebar(
   sliderside,
   #butonside,
   sidebarMenu(
+    menuItem("Inicio", tabName = "Inicio", icon = icon("atlas")),
     menuItem("Datos", tabName = "general_datos", icon = icon("atlas")),
     
     menuItem("Producción cientifica", icon = icon("book"), tabName = ("produccion")),
@@ -170,7 +171,8 @@ setup <- tabItems(
                                )))),
   tabItem(tabName = "clasi_grupos",
           fluidPage(plotlyOutput("graf1"))),
-  
+  tabItem(tabName = "Inicio",
+          fluidPage(tags$h1("Inicio"))),
   tabItem(tabName = "clasi_inves",
           fluidPage(plotlyOutput("graf2"))),
   
@@ -215,15 +217,19 @@ ui <- dashboardPage(
   ),
   sidebar,
   dashboardBody(
+    tags$h2("Proyecto Margaret Universidad Católica Luis Amigó"),
+    #textOutput("try"),
     shinyauthr::loginUI(
       "login", 
       cookie_expiry = cookie_expiry
     ),
     uiOutput("testUI")
-  )
+      )
 )
 
 server <- function(input, output) {
+  
+  output$try <- reactive(inputPanel())
   
   filtro <- reactive(input$grupos_input)
   
