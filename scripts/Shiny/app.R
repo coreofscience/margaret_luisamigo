@@ -160,7 +160,22 @@ setup <- dashboardBody(
 
 ui <- dashboardPage(
   skin = "yellow",
-  dashboardHeader(title = "Margaret"),
+  dashboardHeader(title = "Margaret",
+                  dropdownMenu(type = "notifications", icon = shiny::icon("code"),
+                               badgeStatus = "info", headerText = "Desarrolladores",
+                               tags$li(a(href = "https://github.com/srobledog",
+                                         target = "_blank",
+                                         tagAppendAttributes(icon("github")),
+                                         "Sebastian Robledo")),
+                               tags$li(a(href = "https://github.com/bryanariasq02",
+                                         target = "_blank",
+                                         tagAppendAttributes(icon("github")),
+                                         "Bryan Arias")),
+                               tags$li(a(href = "https://github.com/camilogs1",
+                                         target = "_blank",
+                                         tagAppendAttributes(icon("github")),
+                                         "Camilo García"))
+                  )),
   sidebar,
   setup
 )
