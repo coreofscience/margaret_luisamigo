@@ -120,7 +120,6 @@ sidebar <- dashboardSidebar(
   sliderside,
   #butonside,
   sidebarMenu(
-    menuItem("Inicio", tabName = "Inicio", icon = icon("atlas")),
     menuItem("Datos", tabName = "general_datos", icon = icon("atlas")),
     
     menuItem("Producción cientifica", icon = icon("book"), tabName = ("produccion")),
@@ -215,7 +214,7 @@ ui <- dashboardPage(
       shinyauthr::logoutUI("logout")
     )
   ),
-  sidebar,
+  uiOutput("sidebar"),
   dashboardBody(
     tags$h2("Proyecto Margaret Universidad Católica Luis Amigó"),
     #textOutput("try"),
@@ -953,6 +952,10 @@ server <- function(input, output) {
       user_data()
   })
   
+  output$sidebar <- renderUI({
+    req(credentials()$user_auth)
+    sidebar
+  })
 } 
 
 shinyApp(ui = ui , server = server)
