@@ -79,7 +79,7 @@ sidebar <- dashboardSidebar(
   sliderside,
   #butonside,
   sidebarMenu(
-             menuItem("Datos", tabName = "general_datos", icon = icon("atlas")),
+             menuItem("Datos", tabName = "general_datos", icon = icon("atlas"), badgeLabel = "New", badgeColor = "yellow"),
     
     menuItem("Producción cientifica", icon = icon("book"), tabName = ("produccion")),
     
@@ -192,9 +192,9 @@ server <- function(input, output) {
     grupos_general <- grupos_general |> 
       select(grupo, clasificacion, sum_papers, departamento , url,
              fecha_creacion,lider, email, area_conocimiento_1) |> 
-      mutate(url= str_c("<a href=",
+      mutate(url= str_c('<a href="',
                         url,
-                        ">Link</a>"))
+                        '" target="_blank">Link</a>'))
     if (filtro()==FALSE)
     {
       datatable(grupos_general, filter = 'top',extensions = c('Scroller','Buttons'),
@@ -246,15 +246,13 @@ server <- function(input, output) {
   output$ex2 <- DT::renderDataTable({
     
     investigadores_general <- investigadores_general |> 
-      mutate(url = str_c("<a href=","\"",
+      mutate(url = str_c('<a href="',
                          url,
-                         "\"",
-                         ">Link</a>"),
+                         '" target="_blank">Link</a>'),
              scholar = str_c("<a href=","\"",
                              "https://scholar.google.com/citations?user=",
                              id_scholar,
-                             "\"",
-                             ">Scholar</a>")) |>
+                             '" target="_blank">Scholar</a>')) |>
       select(-vinculacion,
              -fin_vinculacion) |> 
       rename(Investigador = integrantes,
@@ -385,7 +383,7 @@ server <- function(input, output) {
                           "https://doi.org/",
                           DOI,
                           "\"",
-                          ">Enlace</a>")) 
+                          '" target="_blank">Link</a>')) 
     if (filtro()==FALSE)
     {
       datatable(articulos_2016_2020 ,filter = 'top',extensions = c('Scroller','Buttons'),
@@ -546,7 +544,7 @@ server <- function(input, output) {
       select(-nombre_proyecto, -tipo_producto) |> 
       mutate(sitio_web= str_c("<a href=",
                               sitio_web,
-                              ">Link</a>")) 
+                              '" target="_blank">Link</a>')) 
     if (filtro()==FALSE)
     {
       datatable(software_2016_2020 ,filter = 'top', extensions = c('Scroller','Buttons'),
