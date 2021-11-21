@@ -13,6 +13,7 @@ data_cleaning_researcher <- function(grupo_df) {
   
   grupo_researcher_cleaned <- 
     grupo_df[["grupo_researcher"]] |>
+    head(32) |> 
     mutate(inicio_vinculacion = str_remove(inicio_fin_vinculacion,
                                            "-.*"),
            inicio_vinculacion = ym(inicio_vinculacion),
