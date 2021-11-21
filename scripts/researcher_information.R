@@ -1,5 +1,11 @@
 researcher_information_ucla <- function(shiny_data){
   
+  information <- read_csv("https://docs.google.com/spreadsheets/d/1MT7BKbO7co8mtkuJWY6vQ1J1Vxnerkr998DmWU9hoPY/export?format=csv&gid=1016145547") |> 
+    unite(researcher,"NOMBRES",c("NOMBRES","APELLIDOS"),sep = " ",remove = TRUE) |> 
+    unique()
+  ---------------------------------------(nuevos datos)-------------
+    
+  
   researcher_data_1 <- read_csv("https://docs.google.com/spreadsheets/d/1MT7BKbO7co8mtkuJWY6vQ1J1Vxnerkr998DmWU9hoPY/export?format=csv&gid=848891811") |> 
     mutate(DOCENTE = str_to_upper(DOCENTE),
            DOCENTE = stri_trans_general(str = DOCENTE,

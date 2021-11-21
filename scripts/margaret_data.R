@@ -25,7 +25,10 @@ grupos <- read_csv("https://docs.google.com/spreadsheets/d/1MT7BKbO7co8mtkuJWY6v
   mutate(grupo = str_to_upper(grupo),
          grupo = stri_trans_general(str = grupo,
                                     id = "Latin-ASCII"))
-
+researcher_data <- read_csv("https://docs.google.com/spreadsheets/d/1MT7BKbO7co8mtkuJWY6vQ1J1Vxnerkr998DmWU9hoPY/export?format=csv&gid=1016145547") |> 
+  unite(researcher,"NOMBRES",c("NOMBRES","APELLIDOS"),sep = " ",remove = TRUE) |> 
+  unique() 
+ 
 researchers <- read_csv("https://docs.google.com/spreadsheets/d/1MT7BKbO7co8mtkuJWY6vQ1J1Vxnerkr998DmWU9hoPY/export?format=csv&gid=688218271") |> 
   select(researcher, id_scholar) |> 
   filter(id_scholar != "NA") |> 
@@ -37,8 +40,14 @@ researchers <- read_csv("https://docs.google.com/spreadsheets/d/1MT7BKbO7co8mtku
   unnest_wider(h_index) |> 
   unnest_wider(result) |> 
   select(researcher, id_scholar, h_index) |> 
-  mutate(h_index = if_else(is.na(h_index), 0, h_index))
-
+  mutate(h_index = if_else(is.na(h_index), 0, h_index)) |> 
+  full_join(researcher_data, by = c("researcher"="researcher")) |> 
+  rename(unidad_academica = 4) |> 
+  group_by(researcher) |> 
+  mutate(unidad_academica = paste0(unidad_academica, collapse = "; "),
+         CENTRO = paste0(CENTRO, collapse = "; "),
+         ZONA = paste0(ZONA, collapse = "; ")) |> 
+  unique()
 
 grupo_df <- data_getting_ucla(grupos)
 produccion_grupos <- data_cleaning_ucla(grupo_df)
