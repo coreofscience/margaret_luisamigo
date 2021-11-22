@@ -23,25 +23,25 @@ articulos_unicos_2016_2020 <-
   read_csv(here("output",
                 "articulos.csv")) |> 
   filter(ano >= 2016,
-         ano <=2020)
+         ano <=2021)
 
 capitulos_2016_2020 <- 
   read_csv(here("output",
                 "capitulos.csv")) |> 
   filter(ano >= 2016,
-         ano <=2020)
+         ano <=2021)
 
 libros_2016_2020 <- 
   read_csv(here("output",
                 "libros.csv")) |> 
   filter(Ano >= 2016,
-         Ano <=2020)
+         Ano <=2021)
 
 software_2016_2020 <- 
   read_csv(here("output",
                 "softwares.csv")) |> 
   filter(ano >= 2016,
-         ano <=2020)
+         ano <=2021)
 
 trabajo_2016_2020 <- 
   read_csv(here("output",
@@ -51,13 +51,13 @@ trabajo_2016_2020 <-
          desde = str_remove(desde, "\\d.* "),
          desde = str_trim(desde)) |> 
   filter(desde >= 2016,
-         hasta <=2020)
+         hasta <=2021)
 
 innovacion_2016_2020 <- 
   read_csv(here("output",
                 "innovaciones_gestion.csv")) |> 
   filter(ano >= 2016,
-         ano <=2020)
+         ano <=2021)
 
 grupos_general <- 
   read_csv(here("output",
@@ -115,12 +115,12 @@ investigadores_general |>
          CvLAC = url,
          Grupo = grupo,
          Inicio = inicio_vinculacion,
-         Formacion = posgrade,
-         ) |> 
+         Formacion = posgrade) |> 
   select(Investigador,
          Grupo,
-         unidad,
-         programa,
+         unidad_academica,
+         CENTRO,
+         ZONA,
          articulos,
          capitulos,
          libros,
@@ -135,7 +135,8 @@ investigadores_general |>
          scholar) |> 
   datatable(options = list(pageLength = 15),
             escape = FALSE,
-            colnames = c("Investigador", "Grupo","Unidad","Programa" , "Artículos", "Capítulos", 
+            colnames = c("Investigador", "Grupo","Unidad", "Centro", 
+                         "Zona", "Artículos", "Capítulos", 
                          "Libros", "Softwares", "Trabajos Dirigidos", 
                          "Innovaciones", "H index", "Categoría",
                          "Formación","Inicio", "CvLAC", "Scholar"))
@@ -182,8 +183,10 @@ articulos_unicos_2016_2020 |>
             escape = FALSE,
             colnames = c("Grupo", "Categoría", "Tipo producto",
                          "Título", "País revista", "Revista", 
-                         "ISSN","Casiflicación Revista", "Clasificación Scimago", "Año", "Volumen",
-                         "Fasc","Páginas", "Enlace artículo", "Autores"))
+                         "ISSN","Casiflicación Revista", 
+                         "Clasificación Scimago", "Año", "Volumen",
+                         "Fasc","Páginas", "Enlace artículo", "Autores",
+                         "Unidad","Programa", "Centro"))
 ```
 
 ### Capítulos
@@ -196,7 +199,8 @@ capitulos_2016_2020 |>
             colnames = c("Grupo", "Categoría",
                          "Título capitulo", "País", "Año", 
                          "Titulo libro","ISBN", "Páginas", "Editorial",
-                         "Autores"))
+                         "Autores",
+                         "Unidad","Programa", "Centro"))
 ```
 
 ### Libros
@@ -208,7 +212,8 @@ libros_2016_2020 |>
             escape = FALSE,
             colnames = c("Grupo", "Categoría",
                          "Título libro", "País", "Año", 
-                         "ISBN","Editorial", "Autores"))
+                         "ISBN","Editorial", "Autores",
+                         "Unidad","Programa", "Centro"))
 ```
 
 ### Softwares
@@ -224,7 +229,8 @@ software_2016_2020 |>
             colnames = c("Grupo", "Categoría",
                          "Título", "País", "Año", 
                          "Disponibilidad","Sitio web", "Nombre comercial", "Institución financiadora", 
-                         "Autores"))
+                         "Autores",
+                         "Unidad","Programa", "Centro"))
 ```
 
 ### Innovaciones
@@ -235,7 +241,8 @@ innovacion_2016_2020 |>
             escape = FALSE,
             colnames = c("Grupo", "Categoría", "Tipo Producto",
                          "Título", "país", "Año", 
-                         "Disponibilidad","Institución financiadora", "Autores"))
+                         "Disponibilidad","Institución financiadora", "Autores",
+                         "Unidad","Programa", "Centro"))
 ```
 
 ### Trabajos dirigidos/turorías
@@ -247,7 +254,8 @@ trabajo_2016_2020 |>
             colnames = c("Grupo", "Categoría", "Tipo Producto",
                          "Título", "Desde", "hasta", 
                          "Tipo orientación","Estudiante", "Programa académico","Páginas", 
-                         "Valoración","Institución", "Tutor coautor"))
+                         "Valoración","Institución", "Tutor coautor",
+                         "Unidad","Programa", "Centro"))
 ```
 
 # Grupos e Investigadores en cifras

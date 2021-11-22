@@ -12,8 +12,7 @@ getting_scholar_h_index <- function(data_scholar) {
 data_cleaning_researcher <- function(grupo_df) {
   
   grupo_researcher_cleaned <- 
-    grupo_df[["grupo_researcher"]] |>
-    head(32) |> 
+    grupo_df[["grupo_researcher"]] |> 
     mutate(inicio_vinculacion = str_remove(inicio_fin_vinculacion,
                                            "-.*"),
            inicio_vinculacion = ym(inicio_vinculacion),
@@ -23,10 +22,19 @@ data_cleaning_researcher <- function(grupo_df) {
     filter(str_detect(fin_vinculacion, "Actual")) |> # Only active researchers
     mutate(posgrade = map(.x = url, 
                           .f = safely(get_posgrade_clasficitation_cvlac))) |> 
-    mutate(posgrade = map(posgrade, "result")) |> 
-    mutate(posgrade = map(posgrade, ~ replace(.x, is.null(.x), "CvLAC oculto"))) |> 
-    unnest(posgrade) |> 
-    replace_na(list(clasification = "CvLAC oculto" )) |> 
+    mutate(posgrade = map(posgrade, "result")) |>
+    mutate(posgrade = map(posgrade, ~ replace(.x, is.null(.x), "CvLAC oculto")))
+    
+    grupo_researcher_cleaned_1 = 
+      grupo_researcher_cleaned |> filter(posgrade == "CvLAC oculto") |> 
+      select(-posgrade) |> 
+      mutate(posgrade = "CvLAC oculto",
+             clasification = "CvLAC oculto")
+    
+    grupo_researcher_cleaned_2 <-
+      grupo_researcher_cleaned |> filter(posgrade != "CvLAC oculto") |> 
+      unnest(posgrade) |> 
+      rbind(grupo_researcher_cleaned_1) |> 
     mutate(integrantes = str_to_upper(integrantes),
            integrantes = stri_trans_general(str = integrantes,
                                             id = "Latin-ASCII"),
@@ -50,7 +58,7 @@ data_cleaning_researcher <- function(grupo_df) {
                                        collapse = "; ")) |>
     unique()
   
-  return(grupo_researcher_cleaned)
+  return(grupo_researcher_cleaned_2)
   
 }
 
@@ -2338,6 +2346,7 @@ export_csv <- function(shiny_data) {
 
 get_posgrade_clasficitation_cvlac <- function(cvlac_url) {
   
+  
   cvlac_df = read_html(cvlac_url) |> 
     html_table()
   
@@ -2384,9 +2393,9 @@ get_posgrade_clasficitation_cvlac <- function(cvlac_url) {
                              if_else(posgrade == "Maestría/Magister", 2, 
                                      if_else(posgrade == "Especialización", 1, 
                                              0)
-                                     )
                              )
-           ) |> 
+    )
+    ) |> 
     slice_max(ranking) |> 
     select(posgrade) |> 
     slice(1) 
@@ -2417,8 +2426,6 @@ get_posgrade_clasficitation_cvlac <- function(cvlac_url) {
   cvlac_posgrade_category <- 
     cvlac_posgrade |> 
     bind_cols(cvlac_category)
-  
-  
 }
 
 make_general_grupos <- function(produccion_actualizada){
@@ -2684,4 +2691,106 @@ researcher_product <- function(produccion_actualizada){
     filter(!duplicated(integrantes))
   
   return(researcher_general)
+}
+
+merge_information <- function(shiny_data){
+  
+  articulos <- shiny_data[[2]][["articulos"]] |> 
+    separate_rows(autores, sep = ",") |> 
+    left_join(shiny_data[[3]], by = c("autores"="integrantes")) |> 
+    select(-grupo.y, -vinculacion, -horas_dedicacion, -capitulos,
+           -url, -inicio_vinculacion, -fin_vinculacion, -posgrade, 
+           -clasification, -id_scholar, -h_index, -articulos, 
+           -libros, -softwares, -innovaciones, -trabajos_dirigidos) |> 
+    group_by(grupo.x, titulo) |> 
+    mutate(autores = paste0(autores, collapse = ", "),
+           unidad_academica = paste0(unidad_academica, collapse = " ; "),
+           CENTRO = paste0(CENTRO, collapse = " ; "),
+           ZONA = paste0(ZONA, collapse = " ; ")) |> 
+    unique() |> 
+    rename(grupo = 1)
+    
+  capitulos <- shiny_data[[2]][["capitulos"]] |> 
+    separate_rows(autores, sep = ",") |> 
+    left_join(shiny_data[[3]], by = c("autores"="integrantes")) |> 
+    select(-grupo.y, -vinculacion, -horas_dedicacion, -capitulos,
+           -url, -inicio_vinculacion, -fin_vinculacion, -posgrade, 
+           -clasification, -id_scholar, -h_index, -articulos, 
+           -libros, -softwares, -innovaciones, -trabajos_dirigidos) |> 
+    group_by(grupo.x, titulo_capitulo) |> 
+    mutate(autores = paste0(autores, collapse = ", "),
+           unidad_academica = paste0(unidad_academica, collapse = " ; "),
+           CENTRO = paste0(CENTRO, collapse = " ; "),
+           ZONA = paste0(ZONA, collapse = " ; ")) |> 
+    unique() |> 
+    rename(grupo = 1)
+    
+  libros <- shiny_data[[2]][["libros"]] |> 
+    separate_rows(Autores, sep = ",") |> 
+    left_join(shiny_data[[3]], by = c("Autores"="integrantes")) |> 
+    select(-grupo.y, -vinculacion, -horas_dedicacion, -capitulos,
+           -url, -inicio_vinculacion, -fin_vinculacion, -posgrade, 
+           -clasification, -id_scholar, -h_index, -articulos, 
+           -libros, -softwares, -innovaciones, -trabajos_dirigidos) |> 
+    group_by(grupo.x, Titulo) |> 
+    mutate(Autores = paste0(Autores, collapse = ", "),
+           unidad_academica = paste0(unidad_academica, collapse = " ; "),
+           CENTRO = paste0(CENTRO, collapse = " ; "),
+           ZONA = paste0(ZONA, collapse = " ; ")) |> 
+    unique() |> 
+    rename(grupo = 1) 
+  
+  softwares <- shiny_data[[2]][["softwares"]] |> 
+    separate_rows(autores, sep = ",") |> 
+    left_join(shiny_data[[3]], by = c("autores"="integrantes")) |> 
+    select(-grupo.y, -vinculacion, -horas_dedicacion, -capitulos,
+           -url, -inicio_vinculacion, -fin_vinculacion, -posgrade, 
+           -clasification, -id_scholar, -h_index, -articulos, 
+           -libros, -softwares, -innovaciones, -trabajos_dirigidos) |> 
+    group_by(grupo.x, titulo) |> 
+    mutate(autores = paste0(autores, collapse = ", "),
+           unidad_academica = paste0(unidad_academica, collapse = " ; "),
+           CENTRO = paste0(CENTRO, collapse = " ; "),
+           ZONA = paste0(ZONA, collapse = " ; ")) |> 
+    unique() |> 
+    rename(grupo = 1)
+    
+  innovaciones_gestion <- shiny_data[[2]][["innovaciones_gestion"]] |> 
+    separate_rows(autores, sep = ",") |> 
+    left_join(shiny_data[[3]], by = c("autores"="integrantes")) |> 
+    select(-grupo.y, -vinculacion, -horas_dedicacion, -capitulos,
+           -url, -inicio_vinculacion, -fin_vinculacion, -posgrade, 
+           -clasification, -id_scholar, -h_index, -articulos, 
+           -libros, -softwares, -innovaciones, -trabajos_dirigidos) |> 
+    group_by(grupo.x, titulo) |> 
+    mutate(autores = paste0(autores, collapse = ", "),
+           unidad_academica = paste0(unidad_academica, collapse = " ; "),
+           CENTRO = paste0(CENTRO, collapse = " ; "),
+           ZONA = paste0(ZONA, collapse = " ; ")) |> 
+    unique() |> 
+    rename(grupo = 1)  
+  
+  trabajos_dirigidos <- shiny_data[[2]][["trabajos_dirigidos"]] |> 
+  separate_rows(tutor_coautor, sep = ",") |> 
+    left_join(shiny_data[[3]], by = c("tutor_coautor"="integrantes")) |> 
+    select(-grupo.y, -vinculacion, -horas_dedicacion, -capitulos,
+           -url, -inicio_vinculacion, -fin_vinculacion, -posgrade, 
+           -clasification, -id_scholar, -h_index, -articulos, 
+           -libros, -softwares, -innovaciones, -trabajos_dirigidos) |> 
+    group_by(grupo.x, titulo) |> 
+    mutate(tutor_coautor = paste0(tutor_coautor, collapse = ", "),
+           unidad_academica = paste0(unidad_academica, collapse = " ; "),
+           CENTRO = paste0(CENTRO, collapse = " ; "),
+           ZONA = paste0(ZONA, collapse = " ; ")) |> 
+    unique() |> 
+    rename(grupo = 1)
+  
+  shiny_data[[2]][["articulos"]] <- articulos
+  shiny_data[[2]][["capitulos"]] <- capitulos
+  shiny_data[[2]][["libros"]] <- libros
+  shiny_data[[2]][["softwares"]] <- softwares
+  shiny_data[[2]][["innovaciones_gestion"]] <- innovaciones_gestion
+  shiny_data[[2]][["trabajos_dirigidos"]] <- trabajos_dirigidos
+  
+  return(shiny_data[[2]])
 }
