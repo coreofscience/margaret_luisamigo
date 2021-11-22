@@ -11,7 +11,9 @@ library(shinydashboard)
 
 articulos_unicos_2016_2020 <- 
   read_csv(here("output",
-                "articulos.csv"))
+                "articulos.csv")) |> 
+  mutate(SJR_Q = ifelse(SJR_Q == '-', "Sin categoria",
+         SJR_Q))
 
 investigadores_general <- 
   read_csv(here("output",
@@ -70,14 +72,14 @@ filterside <- selectInput("grupos_input","Grupos:",
 
 #butonside <- actionButton("aplicar_input", "Aplicar")
 
-sliderside <- sliderInput("fechas_input", "Años:", min = 1995, max = 2020, value = c(2016,2020), sep = "")
+sliderside <- sliderInput("fechas_input", "Años:", min = 1995, max = 2021, value = c(2016,2020), sep = "")
 
 sidebar <- dashboardSidebar(
   filterside,
   sliderside,
   #butonside,
   sidebarMenu(
-             menuItem("Datos", tabName = "general_datos", icon = icon("atlas")),
+             menuItem("Datos", tabName = "general_datos", icon = icon("atlas"), badgeLabel = "New", badgeColor = "yellow"),
     
     menuItem("Producción cientifica", icon = icon("book"), tabName = ("produccion")),
     
@@ -90,7 +92,7 @@ sidebar <- dashboardSidebar(
              menuSubItem("Formación investigadores", tabName = "forma_inves")
     ),
     menuItem("Rpubs", icon = icon("file-code-o"),
-             href = "https://rpubs.com/srobledog/margaret_7"
+             href = "https://rpubs.com/srobledog/margaret"
     )
   ),
   mainPanel(
@@ -102,31 +104,31 @@ setup <- dashboardBody(
   tabItems( 
     tabItem(tabName = "general_datos",
             tabsetPanel(type = "tabs",
-                        tabPanel("Grupos", fluidPage((DT::dataTableOutput('ex1'))
+                        tabPanel("Grupos", fluidPage(br(),(DT::dataTableOutput('ex1'))
                         ),),
                         
-                        tabPanel("Investigadores", fluidPage((DT::dataTableOutput('ex2'))
+                        tabPanel("Investigadores", fluidPage(br(),(DT::dataTableOutput('ex2'))
                         ),),
                         
-                        tabPanel("Paises", fluidPage((DT::dataTableOutput('ex3'))
+                        tabPanel("Paises", fluidPage(br(),(DT::dataTableOutput('ex3'))
                         ),),
                         
-                        tabPanel("Revistas", fluidPage((DT::dataTableOutput('ex4'))
+                        tabPanel("Revistas", fluidPage(br(),(DT::dataTableOutput('ex4'))
                         )))),
     tabItem(tabName = "produccion",
             tabsetPanel(type = "tabs",
-                        tabPanel("Articulos", fluidPage((DT::dataTableOutput('articulo'))
+                        tabPanel("Articulos", fluidPage(br(),(DT::dataTableOutput('articulo'))
                         )),
-                        tabPanel("Capitulos", fluidPage((DT::dataTableOutput('capitulo'))
+                        tabPanel("Capitulos", fluidPage(br(),(DT::dataTableOutput('capitulo'))
                         )),
-                        tabPanel("Libros", fluidPage((DT::dataTableOutput('libro'))
+                        tabPanel("Libros", fluidPage(br(),(DT::dataTableOutput('libro'))
                         )),
-                        tabPanel("Software", fluidPage((DT::dataTableOutput('software'))
+                        tabPanel("Software", fluidPage(br(),(DT::dataTableOutput('software'))
                         )),
-                        tabPanel("Innovaciones", fluidPage((DT::dataTableOutput('innovaciones'))
+                        tabPanel("Innovaciones", fluidPage(br(),(DT::dataTableOutput('innovaciones'))
                         )),
                         tabPanel("Trabajos dirigidos/Tutorías",
-                                 fluidPage((DT::dataTableOutput('trabajosd'))
+                                 fluidPage(br(),(DT::dataTableOutput('trabajosd'))
                                  )))),
     tabItem(tabName = "clasi_grupos",
             fluidPage(plotlyOutput("graf1"))),
@@ -158,7 +160,22 @@ setup <- dashboardBody(
 
 ui <- dashboardPage(
   skin = "yellow",
-  dashboardHeader(title = "Margaret"),
+  dashboardHeader(title = "Margaret",
+                  dropdownMenu(type = "notifications", icon = shiny::icon("code"),
+                               badgeStatus = "info", headerText = "Desarrolladores",
+                               tags$li(a(href = "https://github.com/srobledog",
+                                         target = "_blank",
+                                         tagAppendAttributes(icon("github")),
+                                         "Sebastian Robledo")),
+                               tags$li(a(href = "https://github.com/bryanariasq02",
+                                         target = "_blank",
+                                         tagAppendAttributes(icon("github")),
+                                         "Bryan Arias")),
+                               tags$li(a(href = "https://github.com/camilogs1",
+                                         target = "_blank",
+                                         tagAppendAttributes(icon("github")),
+                                         "Camilo García"))
+                  )),
   sidebar,
   setup
 )
@@ -175,9 +192,9 @@ server <- function(input, output) {
     grupos_general <- grupos_general |> 
       select(grupo, clasificacion, sum_papers, departamento , url,
              fecha_creacion,lider, email, area_conocimiento_1) |> 
-      mutate(url= str_c("<a href=",
+      mutate(url= str_c('<a href="',
                         url,
-                        ">Link</a>"))
+                        '" target="_blank">Link</a>'))
     if (filtro()==FALSE)
     {
       datatable(grupos_general, filter = 'top',extensions = c('Scroller','Buttons'),
@@ -229,15 +246,13 @@ server <- function(input, output) {
   output$ex2 <- DT::renderDataTable({
     
     investigadores_general <- investigadores_general |> 
-      mutate(url = str_c("<a href=","\"",
+      mutate(url = str_c('<a href="',
                          url,
-                         "\"",
-                         ">Link</a>"),
+                         '" target="_blank">Link</a>'),
              scholar = str_c("<a href=","\"",
                              "https://scholar.google.com/citations?user=",
                              id_scholar,
-                             "\"",
-                             ">Scholar</a>")) |>
+                             '" target="_blank">Scholar</a>')) |>
       select(-vinculacion,
              -fin_vinculacion) |> 
       rename(Investigador = integrantes,
@@ -368,7 +383,7 @@ server <- function(input, output) {
                           "https://doi.org/",
                           DOI,
                           "\"",
-                          ">Enlace</a>")) 
+                          '" target="_blank">Link</a>')) 
     if (filtro()==FALSE)
     {
       datatable(articulos_2016_2020 ,filter = 'top',extensions = c('Scroller','Buttons'),
@@ -529,7 +544,7 @@ server <- function(input, output) {
       select(-nombre_proyecto, -tipo_producto) |> 
       mutate(sitio_web= str_c("<a href=",
                               sitio_web,
-                              ">Link</a>")) 
+                              '" target="_blank">Link</a>')) 
     if (filtro()==FALSE)
     {
       datatable(software_2016_2020 ,filter = 'top', extensions = c('Scroller','Buttons'),
