@@ -39,7 +39,7 @@ data_cleaning_researcher <- function(grupo_df) {
            integrantes = stri_trans_general(str = integrantes,
                                             id = "Latin-ASCII"),
            integrantes = str_squish(integrantes)) |> 
-    left_join(researchers, by = c("integrantes" = "researcher")) |> 
+    full_join(researchers, by = c("integrantes" = "researcher")) |> 
     mutate(h_index = ifelse(is.na(h_index), 
                             0, 
                             h_index)) |> 

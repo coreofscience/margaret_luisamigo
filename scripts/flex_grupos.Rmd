@@ -258,6 +258,44 @@ trabajo_2016_2020 |>
                          "Unidad","Programa", "Centro"))
 ```
 
+# Producción en cifras
+
+Column {data-width=500}
+--------------------------------------
+
+### Producción de articulos por Zona
+```{r}
+data <- articulos_unicos_2016_2020 |> 
+  select(categoria_revista, ZONA) |> 
+  mutate(ZONA = str_remove(ZONA, " ; .*"),
+         ZONA = if_else(is.na(ZONA), "NA", ZONA),
+         ZONA = str_remove(ZONA, "; .*")) |> 
+  group_by(categoria_revista) |> 
+  arrange(categoria_revista)|> 
+  count(ZONA, sort = T, name = "cantidad") |> 
+  arrange(categoria_revista)
+  datatable(data,options = list(pageLength = 50),
+            colnames = c("Categoria revista", "Zona", "Cantidad"))
+```
+Column {data-width=500}
+--------------------------------------
+
+### Producción de articulos por Unidad
+```{r}
+data <- articulos_unicos_2016_2020 |> 
+  select(categoria_revista, unidad_academica) |> 
+  mutate(unidad_academica = str_remove(unidad_academica, " ; .*"),
+         unidad_academica = if_else(is.na(unidad_academica), "NA", unidad_academica),
+         unidad_academica = str_remove(unidad_academica, "; .*")) |> 
+  group_by(categoria_revista) |> 
+  arrange(categoria_revista)|> 
+  count(unidad_academica, sort = T, name = "cantidad") |> 
+  arrange(categoria_revista)
+  datatable(data,options = list(pageLength = 50), colnames = c("Categoria revista", "Unidad academica", "Cantidad"))
+
+```
+
+
 # Grupos e Investigadores en cifras
 
 Column {data-width=300}

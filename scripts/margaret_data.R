@@ -27,7 +27,13 @@ grupos <- read_csv("https://docs.google.com/spreadsheets/d/1MT7BKbO7co8mtkuJWY6v
                                     id = "Latin-ASCII"))
 
 researcher_data <- read_csv("https://docs.google.com/spreadsheets/d/1MT7BKbO7co8mtkuJWY6vQ1J1Vxnerkr998DmWU9hoPY/export?format=csv&gid=1016145547") |> 
-  unite(researcher,"NOMBRES",c("NOMBRES","APELLIDOS"),sep = " ",remove = TRUE) |> 
+  mutate(APELLIDOS = str_trim(APELLIDOS),
+         NOMBRES = str_trim(NOMBRES)) |> 
+  unite(researcher,"NOMBRES",c("NOMBRES","APELLIDOS"),sep = " ",remove = TRUE) |>
+  mutate(researcher = str_to_upper(researcher),
+         researcher = stri_trans_general(str = researcher,
+                                         id = "Latin-ASCII"),
+         researcher = str_squish(researcher)) |> 
   unique() 
  
 researchers <- read_csv("https://docs.google.com/spreadsheets/d/1MT7BKbO7co8mtkuJWY6vQ1J1Vxnerkr998DmWU9hoPY/export?format=csv&gid=688218271") |> 
@@ -36,7 +42,8 @@ researchers <- read_csv("https://docs.google.com/spreadsheets/d/1MT7BKbO7co8mtku
   unique() |> 
   mutate(researcher = str_to_upper(researcher),
          researcher = stri_trans_general(str = researcher,
-                                         id = "Latin-ASCII")) |>  
+                                         id = "Latin-ASCII"),
+         researcher = str_squish(researcher)) |>  
   mutate(h_index = map(id_scholar, safely(get_profile))) |> 
   unnest_wider(h_index) |> 
   unnest_wider(result) |> 
