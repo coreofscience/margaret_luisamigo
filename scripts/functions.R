@@ -22,10 +22,19 @@ data_cleaning_researcher <- function(grupo_df) {
     filter(str_detect(fin_vinculacion, "Actual")) |> # Only active researchers
     mutate(posgrade = map(.x = url, 
                           .f = safely(get_posgrade_clasficitation_cvlac))) |> 
-    mutate(posgrade = map(posgrade, "result")) |> 
-    mutate(posgrade = map(posgrade, ~ replace(.x, is.null(.x), "CvLAC oculto"))) |> 
+    mutate(posgrade = map(posgrade, "result")) |>
+    mutate(posgrade = map(posgrade, ~ replace(.x, is.null(.x), "CvLAC oculto")))
+  
+  grupo_researcher_cleaned_1 = 
+    grupo_researcher_cleaned |> filter(posgrade == "CvLAC oculto") |> 
+    select(-posgrade) |> 
+    mutate(posgrade = "CvLAC oculto",
+           clasification = "CvLAC oculto")
+  
+  grupo_researcher_cleaned_2 <-
+    grupo_researcher_cleaned |> filter(posgrade != "CvLAC oculto") |> 
     unnest(posgrade) |> 
-    replace_na(list(clasification = "CvLAC oculto" )) |> 
+    rbind(grupo_researcher_cleaned_1) |>
     mutate(integrantes = str_to_upper(integrantes),
            integrantes = stri_trans_general(str = integrantes,
                                             id = "Latin-ASCII"),
