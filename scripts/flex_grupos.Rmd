@@ -108,9 +108,8 @@ investigadores_general |>
                          id_scholar,
                          "\"",
                          ">Scholar</a>")) |>
-  select(-vinculacion,
-         -fin_vinculacion) |> 
-  rename(Investigador = integrantes,
+  select(-vinculacion) |> 
+  rename(Investigador = researcher,
          Horas = horas_dedicacion,
          CvLAC = url,
          Grupo = grupo,
@@ -131,6 +130,7 @@ investigadores_general |>
          clasification,
          Formacion,
          Inicio,
+         fin_vinculacion,
          CvLAC,
          scholar) |> 
   datatable(options = list(pageLength = 15),
@@ -139,7 +139,7 @@ investigadores_general |>
                          "Zona", "Artículos", "Capítulos", 
                          "Libros", "Softwares", "Trabajos Dirigidos", 
                          "Innovaciones", "H index", "Categoría",
-                         "Formación","Inicio", "CvLAC", "Scholar"))
+                         "Formación","Inicio","Fin vinculación", "CvLAC", "Scholar"))
 ```
 
 
@@ -266,15 +266,28 @@ Column {data-width=500}
 ### Producción de articulos por Zona
 ```{r}
 data <- articulos_unicos_2016_2020 |> 
-  select(categoria_revista, ZONA) |> 
-  mutate(ZONA = str_remove(ZONA, " ; .*"),
-         ZONA = if_else(is.na(ZONA), "NA", ZONA),
-         ZONA = str_remove(ZONA, "; .*")) |> 
-  group_by(categoria_revista) |> 
-  arrange(categoria_revista)|> 
-  count(ZONA, sort = T, name = "cantidad") |> 
+  mutate(id = 1:length(articulos_unicos_2016_2020$titulo)) |> 
+  select(categoria_revista, ZONA, id) |> 
+  separate_rows(ZONA, sep = " ; ") |>
+  separate_rows(ZONA, sep = "; ") |> 
+  group_by(categoria_revista, id) |> 
+  mutate(ranking = if_else(ZONA %in% c("OCCIDENTE",
+                                       "SEDE NACIONAL JOSE CELESTINO MUTIS","SUR",
+                                       "CENTRO ORIENTE","CARIBE",
+                                       "CENTRO BOGOTA Y CUNDINAMARCA","CENTRO SUR",
+                                       "AMAZONAS Y ORINOQUIA","CENTRO BOYACA"), 2,
+                           if_else(ZONA == "OTRO", 1,0))) |>
+  arrange(ranking) |> 
+  mutate(ZONA = paste0(ZONA, collapse = ", "),
+         ranking = paste0(ranking, collapse = ", ")) |> 
+  unique() |> 
+  mutate(ZONA = str_remove(ZONA, ".*, "))
+  
+  data1 <- ungroup(data) |>
+    select(categoria_revista, ZONA) |> 
+    count(categoria_revista, ZONA, sort = T, name = "cantidad") |> 
   arrange(categoria_revista)
-  datatable(data,options = list(pageLength = 50),
+  datatable(data1,options = list(pageLength = 50),
             colnames = c("Categoria revista", "Zona", "Cantidad"))
 ```
 Column {data-width=500}
@@ -283,15 +296,35 @@ Column {data-width=500}
 ### Producción de articulos por Unidad
 ```{r}
 data <- articulos_unicos_2016_2020 |> 
-  select(categoria_revista, unidad_academica) |> 
-  mutate(unidad_academica = str_remove(unidad_academica, " ; .*"),
-         unidad_academica = if_else(is.na(unidad_academica), "NA", unidad_academica),
-         unidad_academica = str_remove(unidad_academica, "; .*")) |> 
-  group_by(categoria_revista) |> 
-  arrange(categoria_revista)|> 
-  count(unidad_academica, sort = T, name = "cantidad") |> 
+  mutate(id = 1:length(articulos_unicos_2016_2020$titulo)) |> 
+  select(categoria_revista, unidad_academica, id) |> 
+  separate_rows(unidad_academica, sep = " ; ") |>
+  separate_rows(unidad_academica, sep = "; ") |> 
+  group_by(categoria_revista, id) |> 
+  mutate(ranking = if_else(unidad_academica %in% c("ESCUELA DE CIENCIAS ADMINISTRATIVAS,CONTABLES, ECONOMICAS Y DE NEGOCIOS",
+                                                   "ESCUELA DE CIENCIAS BASICAS, TECNOLOGIA E INGENIERIA",
+                                                   "VICERRECTORIA ACADEMICA Y DE INVESTIGACION",
+                                                   "ESCUELA DE CIENCIAS AGRICOLAS, PECUARIAS Y DEL MEDIO AMBIENTE",
+                                                   "ESCUELA DE CIENCIAS SOCIALES, ARTES Y HUMANIDADES",
+                                                   "ESCUELA DE CIENCIAS DE LA EDUCACION",
+                                                   "ESCUELA DE CIENCIAS DE LA SALUD",
+                                                   "INSTITUTO VIRTUAL DE LENGUAS",
+                                                   "ESCUELA DE CIENCIAS JURIDICA Y POLITICAS",
+                                                   "VICERRECTORIA DE SERVICIOS A ASPIRANTES, ESTUDIANTES Y EGRESADOS",
+                                                   "VICERRECTORIA DE DESARROLLO REGIONAL"), 2,
+                           if_else(unidad_academica == "OTRO", 1,0))) |>
+  arrange(ranking) |> 
+  mutate(unidad_academica = paste0(unidad_academica, collapse = "; "),
+         ranking = paste0(ranking, collapse = ", ")) |> 
+  unique() |> 
+  mutate(unidad_academica = str_remove(unidad_academica, ".*; "))
+  
+  data1 <- ungroup(data) |>
+    select(categoria_revista, unidad_academica) |> 
+    count(categoria_revista, unidad_academica, sort = T, name = "cantidad") |> 
   arrange(categoria_revista)
-  datatable(data,options = list(pageLength = 50), colnames = c("Categoria revista", "Unidad academica", "Cantidad"))
+  datatable(data1,options = list(pageLength = 50),
+            colnames = c("Categoria revista", "Zona", "Cantidad"))
 
 ```
 

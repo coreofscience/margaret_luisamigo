@@ -1,25 +1,7 @@
-researcher_information_ucla <- function(shiny_data){
+researcher_information_ucla <- function(researchers, shiny_data){
   
-  researcher_data_1 <- read_csv("https://docs.google.com/spreadsheets/d/1MT7BKbO7co8mtkuJWY6vQ1J1Vxnerkr998DmWU9hoPY/export?format=csv&gid=848891811") |> 
-    mutate(DOCENTE = str_to_upper(DOCENTE),
-           DOCENTE = stri_trans_general(str = DOCENTE,
-                                      id = "Latin-ASCII")) |> 
-    unique() 
-  
-  researcher_data_all <- read_csv("https://docs.google.com/spreadsheets/d/1MT7BKbO7co8mtkuJWY6vQ1J1Vxnerkr998DmWU9hoPY/export?format=csv&gid=988287821") |> 
-    select(X11, X12, escuela) |> 
-    rename(DOCENTE = 1,
-           apellido = 2)|> 
-    unite(DOCENTE,"DOCENTE",c("DOCENTE","apellido"),sep = " ",remove = TRUE) |> 
-    unique() |> 
-    right_join(researcher_data_1, by = c("DOCENTE"="DOCENTE")) |> 
-    select(DOCENTE, UNIDAD, escuela) |> 
-    rename(PROGRAMA = 3)
-    
-  
-  
-  researcher_data <- researcher_data_all|> 
-    mutate(id = 1:length(researcher_data_all$DOCENTE),
+  researchers_data <- researchers |> 
+    mutate(id = 1:length(researchers$researcher),
            id = str_c("1-",id)) |> 
     rename(integrantes = 1) |> 
     select(integrantes, id)
@@ -31,7 +13,7 @@ researcher_information_ucla <- function(shiny_data){
            id = str_c("2-",id)) |> 
     select(integrantes, id)
   
-  df_1 <- rbind(researcher_data, df_docentes)
+  df_1 <- rbind(researchers_data, df_docentes)
   
   df_2 <-
     df_1 |> 
@@ -45,23 +27,33 @@ researcher_information_ucla <- function(shiny_data){
   
   df_5 <- 
     df_2 |>  
-    filter(similarity >= 0.6)
+    filter(similarity >= 0.76)
   
   df_6 <- 
-    df_5 |> left_join(researcher_data, by = c("item1" = "id")) |> 
+    df_5 |> left_join(researchers_data, by = c("item1" = "id")) |> 
     right_join(df_docentes, by = c("item2" = "id")) |> 
     filter(!duplicated(integrantes.y))
   
   grupo_researcher_cleaned <- 
-    df_6 |> left_join(researcher_data_all, by = c("integrantes.x"="DOCENTE")) |> 
-    left_join(df_docentes_all, by= c("integrantes.y"="integrantes")) |> 
-    select(5:23) |> 
-    rename(integrantes = 1) |> 
-    mutate(UNIDAD = ifelse(is.na(UNIDAD), "Otro", UNIDAD),
-           PROGRAMA = ifelse(is.na(PROGRAMA), "Otro", PROGRAMA)) |> 
-    rename(unidad = UNIDAD, 
-           programa = PROGRAMA) |> 
-    arrange(grupo)
+    df_6 |> 
+    full_join(researchers, by = c("integrantes.x"="researcher")) |> 
+    full_join(df_docentes_all, by= c("integrantes.y"="integrantes")) |> 
+    select(4:24)
   
-  return(grupo_researcher_cleaned)
+  sin_grupo <- grupo_researcher_cleaned |> 
+    filter(is.na(integrantes.y)) |> 
+    select(-integrantes.y) |> 
+    mutate(fin_vinculacion = "Sin información en GrupLAC") |> 
+    rename(researcher = 1)
+  
+  grupo_researcher <- grupo_researcher_cleaned |> 
+    filter(!is.na(integrantes.y)) |> 
+    select(-integrantes.x) |> 
+    mutate(unidad_academica = if_else(is.na(unidad_academica), "OTRO", unidad_academica),
+           CENTRO = if_else(is.na(CENTRO), "OTRO", CENTRO),
+           ZONA = if_else(is.na(ZONA), "OTRO", ZONA)) |> 
+    rename(researcher = 1) |> 
+    rbind(sin_grupo)
+  
+  return(grupo_researcher)
 }

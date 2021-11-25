@@ -19,7 +19,6 @@ data_cleaning_researcher <- function(grupo_df) {
            fin_vinculacion = str_remove(inicio_fin_vinculacion,
                                         ".*-")) |> 
     select(-inicio_fin_vinculacion) |> 
-    filter(str_detect(fin_vinculacion, "Actual")) |> # Only active researchers
     mutate(posgrade = map(.x = url, 
                           .f = safely(get_posgrade_clasficitation_cvlac))) |> 
     mutate(posgrade = map(posgrade, "result")) |>
@@ -39,17 +38,11 @@ data_cleaning_researcher <- function(grupo_df) {
            integrantes = stri_trans_general(str = integrantes,
                                             id = "Latin-ASCII"),
            integrantes = str_squish(integrantes)) |> 
-    full_join(researchers, by = c("integrantes" = "researcher")) |> 
-    mutate(h_index = ifelse(is.na(h_index), 
-                            0, 
-                            h_index)) |> 
     group_by(integrantes, 
              vinculacion, 
              url, 
              posgrade, 
-             clasification,
-             h_index,
-             id_scholar) |> 
+             clasification) |> 
     mutate(grupo = paste0(grupo, 
                           collapse = "; "), 
            horas_dedicacion = paste0(horas_dedicacion, 
@@ -2696,13 +2689,13 @@ researcher_product <- function(produccion_actualizada){
 merge_information <- function(shiny_data){
   
   articulos <- shiny_data[[2]][["articulos"]] |> 
-    separate_rows(autores, sep = ",") |> 
-    left_join(shiny_data[[3]], by = c("autores"="integrantes")) |> 
+    separate_rows(autores, sep = ", ") |> 
+    left_join(shiny_data[[3]], by = c("autores"="researcher")) |> 
     select(-grupo.y, -vinculacion, -horas_dedicacion, -capitulos,
            -url, -inicio_vinculacion, -fin_vinculacion, -posgrade, 
            -clasification, -id_scholar, -h_index, -articulos, 
            -libros, -softwares, -innovaciones, -trabajos_dirigidos) |> 
-    group_by(grupo.x, titulo) |> 
+    group_by(titulo) |> 
     mutate(autores = paste0(autores, collapse = ", "),
            unidad_academica = paste0(unidad_academica, collapse = " ; "),
            CENTRO = paste0(CENTRO, collapse = " ; "),
@@ -2711,13 +2704,13 @@ merge_information <- function(shiny_data){
     rename(grupo = 1)
     
   capitulos <- shiny_data[[2]][["capitulos"]] |> 
-    separate_rows(autores, sep = ",") |> 
-    left_join(shiny_data[[3]], by = c("autores"="integrantes")) |> 
+    separate_rows(autores, sep = ", ") |> 
+    left_join(shiny_data[[3]], by = c("autores"="researcher")) |> 
     select(-grupo.y, -vinculacion, -horas_dedicacion, -capitulos,
            -url, -inicio_vinculacion, -fin_vinculacion, -posgrade, 
            -clasification, -id_scholar, -h_index, -articulos, 
            -libros, -softwares, -innovaciones, -trabajos_dirigidos) |> 
-    group_by(grupo.x, titulo_capitulo) |> 
+    group_by(titulo_capitulo) |> 
     mutate(autores = paste0(autores, collapse = ", "),
            unidad_academica = paste0(unidad_academica, collapse = " ; "),
            CENTRO = paste0(CENTRO, collapse = " ; "),
@@ -2726,13 +2719,13 @@ merge_information <- function(shiny_data){
     rename(grupo = 1)
     
   libros <- shiny_data[[2]][["libros"]] |> 
-    separate_rows(Autores, sep = ",") |> 
-    left_join(shiny_data[[3]], by = c("Autores"="integrantes")) |> 
+    separate_rows(Autores, sep = ", ") |> 
+    left_join(shiny_data[[3]], by = c("Autores"="researcher")) |> 
     select(-grupo.y, -vinculacion, -horas_dedicacion, -capitulos,
            -url, -inicio_vinculacion, -fin_vinculacion, -posgrade, 
            -clasification, -id_scholar, -h_index, -articulos, 
            -libros, -softwares, -innovaciones, -trabajos_dirigidos) |> 
-    group_by(grupo.x, Titulo) |> 
+    group_by(Titulo) |> 
     mutate(Autores = paste0(Autores, collapse = ", "),
            unidad_academica = paste0(unidad_academica, collapse = " ; "),
            CENTRO = paste0(CENTRO, collapse = " ; "),
@@ -2741,13 +2734,13 @@ merge_information <- function(shiny_data){
     rename(grupo = 1) 
   
   softwares <- shiny_data[[2]][["softwares"]] |> 
-    separate_rows(autores, sep = ",") |> 
-    left_join(shiny_data[[3]], by = c("autores"="integrantes")) |> 
+    separate_rows(autores, sep = ", ") |> 
+    left_join(shiny_data[[3]], by = c("autores"="researcher")) |> 
     select(-grupo.y, -vinculacion, -horas_dedicacion, -capitulos,
            -url, -inicio_vinculacion, -fin_vinculacion, -posgrade, 
            -clasification, -id_scholar, -h_index, -articulos, 
            -libros, -softwares, -innovaciones, -trabajos_dirigidos) |> 
-    group_by(grupo.x, titulo) |> 
+    group_by(titulo) |> 
     mutate(autores = paste0(autores, collapse = ", "),
            unidad_academica = paste0(unidad_academica, collapse = " ; "),
            CENTRO = paste0(CENTRO, collapse = " ; "),
@@ -2756,13 +2749,13 @@ merge_information <- function(shiny_data){
     rename(grupo = 1)
     
   innovaciones_gestion <- shiny_data[[2]][["innovaciones_gestion"]] |> 
-    separate_rows(autores, sep = ",") |> 
-    left_join(shiny_data[[3]], by = c("autores"="integrantes")) |> 
+    separate_rows(autores, sep = ", ") |> 
+    left_join(shiny_data[[3]], by = c("autores"="researcher")) |> 
     select(-grupo.y, -vinculacion, -horas_dedicacion, -capitulos,
            -url, -inicio_vinculacion, -fin_vinculacion, -posgrade, 
            -clasification, -id_scholar, -h_index, -articulos, 
            -libros, -softwares, -innovaciones, -trabajos_dirigidos) |> 
-    group_by(grupo.x, titulo) |> 
+    group_by(titulo) |> 
     mutate(autores = paste0(autores, collapse = ", "),
            unidad_academica = paste0(unidad_academica, collapse = " ; "),
            CENTRO = paste0(CENTRO, collapse = " ; "),
@@ -2771,13 +2764,13 @@ merge_information <- function(shiny_data){
     rename(grupo = 1)  
   
   trabajos_dirigidos <- shiny_data[[2]][["trabajos_dirigidos"]] |> 
-  separate_rows(tutor_coautor, sep = ",") |> 
-    left_join(shiny_data[[3]], by = c("tutor_coautor"="integrantes")) |> 
+  separate_rows(tutor_coautor, sep = ", ") |> 
+    left_join(shiny_data[[3]], by = c("tutor_coautor"="researcher")) |> 
     select(-grupo.y, -vinculacion, -horas_dedicacion, -capitulos,
            -url, -inicio_vinculacion, -fin_vinculacion, -posgrade, 
            -clasification, -id_scholar, -h_index, -articulos, 
            -libros, -softwares, -innovaciones, -trabajos_dirigidos) |> 
-    group_by(grupo.x, titulo) |> 
+    group_by(titulo) |> 
     mutate(tutor_coautor = paste0(tutor_coautor, collapse = ", "),
            unidad_academica = paste0(unidad_academica, collapse = " ; "),
            CENTRO = paste0(CENTRO, collapse = " ; "),
