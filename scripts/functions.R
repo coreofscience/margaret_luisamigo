@@ -58,7 +58,7 @@ data_cleaning_researcher <- function(grupo_df) {
                                        collapse = "; ")) |>
     unique()
   
-  return(grupo_researcher_cleaned)
+  return(grupo_researcher_cleaned_2)
   
 }
 

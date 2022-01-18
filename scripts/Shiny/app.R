@@ -188,7 +188,7 @@ server <- function(input, output) {
   
   filtro_fecha_max <- reactive({input$fechas_input[2]})
   
-  output$ex1 <- DT::renderDataTable({
+  output$ex1 <- DT::renderDataTable(server = FALSE,{
     grupos_general <- grupos_general |> 
       select(grupo, clasificacion, sum_papers, departamento , url,
              fecha_creacion,lider, email, area_conocimiento_1) |> 
@@ -243,7 +243,7 @@ server <- function(input, output) {
     }
   })
   
-  output$ex2 <- DT::renderDataTable({
+  output$ex2 <- DT::renderDataTable(server = FALSE,{
     
     investigadores_general <- investigadores_general |> 
       mutate(url = str_c('<a href="',
@@ -326,7 +326,7 @@ server <- function(input, output) {
     }
   })
   
-  output$ex3 <- DT::renderDataTable({
+  output$ex3 <- DT::renderDataTable(server = FALSE,{
     
     paises_general <- paises_general |>  
       mutate(porcentaje = str_c(porcentaje," %"),
@@ -350,7 +350,7 @@ server <- function(input, output) {
     
   })
   
-  output$ex4 <- DT::renderDataTable({
+  output$ex4 <- DT::renderDataTable(server = FALSE,{
     
     revistas_actuales <- revistas_actuales |> 
       mutate(porcentaje = str_c(porcentaje," %")) |>  
@@ -372,7 +372,7 @@ server <- function(input, output) {
                 class = 'cell-border stripe')
   })
   
-  output$articulo <- DT::renderDataTable({
+  output$articulo <- DT::renderDataTable(server = FALSE,{
     
     articulos_2016_2020 <- articulos_2016_2020 |> 
       filter(ano >= filtro_fecha_min(),
@@ -430,7 +430,7 @@ server <- function(input, output) {
     }
   })
   
-  output$capitulo <- DT::renderDataTable({
+  output$capitulo <- DT::renderDataTable(server = FALSE,{
     
     capitulos_2016_2020 <- capitulos_2016_2020 |> 
       filter(ano >= filtro_fecha_min(),
@@ -484,7 +484,7 @@ server <- function(input, output) {
     }
   })
   
-  output$libro <- DT::renderDataTable({
+  output$libro <- DT::renderDataTable(server = FALSE,{
     
     libros_2016_2020 <- libros_2016_2020 |> 
       filter(Ano >= filtro_fecha_min(),
@@ -536,7 +536,7 @@ server <- function(input, output) {
     }
   })
   
-  output$software <- DT::renderDataTable({
+  output$software <- DT::renderDataTable(server = FALSE,{
     
     software_2016_2020 <- software_2016_2020 |> 
       filter(ano >= filtro_fecha_min(),
@@ -593,7 +593,7 @@ server <- function(input, output) {
     }
   })
   
-  output$innovaciones <- DT::renderDataTable({
+  output$innovaciones <- DT::renderDataTable(server = FALSE,{
     
     innovacion_2016_2020 <- innovacion_2016_2020 |> 
       filter(ano >= filtro_fecha_min(),
@@ -644,7 +644,7 @@ server <- function(input, output) {
     }
   })
   
-  output$trabajosd <- DT::renderDataTable({
+  output$trabajosd <- DT::renderDataTable(server = FALSE,{
     
     trabajo_2016_2020 <- trabajo_2016_2020 |> 
       mutate(hasta = str_remove(hasta, ".* "),
