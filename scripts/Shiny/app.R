@@ -8,6 +8,7 @@ library(plotly)
 library(readxl)
 library(stringi)
 library(shinydashboard)
+library(writexl)
 
 articulos_unicos_2016_2020 <- 
   read_csv(here("output",
@@ -56,31 +57,31 @@ innovacion_2016_2020 <-
                 "innovaciones_gestion.csv"))
 
 actividades_evaluador <-
-  read.csv(here("output",
+  read_csv(here("output",
                 "actividades_evaluador.csv"))
 
 actividades_formacion <-
-  read.csv(here("output",
+  read_csv(here("output",
                 "actividades_formacion.csv"))
 
 apropiacion_social <-
-  read.csv(here("output",
+  read_csv(here("output",
                 "apropiacion_social_conocimiento.csv"))
 
 conceptos_tecnicos <-
-  read.csv(here("output",
+  read_csv(here("output",
                 "conceptos_tecnicos.csv"))
 
 consultorias <-
-  read.csv(here("output",
+  read_csv(here("output",
                 "consultorias.csv"))
 
 cursos <-
-  read.csv(here("output",
+  read_csv(here("output",
                 "cursos.csv"))
 
 demas_trabajos <-
-  read.csv(here("output",
+  read_csv(here("output",
                 "demas_trabajos.csv"))
 #investigadores
 df_researchers <-
@@ -88,178 +89,178 @@ df_researchers <-
                 "df_researcher.csv"))
 
 divulgacion_publica_contenidos_transmedia <-
-  read.csv(here("output",
+  read_csv(here("output",
                 "divulgacion_publica_contenidos_transmedia.csv"))
 
 documentos_trabajo <-
-  read.csv(here("output",
+  read_csv(here("output",
                 "documentos_trabajo.csv"))
 
 ediciones <- 
-  read.csv(here("output",
+  read_csv(here("output",
                 "ediciones.csv"))
 
 Eliminados_por_grupo <-
-  read.csv(here("output",
+  read_csv(here("output",
                 "Eliminados_por_grupo.csv"))
 
 espacios_participacion <-
-  read.csv(here("output",
+  read_csv(here("output",
                 "espacios_participacion.csv"))
 
 estrategias_comunicacion <- 
-  read.csv(here("output",
+  read_csv(here("output",
                 "estrategias_comunicacion.csv"))
 
 estrategias_pedagogicas <-
-  read.csv(here("output",
+  read_csv(here("output",
                 "estrategias_pedagogicas.csv"))
 
 eventos_cientificos <-
-  read.csv(here("output",
+  read_csv(here("output",
                 "eventos_cientificos.csv"))
 
 generacion_contenido_audio <-
-  read.csv(here("output",
+  read_csv(here("output",
                 "generacion_contenido_audio.csv"))
 
 generacion_contenido_impreso <-
-  read.csv(here("output",
+  read_csv(here("output",
                 "generacion_contenido_impreso.csv"))
 
 generacion_contenido_virtual <-
-  read.csv(here("output",
+  read_csv(here("output",
                 "generacion_contenido_virtual.csv"))
 
 generacion_multimedia <-
-  read.csv(here("output",
+  read_csv(here("output",
                 "generacion_multimedia.csv"))
 
 informes_investigacion <-
-  read.csv(here("output",
+  read_csv(here("output",
                 "informes_investigacion.csv"))
 
 informes_tecnicos <-
-  read.csv(here("output",
+  read_csv(here("output",
                 "informes_tecnicos.csv"))
 
 innovaciones_gestion <-
-  read.csv(here("output",
+  read_csv(here("output",
                 "innovaciones_gestion.csv"))
 
 innovaciones_procesos <-
-  read.csv(here("output",
+  read_csv(here("output",
                 "innovaciones_procesos.csv"))
 
 international_journals_2021 <-
-  read.csv(here("output",
+  read_csv(here("output",
                 "international_journals_2021.csv"))
 
 journals_2016_2020 <-
-  read.csv(here("output",
+  read_csv(here("output",
                 "journals_2016_2020.csv"))
 
 journals_international_2016_2020 <-
-  read.csv(here("output",
+  read_csv(here("output",
                 "journals_international_2016_2020.csv"))
 
 jurado <-
-  read.csv(here("output",
+  read_csv(here("output",
                 "jurado.csv"))
 
 libros_divulgacion <-
-  read.csv(here("output",
+  read_csv(here("output",
                 "libros_divulgacion.csv"))
 
 libros_formacion <-
-  read.csv(here("output",
+  read_csv(here("output",
                 "libros_formacion.csv"))
 
 manuales_guias_especializadas <-
-  read.csv(here("output",
+  read_csv(here("output",
                 "manuales_guias_especializadas.csv"))
 
 notas_cientificas <-
-  read.csv(here("output",
+  read_csv(here("output",
                 "notas_cientificas.csv"))
 
 nuevos_registros_cientificos <-
-  read.csv(here("output",
+  read_csv(here("output",
                 "nuevos_registros_cientificos.csv"))
 
 otra_publicacion_divulgativa <- 
-  read.csv(here("output",
+  read_csv(here("output",
                 "otra_publicacion_divulgativa.csv"))
 
 otros_articulos <-
-  read.csv(here("output",
+  read_csv(here("output",
                 "otros_articulos.csv"))
 
 otros_libros <-
-  read.csv(here("output",
+  read_csv(here("output",
                 "otros_libros.csv"))
 
 otros_productos_tencologicos <-
-  read.csv(here("output",
+  read_csv(here("output",
                 "otros_productos_tencologicos.csv"))
 
 participacion_ciudadana_cti <-
-  read.csv(here("output",
+  read_csv(here("output",
                 "participacion_ciudadana_cti.csv"))
 
 participacion_comites <-
-  read.csv(here("output",
+  read_csv(here("output",
                 "participacion_comites.csv"))
 
 produccion_tecnica_tecnologica <-
-  read.csv(here("output",
+  read_csv(here("output",
                 "produccion_tecnica_tecnologica.csv"))
 
 Producciones_de_contenido_digital <-
-  read.csv(here("output",
+  read_csv(here("output",
                 "Producciones_de_contenido_digital.csv"))
 
 producciones_digital_audiovisual <-
-  read.csv(here("output",
+  read_csv(here("output",
                 "Producciones_digital_audiovisual.csv"))
 
 redes_conocimiento <-
-  read.csv(here("output",
+  read_csv(here("output",
                 "redes_conocimiento.csv"))
 
 reglamentos_tecnicos <-
-  read.csv(here("output",
+  read_csv(here("output",
                 "reglamentos_tecnicos.csv"))
 
 regulaciones_normas <-
-  read.csv(here("output",
+  read_csv(here("output",
                 "regulaciones_normas.csv"))
 
 signos_distintivos <-
-  read.csv(here("output",
+  read_csv(here("output",
                 "signos_distintivos.csv"))
 
 similares_entre_grupo <-
-  read.csv(here("output",
+  read_csv(here("output",
                 "Similares_entre_grupo.csv"))
 
 traducciones <-
-  read.csv(here("output",
+  read_csv(here("output",
                 "traducciones.csv"))
 
-margaret <- list("actividades_evaluador"=actividades_evaluador,"actividades_formacion"=actividades_formacion,
-                 "apropiacion_social_conocimiento"=apropiacion_social,"articulos"=articulos_2016_2020,
+margaret <- list("grupos_general"=grupos_general,"investigadores"=investigadores_general,"articulos"=articulos_unicos_2016_2020,
+                 "actividades_evaluador"=actividades_evaluador,"actividades_formacion"=actividades_formacion,
+                 "apropiacion_social_conocimiento"=apropiacion_social,
                  "capitulos"=capitulos_2016_2020,"conceptos_tecnicos"=conceptos_tecnicos,"consultorias"=consultorias,
-                 "revistas_actuales"=revistas_actuales,"cursos"=cursos,"demas_trabajos"=demas_trabajos,
-                 "df_researcher"=df_researchers,"divulgacion_publica_contenidos_transmedia"=divulgacion_publica_contenidos_transmedia,
-                 "documentos_trabajo"=documentos_trabajo,"ediciones"=ediciones,"eliminados_por_grupo"=Eliminados_por_grupo,
+                 "cursos"=cursos,"demas_trabajos"=demas_trabajos,
+                 "divulgacion_publica_contenidos_transmedia"=divulgacion_publica_contenidos_transmedia,
+                 "documentos_trabajo"=documentos_trabajo,"ediciones"=ediciones,
                  "espacios_participacion"=espacios_participacion,"estrategias_comunicacion"=estrategias_comunicacion,
                  "estrategias_pedagogicas"=estrategias_pedagogicas,"eventos_cientificos"=eventos_cientificos,
-                 "generacion_contenido_audio"=generacion_contenido_audio,"generacion_contenido_impreso"=generacion_contenido_impreso,
-                 "generacion_contenido_virtual"=generacion_contenido_virtual,"generacion_multimedia"=generacion_multimedia,
-                 "grupos_general"=grupos_general,"informes_investigacion"=informes_investigacion,"informes_tecnicos"=informes_tecnicos,
-                 "innovaciones_gestion"=innovaciones_gestion,"innovaciones_procesos"=innovaciones_procesos,"revistas_internacionales_2021"=international_journals_2021,
-                 "investigadores"=investigadores_general,"revistas_2016_2020"=journals_2016_2020,"revistas_internacional_2016_2020"=journals_international_2016_2020,
+                 "generacion_contenido_audio"=generacion_contenido_audio,
+                 "generacion_contenido_impreso"=generacion_contenido_impreso,"generacion_contenido_virtual"=generacion_contenido_virtual,
+                 "generacion_multimedia"=generacion_multimedia,"informes_investigacion"=informes_investigacion,"informes_tecnicos"=informes_tecnicos,
+                 "innovaciones_gestion"=innovaciones_gestion,"innovaciones_procesos"=innovaciones_procesos,
                  "jurado"=jurado,"libros_divulgaciones"=libros_divulgacion,"libros_formacion"=libros_formacion,"libros"=libros_2016_2020,
                  "manuales_guias_especializadas"=manuales_guias_especializadas,"notas_cientificas"=notas_cientificas,
                  "nuevos_registros_cientificos"=nuevos_registros_cientificos,"otra_publicacion_divulgativa"=otra_publicacion_divulgativa,
@@ -268,8 +269,8 @@ margaret <- list("actividades_evaluador"=actividades_evaluador,"actividades_form
                  "produccion_tecnica_tecnologia"=produccion_tecnica_tecnologica,"producciones_de_contenido_digital"=Producciones_de_contenido_digital,
                  "producciones_digital_audiovisual"=producciones_digital_audiovisual,"redes_conocimiento"=redes_conocimiento,
                  "reglamentos_tecnicos"=reglamentos_tecnicos,"regulaciones_normas"=regulaciones_normas,"signos_distintivos"=signos_distintivos,
-                 "similares_entre_grupo"=similares_entre_grupo,"software"=software_2016_2020,"trabajos_dirigidos"=trabajo_2016_2020,
-                 "traducciones"=traducciones)
+                 "software"=software_2016_2020,"trabajos_dirigidos"=trabajo_2016_2020,"traducciones"=traducciones,
+                 "similares_entre_grupo"=similares_entre_grupo,"eliminados_por_grupo"=Eliminados_por_grupo)
 #-----------------------------------------------------------------------------------------------------#
 #dataframe filtros
 #filtro grupo
@@ -311,7 +312,7 @@ sidebar <- dashboardSidebar(
              href = "https://rpubs.com/srobledog/margaret"
     ),
     #download
-    menuItem(downloadButton("download", "Download full results"))
+    menuItem("Descargar",icon = icon("fas fa-download"), downloadButton("download", "Download full results"))
   ),
   mainPanel(
     textOutput("grupos_input")
@@ -406,13 +407,12 @@ server <- function(input, output) {
   
   filtro_fecha_max <- reactive({input$fechas_input[2]})
   
+  data <- margaret
   
   output$download <- downloadHandler(
-    filename = function() {
-      paste(input$dataset, ".csv", sep = "")
-    },
+    filename = "Margaret.xlsx",
     content = function(file) {
-      write.csv(margaret, file, row.names = FALSE)
+      write_xlsx(data, file)
     }
   )
   
