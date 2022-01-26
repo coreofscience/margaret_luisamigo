@@ -289,14 +289,14 @@ filterside <- selectInput("grupos_input","Grupos:",
 
 #butonside <- actionButton("aplicar_input", "Aplicar")
 
-sliderside <- sliderInput("fechas_input", "Años:", min = 1995, max = 2021, value = c(2016,2020), sep = "")
+sliderside <- sliderInput("fechas_input", "Años:", min = 2014, max = 2021, value = c(2016,2020), sep = "")
 
 sidebar <- dashboardSidebar(
   filterside,
   sliderside,
   #butonside,
   sidebarMenu(
-             menuItem("Datos", tabName = "general_datos", icon = icon("atlas"), badgeLabel = "New", badgeColor = "yellow"),
+             menuItem("Datos", tabName = "general_datos", icon = icon("atlas")),
     
     menuItem("Producción cientifica", icon = icon("book"), tabName = ("produccion")),
     
