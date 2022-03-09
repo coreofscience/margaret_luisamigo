@@ -9,7 +9,7 @@ merge_quality_articles_ucla <- function(articulos_unicos){
     rename("ISSN" = Issn,
            "SJR_Q"= 7) |> 
     select(ISSN,SJR_Q) |> 
-    mutate(ano = "2020,2021") |> 
+    mutate(ano = "2020,2021, 2022") |> 
     separate_rows(ano, sep = ",")
   
   scimago_data <-  sjr_journals |> 
