@@ -54,8 +54,17 @@ merge_quality_articles_ucla <- function(articulos_unicos){
     filter(!str_detect(ISSN, "NA")) |> 
     select(1,2,4,5,3)
   
-  national_journals_2016_2021 <- rbind(journal_2016_2017, journal_2018_2019, 
-                                       journal_2020, journal_2021)
+  journal_2022 <- read_csv("https://docs.google.com/spreadsheets/d/1ALPh_lgq6OtxgbKXRUEFEmoWcY37gfsnyTszFXbHvWw/export?format=csv&gid=63772797") |> 
+    unite(ISSN, c("issn_impreso","issn_electronico", "issn_l"), sep = ",", remove = TRUE) |> 
+    mutate(ano = "2022") |> 
+    select(-VIGENCIA) |> 
+    separate_rows(ISSN, sep = ",") |> 
+    filter(!str_detect(ISSN, "NA")) |> 
+    select(1,2,4,5,3)
+  
+  national_journals_2016_2022 <- rbind(journal_2016_2017, journal_2018_2019, 
+                                       journal_2020, journal_2021, journal_2022)
+  
   
   international_journals_2016_2020 <- read_csv(here("output",
                                                     "journals_international_2016_2020.csv")) |> 
@@ -63,16 +72,21 @@ merge_quality_articles_ucla <- function(articulos_unicos){
     rename("revista" = revista_h) |> 
     mutate(ano = as.character(ano))
   
-  international_journal_2021 <- read_csv(here("output",
-                                              "international_journals_2021.csv")) |> 
+  international_journal_2021 <- read_csv("https://docs.google.com/spreadsheets/d/1ALPh_lgq6OtxgbKXRUEFEmoWcY37gfsnyTszFXbHvWw/export?format=csv&gid=2059170707") |> 
     separate_rows(ISSN, sep = "; ") |> 
     mutate(ano = as.character(ano))
   
+  international_journals_2022 <- read_csv(here("output",
+                                                    "international_journal_2022.csv")) |> 
+    mutate(ano = as.character(ano)) |> 
+    select(revista, CATEGORIA, ano, ISSN)|>
+    rename("categoria" = CATEGORIA)
+  
   international_jorunal <- rbind(international_journals_2016_2020,
-                                 international_journal_2021)
+                                 international_journal_2021, international_journals_2022)
   
   articulos <- articulos_unicos |>
-    left_join(national_journals_2016_2021, by =c("ISSN", "ano")) |> 
+    left_join(national_journals_2016_2022, by =c("ISSN", "ano")) |> 
     select(1:7,16,8:14) |> 
     rename("categoria" = categoria.x,
            "categoria_revista" = categoria.y,
