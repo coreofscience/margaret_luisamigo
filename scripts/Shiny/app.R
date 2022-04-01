@@ -1034,13 +1034,13 @@ server <- function(input, output) {
   
   output$graf4 <- renderPlotly({
      datos_produccion <- articulos_unicos_2016_2020 |> 
-       select(categoria, ano, grupo) |> 
+       select(categoria.x, ano, grupo) |> 
        count(grupo ,ano, sort = FALSE, name = "producciones")
      
      if(filtro()==FALSE)
      {
        datos_produccion1 <- articulos_unicos_2016_2020 |> 
-         select(categoria, ano, grupo) |> 
+         select(categoria.x, ano, grupo) |> 
          count(ano, sort = FALSE, name = "producciones") |> 
        plot_ly(x = ~ano, y = ~producciones, type = 'scatter', mode = 'lines') |> 
          layout(title = "Producción articulos",

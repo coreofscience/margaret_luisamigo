@@ -9,7 +9,7 @@ merge_quality_articles_ucla <- function(articulos_unicos){
     rename("ISSN" = Issn,
            "SJR_Q"= 7) |> 
     select(ISSN,SJR_Q) |> 
-    mutate(ano = "2020,2021, 2022") |> 
+    mutate(ano = "2020,2021,2022") |> 
     separate_rows(ano, sep = ",")
   
   scimago_data <-  sjr_journals |> 
@@ -77,15 +77,21 @@ merge_quality_articles_ucla <- function(articulos_unicos){
     mutate(ano = as.character(ano))
   
   international_journals_2022 <- read_csv(here("output",
-                                                    "international_journal_2022.csv")) |> 
-    mutate(ano = as.character(ano)) |> 
-    select(revista, CATEGORIA, ano, ISSN)|>
-    rename("categoria" = CATEGORIA)
+                                               "international_journal_2022.csv")) |> 
+    select(revista, categoria, ano, ISSN)|>
+    mutate(ano = as.character(ano),
+           ISSN = str_trim(ISSN)) |> 
+    as_tibble()
   
-  international_jorunal <- rbind(international_journals_2016_2020,
+  international_journal <- rbind(international_journals_2016_2020,
                                  international_journal_2021, international_journals_2022)
   
+  scimago_data_merge <- scimago_data |> 
+    full_join(international_journal, by=c("ISSN","ano")) |> 
+    mutate(SJR_Q = ifelse(is.na(SJR_Q),categoria,SJR_Q))
+  
   articulos <- articulos_unicos |>
+    mutate(ISSN = str_trim(ISSN)) |> 
     left_join(national_journals_2016_2022, by =c("ISSN", "ano")) |> 
     select(1:7,16,8:14) |> 
     rename("categoria" = categoria.x,
@@ -95,7 +101,7 @@ merge_quality_articles_ucla <- function(articulos_unicos){
   
   articulos_df <- articulos |> 
     filter(is.na(categoria_revista)) |> 
-    left_join(international_jorunal, by =c("ISSN", "ano"))|> 
+    left_join(international_journal, by =c("ISSN", "ano"))|> 
     select(1:7,17,9:15) |> 
     rename("categoria" = categoria.x,
            "revista" = revista.x,
@@ -103,11 +109,16 @@ merge_quality_articles_ucla <- function(articulos_unicos){
   
   articulos_national <- articulos |> filter(!is.na(categoria_revista)) 
   articulos_unicos <- rbind(articulos_national, articulos_df)  |> 
-    left_join(scimago_data, by = c("ano", "ISSN")) |> 
+    left_join(scimago_data_merge, by = c("ano", "ISSN")) |> 
     select(1:8,16,8:15) |> 
     group_by(grupo) |> arrange(desc(grupo))|> 
     mutate(categoria_revista = ifelse(is.na(categoria_revista),"Sin categoria",categoria_revista),
-           SJR_Q = ifelse(is.na(SJR_Q),"Sin categoria",SJR_Q))
+           SJR_Q = ifelse(is.na(SJR_Q),"Sin categoria",SJR_Q),
+           SJR_Q = case_when(SJR_Q =="A1" ~ "Q1",
+                             SJR_Q =="A2" ~ "Q2",
+                             SJR_Q =="B" ~ "Q3",
+                             SJR_Q =="C" ~ "Q4",
+                             TRUE ~ SJR_Q))
   
   return(articulos_unicos)
 }
