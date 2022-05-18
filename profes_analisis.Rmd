@@ -1,0 +1,105 @@
+---
+title: "Analisis"
+author: "Sebastian Robledo"
+date: '2022-05-05'
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+library(margaret)
+library(tidygraph)
+library(rvest)
+```
+
+# Getting data
+
+```{r}
+profes <- 
+  tibble(
+    cvlac = c("https://scienti.minciencias.gov.co/cvlac/visualizador/generarCurriculoCv.do?cod_rh=0000313220",
+              "https://scienti.minciencias.gov.co/cvlac/visualizador/generarCurriculoCv.do?cod_rh=0000942367",
+              "https://scienti.minciencias.gov.co/cvlac/visualizador/generarCurriculoCv.do?cod_rh=0000514322",
+              "https://scienti.minciencias.gov.co/cvlac/visualizador/generarCurriculoCv.do?cod_rh=0001370943",
+              "https://scienti.minciencias.gov.co/cvlac/visualizador/generarCurriculoCv.do?cod_rh=0000212407",
+              "https://scienti.minciencias.gov.co/cvlac/visualizador/generarCurriculoCv.do?cod_rh=0000623466"),
+    scholar =c("https://scholar.google.com/citations?user=IjPj8zoAAAAJ",
+               "https://scholar.google.com/citations?user=bEZsTPUAAAAJ",
+               "https://scholar.google.com/citations?user=PXnaNH4AAAAJ",
+               "https://scholar.google.com/citations?user=MTw3GSYAAAAJ",
+               "https://scholar.google.es/citations?user=1lYzwqMAAAAJ",
+               "no tiene"))
+
+profe <- 
+  profes |> 
+  slice(1)
+
+# Getting the data from cvlac
+
+data_grupos_all_profes <- 
+    apply(profe, 1, function(x){
+      URL <- read_html(x['cvlac'])})
+
+data_grupos_all_profes_table <- # it has 39 elements that could be each one a dataframe 
+  data_grupos_all_profes[[1]] |> 
+  html_table() # Example View(data_grupos_all_profes_table[[1]])
+
+
+
+
+data_getting_product <- function(data_grupos_all){
+  
+  grupo_df <- 
+    tibble(grupo = character(),
+           producto = character(),
+           categoria = character())
+  
+  for (i in 1:length(grupos$url)) {
+    
+    grupo <- 
+      data_grupos_all[[i]] |> 
+      html_table()
+    
+    for (j in 1:39) {
+      
+      df_1 = # Creates a table with the first row 
+        data_grupos_all_profes_table %>% 
+        tibble() %>% 
+        slice(j) %>% 
+        unlist %>% 
+        tibble() %>% 
+        rename(producto = ".") %>% 
+        mutate(grupo = grupos$grupo[i])
+      
+      if (length(df_1$producto) > 1) {
+        
+        df_2 =
+          df_1 %>% 
+          filter(producto != "") %>% 
+          mutate(categoria = df_1$producto[1]) %>% 
+          filter(str_detect(producto, "^[0-9]\\.*")) %>% 
+          select(grupo, producto, categoria)
+        
+      } else {
+        
+        df_2 = 
+          df_1 %>% 
+          mutate(categoria = df_1$producto[1],
+                 producto = "NO TIENE") %>% 
+          select(grupo, producto, categoria) %>% 
+          unique()
+        
+      }
+      
+      grupo_df <- 
+        bind_rows(df_2,
+                  grupo_df) 
+      
+    }
+  }
+  
+  rm(df_1, df_2, grupo, i, j)
+  return(grupo_df)
+}
+```
+
