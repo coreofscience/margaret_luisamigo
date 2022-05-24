@@ -120,7 +120,8 @@ get_cvlac <- function(url) {
       dplyr::mutate(fecha = stringr::str_extract(articulos,
                                                  ',[0-9]{4},')) |> 
       dplyr::mutate(fecha = str_remove_all(fecha, ',')) |> 
-      dplyr::count(fecha, sort = TRUE)
+      dplyr::count(fecha, sort = TRUE) |> 
+      rename(total = n)
   } else {
     df_papers_2 <- tibble(articulos = 0)
   }
