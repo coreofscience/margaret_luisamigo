@@ -44,3 +44,4 @@ output/
 *.html
 rsconnect/
 .DS_Store
+*.xlsx
