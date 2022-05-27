@@ -1,7 +1,10 @@
 merge_quality_articles_ucla <- function(articulos_unicos){
   
-  devtools::install_github("ikashnitsky/sjrdata")
-  library(sjrdata)
+  # devtools::install_github("ikashnitsky/sjrdata", force = T)
+  # library(sjrdata)
+  
+  load(here("data",
+            "scimago_data.rda"))
   
   scimago_2020 <- read_csv2(here("output",
                                 "scimago2020.csv")) |> 
@@ -12,13 +15,7 @@ merge_quality_articles_ucla <- function(articulos_unicos){
     mutate(ano = "2020,2021,2022") |> 
     separate_rows(ano, sep = ",")
   
-  scimago_data <-  sjr_journals |> 
-    filter(year>=2016) |> 
-    separate_rows(issn, sep = ", ") |> 
-    select(year, issn,sjr_best_quartile) |> 
-    rename("ISSN" = issn,
-           "ano" = year,
-           "SJR_Q"= sjr_best_quartile) |> 
+  scimago_data <-  scimago_data |> 
     rbind(scimago_2020) |> 
     mutate(i1 = substr(ISSN, 1,4),
            i2 = substr(ISSN, 5,8)) |>
