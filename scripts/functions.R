@@ -2460,7 +2460,7 @@ make_general_grupos <- function(produccion_actualizada){
   
   general_grupos <- produccion_actualizada[[2]][["articulos"]] |> 
     select(grupo, ano) |> 
-    filter(ano>=2016, ano<=2020) |> 
+    filter(ano>=2016) |> 
     count(grupo, sort = T, name = "sum_papers") |> 
     right_join(produccion_actualizada[[1]], by = "grupo") |> 
     select(1,3:13,2)
@@ -2665,12 +2665,12 @@ researcher_product <- function(produccion_actualizada){
     left_join(trabajos_dirigidos_author,
               by = c("integrantes" = "tutor_coautor", 
                      "grupo" = "grupo")) |> 
-    mutate(articulos = replace_na(articulos, 0),
-           capitulos = replace_na(capitulos, 0),
-           libros = replace_na(libros, 0),
-           softwares = replace_na(softwares, 0),
-           trabajos_dirigidos = replace_na(trabajos_dirigidos,0),
-           innovaciones = replace_na(innovaciones, 0)) |> 
+    mutate(articulos = replace_na(articulos, "0"),
+           capitulos = replace_na(capitulos, "0"),
+           libros = replace_na(libros, "0"),
+           softwares = replace_na(softwares, "0"),
+           trabajos_dirigidos = replace_na(trabajos_dirigidos,"0"),
+           innovaciones = replace_na(innovaciones, "0")) |> 
     group_by(integrantes) |> 
     mutate(grupo = paste0(grupo, collapse = "; "),
            articulos = paste0(articulos, collapse = "; "),

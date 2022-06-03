@@ -22,26 +22,22 @@ library(stringi)
 articulos_unicos_2016_2020 <- 
   read_csv(here("output",
                 "articulos.csv")) |> 
-  filter(ano >= 2016,
-         ano <=2021)
+  filter(ano >= 2016)
 
 capitulos_2016_2020 <- 
   read_csv(here("output",
                 "capitulos.csv")) |> 
-  filter(ano >= 2016,
-         ano <=2021)
+  filter(ano >= 2016)
 
 libros_2016_2020 <- 
   read_csv(here("output",
                 "libros.csv")) |> 
-  filter(Ano >= 2016,
-         Ano <=2021)
+  filter(Ano >= 2016)
 
 software_2016_2020 <- 
   read_csv(here("output",
                 "softwares.csv")) |> 
-  filter(ano >= 2016,
-         ano <=2021)
+  filter(ano >= 2016)
 
 trabajo_2016_2020 <- 
   read_csv(here("output",
@@ -50,14 +46,12 @@ trabajo_2016_2020 <-
          hasta = str_trim(hasta),
          desde = str_remove(desde, "\\d.* "),
          desde = str_trim(desde)) |> 
-  filter(desde >= 2016,
-         hasta <=2021)
+  filter(desde >= 2016)
 
 innovacion_2016_2020 <- 
   read_csv(here("output",
                 "innovaciones_gestion.csv")) |> 
-  filter(ano >= 2016,
-         ano <=2021)
+  filter(ano >= 2016)
 
 grupos_general <- 
   read_csv(here("output",
@@ -82,10 +76,10 @@ revistas_actuales <-
 
 ```{r}
 grupos_general |> 
-  select(grupo, clasificacion, sum_papers, departamento , url,
+  select(grupo, clasificacion, sum_papers, departamento , url.x,
          fecha_creacion,lider, email, area_conocimiento_1) |> 
-  mutate(url= str_c("<a href=",
-                     url,
+  mutate(url.x= str_c("<a href=",
+                     url.x,
                      ">Link</a>")) |> 
   datatable(options = list(pageLength = 15),
             escape = FALSE,
