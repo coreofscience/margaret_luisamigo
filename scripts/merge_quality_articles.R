@@ -35,7 +35,7 @@ merge_quality_articles_ucla <- function(articulos_unicos){
     mutate(ano = str_trim(ano),
            ISSN = str_trim(ISSN)) |> 
     left_join(scimago_data_merge, by = c("ISSN", "ano")) |> 
-    merge(publindex_h, by = c("ano", "ISSN"), all = TRUE) |> 
+    left_join(publindex_h, by = c("ano", "ISSN")) |> 
     left_join(publindex_n, by = c("ISSN", "ano")) |> 
     mutate(categoria.y = ifelse(is.na(categoria.y), categoria_h, categoria.y),
            categoria_h = ifelse(is.na(categoria_h), categoria_n, categoria_h)) |> 
@@ -56,5 +56,5 @@ merge_quality_articles_ucla <- function(articulos_unicos){
                              SJR_Q =="C" ~ "Q4",
                              TRUE ~ SJR_Q))
   
-  return(articulos_unicos)
+  return(articulos)
 }
