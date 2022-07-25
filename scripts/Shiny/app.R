@@ -301,15 +301,23 @@ sidebar <- dashboardSidebar(
     menuItem("Producción cientifica", icon = icon("book"), tabName = ("produccion")),
     
     
-    menuItem("Grupos en cifras", icon = icon("bar-chart-o"),
+    menuItem("Grupos en cifras", icon = icon("bar-chart-o",verify_fa = FALSE),
              menuSubItem("Clasificación grupos", tabName = "clasi_grupos"),
              menuSubItem("Clasificación investigadores", tabName = "clasi_inves"),
              menuSubItem("Categoría revistas", tabName = "cate_revista"),
              menuSubItem("Evolución temporal", tabName = "evolu_articulos"),
              menuSubItem("Formación investigadores", tabName = "forma_inves")
     ),
-    menuItem("Rpubs", icon = icon("file-code-o"),
-             href = "https://rpubs.com/srobledog/margaret"
+    menuItem("Procesos Institucionales", icon = icon("folder-plus",verify_fa = FALSE),        
+             menuSubItem("Grupos Reconocidos", icon = icon("boxes"), tabName = "grReconocidos"),
+             menuSubItem("Histórico Proyectos", icon = icon("arrow-circle-left"), tabName = "jistProyectos"),
+             menuItem("Semilleros", icon = icon("microscope"),
+             menuSubItem("Histórico Semilleros", icon = icon("history"), tabName = "histSemilleros"),
+             menuSubItem("Estudiantes inscritos", icon = icon("users"), tabName = "estudiantesInscritos")),
+             menuSubItem("Jovenes Investigadores", icon = icon("search"), tabName = "jovenesInvestigadores"),
+             menuSubItem("Trabajos de grado: Auxiliares", icon = icon("graduation-cap"), tabName = "trabjosGrado"),
+             menuSubItem("Eventos Académicos", icon = icon("calendar-alt"), tabName = "eventosAcademicos")
+             
     ),
     #download
     menuItem("Descargar",icon = icon("fas fa-download"), downloadButton("download", "Download full results"))
