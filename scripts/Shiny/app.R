@@ -942,15 +942,15 @@ server <- function(input, output) {
   output$graf1 <- renderPlotly({
     
     datos_clasi <- grupos_general |> 
-      count(grupo, clasificacion) |> 
-      arrange(desc(clasificacion))
+      count(clasificacion)
+    
+    datos_clasi$clasificacion = factor(datos_clasi$clasificacion,
+                                       levels = c("A1","A","B","C"))
     
     if(filtro()==FALSE)
     {
-      datos_clasi1 <- grupos_general |> 
-        count(clasificacion) |> 
-        arrange(desc(clasificacion)) |> 
-        plot_ly(x = ~clasificacion, y = ~n, type = 'bar') |> 
+      datos_clasi |> 
+        plot_ly(x = dataclasi$clasificacion, y = dataclasi$n, type = 'bar') |> 
           layout(title = 'Clasificación Grupos de investigación',
                  xaxis = list(title = ""),
                  yaxis = list(title = ""))
