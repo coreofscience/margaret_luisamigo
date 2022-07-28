@@ -950,18 +950,27 @@ server <- function(input, output) {
   output$graf1 <- renderPlotly({
     
     datos_clasi <- grupos_general |> 
-      count(grupo, clasificacion) |> 
-      arrange(desc(clasificacion))
+      count(grupo, clasificacion, sort = FALSE)
     
     if(filtro()==FALSE)
     {
       datos_clasi1 <- grupos_general |> 
-        count(clasificacion) |> 
-        arrange(desc(clasificacion)) |> 
+        count(clasificacion)
+      #Orden A1
+      datos_clasi1$clasificacion <- as.factor(datos_clasi1$clasificacion) |> 
+        factor(datos_clasi1$clasificacion, levels = c("A1", "A", "B", "C"))
+      
+      datos_clasi1 <- datos_clasi1 |> 
+        mutate(m = n) |> 
+        mutate(n[0] in m[1])
+      
+      datos_clasi1$n <- as.factor(datos_clasi1$n) |> 
+        mutate(datos_clasi1$n[0] = datos_clasi1$n[1])
+      
+      fig <- datos_clasi1 |>   
         plot_ly(x = ~clasificacion, y = ~n, type = 'bar') |> 
-          layout(title = 'Clasificación Grupos de investigación',
-                 xaxis = list(title = ""),
-                 yaxis = list(title = ""))
+        layout(title = 'Clasificación Grupos de investigación')
+      fig
     }
     else
     {
