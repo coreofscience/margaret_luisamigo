@@ -45,3 +45,6 @@ output/
 rsconnect/
 .DS_Store
 *.xlsx
+
+#Upload files
+Upload/
