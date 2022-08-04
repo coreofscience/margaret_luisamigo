@@ -10,267 +10,8 @@ library(stringi)
 library(shinydashboard)
 library(writexl)
 
-articulos_unicos_2016_2020 <- 
-  read_csv(here("output",
-                "articulos.csv")) |> 
-  mutate(SJR_Q = ifelse(SJR_Q == '-', "Sin categoria",
-         SJR_Q))
-
-investigadores_general <- 
-  read_csv(here("output",
-                "investigadores.csv")) 
-
-grupos_general <- 
-  read_csv(here("output",
-                "grupos_general.csv")) 
-
-paises_general <- articulos_unicos_2016_2020 |> 
-  count(pais_revista, sort = TRUE)
-paises_general$porcentaje <- round(prop.table(paises_general$n),3)*100 
-
-revistas_actuales <-
-  read_csv(here("output", 
-                "current_journals.csv")) 
-
-articulos_2016_2020 <- 
-  read_csv(here("output",
-                "articulos.csv")) 
-
-capitulos_2016_2020 <- 
-  read_csv(here("output",
-                "capitulos.csv")) 
-
-libros_2016_2020 <- 
-  read_csv(here("output",
-                "libros.csv")) 
-
-software_2016_2020 <- 
-  read_csv(here("output",
-                "softwares.csv")) 
-
-trabajo_2016_2020 <- 
-  read_csv(here("output",
-                "trabajos_dirigidos.csv")) 
-
-innovacion_2016_2020 <- 
-  read_csv(here("output",
-                "innovaciones_gestion.csv"))
-
-actividades_evaluador <-
-  read_csv(here("output",
-                "actividades_evaluador.csv"))
-
-actividades_formacion <-
-  read_csv(here("output",
-                "actividades_formacion.csv"))
-
-apropiacion_social <-
-  read_csv(here("output",
-                "apropiacion_social_conocimiento.csv"))
-
-conceptos_tecnicos <-
-  read_csv(here("output",
-                "conceptos_tecnicos.csv"))
-
-consultorias <-
-  read_csv(here("output",
-                "consultorias.csv"))
-
-cursos <-
-  read_csv(here("output",
-                "cursos.csv"))
-
-demas_trabajos <-
-  read_csv(here("output",
-                "demas_trabajos.csv"))
-#investigadores
-df_researchers <-
-  read.csv(here("output",
-                "df_researcher.csv"))
-
-divulgacion_publica_contenidos_transmedia <-
-  read_csv(here("output",
-                "divulgacion_publica_contenidos_transmedia.csv"))
-
-documentos_trabajo <-
-  read_csv(here("output",
-                "documentos_trabajo.csv"))
-
-ediciones <- 
-  read_csv(here("output",
-                "ediciones.csv"))
-
-Eliminados_por_grupo <-
-  read_csv(here("output",
-                "Eliminados_por_grupo.csv"))
-
-espacios_participacion <-
-  read_csv(here("output",
-                "espacios_participacion.csv"))
-
-estrategias_comunicacion <- 
-  read_csv(here("output",
-                "estrategias_comunicacion.csv"))
-
-estrategias_pedagogicas <-
-  read_csv(here("output",
-                "estrategias_pedagogicas.csv"))
-
-eventos_cientificos <-
-  read_csv(here("output",
-                "eventos_cientificos.csv"))
-
-generacion_contenido_audio <-
-  read_csv(here("output",
-                "generacion_contenido_audio.csv"))
-
-generacion_contenido_impreso <-
-  read_csv(here("output",
-                "generacion_contenido_impreso.csv"))
-
-generacion_contenido_virtual <-
-  read_csv(here("output",
-                "generacion_contenido_virtual.csv"))
-
-generacion_multimedia <-
-  read_csv(here("output",
-                "generacion_multimedia.csv"))
-
-informes_investigacion <-
-  read_csv(here("output",
-                "informes_investigacion.csv"))
-
-informes_tecnicos <-
-  read_csv(here("output",
-                "informes_tecnicos.csv"))
-
-innovaciones_gestion <-
-  read_csv(here("output",
-                "innovaciones_gestion.csv"))
-
-innovaciones_procesos <-
-  read_csv(here("output",
-                "innovaciones_procesos.csv"))
-
-international_journals_2021 <-
-  read_csv(here("output",
-                "international_journals_2021.csv"))
-
-journals_2016_2020 <-
-  read_csv(here("output",
-                "journals_2016_2020.csv"))
-
-journals_international_2016_2020 <-
-  read_csv(here("output",
-                "journals_international_2016_2020.csv"))
-
-jurado <-
-  read_csv(here("output",
-                "jurado.csv"))
-
-libros_divulgacion <-
-  read_csv(here("output",
-                "libros_divulgacion.csv"))
-
-libros_formacion <-
-  read_csv(here("output",
-                "libros_formacion.csv"))
-
-manuales_guias_especializadas <-
-  read_csv(here("output",
-                "manuales_guias_especializadas.csv"))
-
-notas_cientificas <-
-  read_csv(here("output",
-                "notas_cientificas.csv"))
-
-nuevos_registros_cientificos <-
-  read_csv(here("output",
-                "nuevos_registros_cientificos.csv"))
-
-otra_publicacion_divulgativa <- 
-  read_csv(here("output",
-                "otra_publicacion_divulgativa.csv"))
-
-otros_articulos <-
-  read_csv(here("output",
-                "otros_articulos.csv"))
-
-otros_libros <-
-  read_csv(here("output",
-                "otros_libros.csv"))
-
-otros_productos_tencologicos <-
-  read_csv(here("output",
-                "otros_productos_tencologicos.csv"))
-
-participacion_ciudadana_cti <-
-  read_csv(here("output",
-                "participacion_ciudadana_cti.csv"))
-
-participacion_comites <-
-  read_csv(here("output",
-                "participacion_comites.csv"))
-
-produccion_tecnica_tecnologica <-
-  read_csv(here("output",
-                "produccion_tecnica_tecnologica.csv"))
-
-Producciones_de_contenido_digital <-
-  read_csv(here("output",
-                "Producciones_de_contenido_digital.csv"))
-
-producciones_digital_audiovisual <-
-  read_csv(here("output",
-                "Producciones_digital_audiovisual.csv"))
-
-redes_conocimiento <-
-  read_csv(here("output",
-                "redes_conocimiento.csv"))
-
-reglamentos_tecnicos <-
-  read_csv(here("output",
-                "reglamentos_tecnicos.csv"))
-
-regulaciones_normas <-
-  read_csv(here("output",
-                "regulaciones_normas.csv"))
-
-signos_distintivos <-
-  read_csv(here("output",
-                "signos_distintivos.csv"))
-
-similares_entre_grupo <-
-  read_csv(here("output",
-                "Similares_entre_grupo.csv"))
-
-traducciones <-
-  read_csv(here("output",
-                "traducciones.csv"))
-
-margaret <- list("grupos_general"=grupos_general,"investigadores"=investigadores_general,"articulos"=articulos_unicos_2016_2020,
-                 "actividades_evaluador"=actividades_evaluador,"actividades_formacion"=actividades_formacion,
-                 "apropiacion_social_conocimiento"=apropiacion_social,
-                 "capitulos"=capitulos_2016_2020,"conceptos_tecnicos"=conceptos_tecnicos,"consultorias"=consultorias,
-                 "cursos"=cursos,"demas_trabajos"=demas_trabajos,
-                 "divulgacion_publica_contenidos_transmedia"=divulgacion_publica_contenidos_transmedia,
-                 "documentos_trabajo"=documentos_trabajo,"ediciones"=ediciones,
-                 "espacios_participacion"=espacios_participacion,"estrategias_comunicacion"=estrategias_comunicacion,
-                 "estrategias_pedagogicas"=estrategias_pedagogicas,"eventos_cientificos"=eventos_cientificos,
-                 "generacion_contenido_audio"=generacion_contenido_audio,
-                 "generacion_contenido_impreso"=generacion_contenido_impreso,"generacion_contenido_virtual"=generacion_contenido_virtual,
-                 "generacion_multimedia"=generacion_multimedia,"informes_investigacion"=informes_investigacion,"informes_tecnicos"=informes_tecnicos,
-                 "innovaciones_gestion"=innovaciones_gestion,"innovaciones_procesos"=innovaciones_procesos,
-                 "jurado"=jurado,"libros_divulgaciones"=libros_divulgacion,"libros_formacion"=libros_formacion,"libros"=libros_2016_2020,
-                 "manuales_guias_especializadas"=manuales_guias_especializadas,"notas_cientificas"=notas_cientificas,
-                 "nuevos_registros_cientificos"=nuevos_registros_cientificos,"otra_publicacion_divulgativa"=otra_publicacion_divulgativa,
-                 "otros_articulos"=otros_articulos,"otros_libros"=otros_libros,"otros_productos_tecnologicos"=otros_productos_tencologicos,
-                 "participacion_ciudadana_cti"=participacion_ciudadana_cti,"participacion_comites"=participacion_comites,
-                 "produccion_tecnica_tecnologia"=produccion_tecnica_tecnologica,"producciones_de_contenido_digital"=Producciones_de_contenido_digital,
-                 "producciones_digital_audiovisual"=producciones_digital_audiovisual,"redes_conocimiento"=redes_conocimiento,
-                 "reglamentos_tecnicos"=reglamentos_tecnicos,"regulaciones_normas"=regulaciones_normas,"signos_distintivos"=signos_distintivos,
-                 "software"=software_2016_2020,"trabajos_dirigidos"=trabajo_2016_2020,"traducciones"=traducciones,
-                 "similares_entre_grupo"=similares_entre_grupo,"eliminados_por_grupo"=Eliminados_por_grupo)
+source(here("scripts/Shiny",
+            "import_data.R"))
 #-----------------------------------------------------------------------------------------------------#
 #dataframe filtros
 #filtro grupo
@@ -287,14 +28,11 @@ filterside <- selectInput("grupos_input","Grupos:",
                           c('General'= FALSE, grupos$grupo),
                           selectize = FALSE)
 
-#butonside <- actionButton("aplicar_input", "Aplicar")
-
 sliderside <- sliderInput("fechas_input", "Años:", min = 2014, max = 2022, value = c(2016,2022), sep = "")
 
 sidebar <- dashboardSidebar(
   filterside,
   sliderside,
-  #butonside,
   sidebarMenu(
              menuItem("Datos", tabName = "general_datos", icon = icon("atlas")),
     
@@ -357,6 +95,12 @@ setup <- dashboardBody(
                         tabPanel("Trabajos dirigidos/Tutorías",
                                  fluidPage(br(),(DT::dataTableOutput('trabajosd'))
                                  )))),
+    tabItem(tabName = "histSemilleros",
+            tabPanel("Histórico semilleros"), fluidPage(br(),(DT::dataTableOutput('histSemi'))
+            )),
+    tabItem(tabName = "estudiantesInscritos",
+            tabPanel("Estudiantes inscritos"), fluidPage(br(),(DT::dataTableOutput('estudiantesInscri'))
+            )),
     tabItem(tabName = "clasi_grupos",
             fluidPage(plotlyOutput("graf1"))),
     
@@ -607,6 +351,50 @@ server <- function(input, output) {
                 colnames = c('Revista', 'ISSN', 'Categoría Publindex',
                              'Categoría Scimago','Cantidad', 'Porcentaje'),
                 class = 'cell-border stripe')
+  })
+  
+  output$histSemi <- DT::renderDataTable(server = FALSE,{
+    
+    semilleros_historicos <- semilleros_historicos |> 
+      filter(AÑO >= filtro_fecha_min(),
+             AÑO <=filtro_fecha_max()) 
+    datatable(semilleros_historicos, filter = 'top', extensions = c('Scroller','Buttons'),
+              options = list(dom = 'Bfrtip',
+                             buttons = 
+                               list('copy', list(
+                                 extend = 'collection',
+                                 buttons = c('csv', 'excel', 'pdf'),
+                                 text = 'Download'
+                               )),
+                             deferRender = TRUE,
+                             scrollY = 420,
+                             scroller = TRUE,
+                             scrollX = TRUE),
+              escape = FALSE,
+              rownames = FALSE,
+              class = 'cell-border stripe')
+  })
+  
+  output$estudiantesInscri <- DT::renderDataTable(server = FALSE,{
+    
+    estudiantes_semilleros <- estudiantes_semilleros |> 
+      filter(AÑO >= filtro_fecha_min(),
+             AÑO <=filtro_fecha_max()) 
+    datatable(estudiantes_semilleros, filter = 'top', extensions = c('Scroller','Buttons'),
+              options = list(dom = 'Bfrtip',
+                             buttons = 
+                               list('copy', list(
+                                 extend = 'collection',
+                                 buttons = c('csv', 'excel', 'pdf'),
+                                 text = 'Download'
+                               )),
+                             deferRender = TRUE,
+                             scrollY = 420,
+                             scroller = TRUE,
+                             scrollX = TRUE),
+              escape = FALSE,
+              rownames = FALSE,
+              class = 'cell-border stripe')
   })
   
   output$articulo <- DT::renderDataTable(server = FALSE,{
@@ -950,7 +738,7 @@ server <- function(input, output) {
     if(filtro()==FALSE)
     {
       datos_clasi |> 
-        plot_ly(x = dataclasi$clasificacion, y = dataclasi$n, type = 'bar') |> 
+        plot_ly(x = datos_clasi$clasificacion, y = datos_clasi$n, type = 'bar') |> 
           layout(title = 'Clasificación Grupos de investigación',
                  xaxis = list(title = ""),
                  yaxis = list(title = ""))
@@ -1042,13 +830,13 @@ server <- function(input, output) {
   
   output$graf4 <- renderPlotly({
      datos_produccion <- articulos_unicos_2016_2020 |> 
-       select(categoria.x, ano, grupo) |> 
+       select(categoria, ano, grupo) |> 
        count(grupo ,ano, sort = FALSE, name = "producciones")
      
      if(filtro()==FALSE)
      {
        datos_produccion1 <- articulos_unicos_2016_2020 |> 
-         select(categoria.x, ano, grupo) |> 
+         select(categoria, ano, grupo) |> 
          count(ano, sort = FALSE, name = "producciones") |> 
        plot_ly(x = ~ano, y = ~producciones, type = 'scatter', mode = 'lines') |> 
          layout(title = "Producción articulos",
