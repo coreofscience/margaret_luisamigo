@@ -54,7 +54,9 @@ sidebar <- dashboardSidebar(
              menuSubItem("Estudiantes inscritos", icon = icon("users"), tabName = "estudiantesInscritos")),
              menuSubItem("Jovenes Investigadores", icon = icon("search"), tabName = "jovenesInvestigadores"),
              menuSubItem("Trabajos de grado: Auxiliares", icon = icon("graduation-cap"), tabName = "trabjosGrado"),
-             menuSubItem("Eventos Académicos", icon = icon("calendar-alt"), tabName = "eventosAcademicos")
+             menuItem("Eventos Académicos", icon = icon("calendar-alt"),
+             menuSubItem("Estudiantes", icon = icon("users"), tabName = "eventos_estudiantes"),
+             menuSubItem("Docentes", icon = icon("users"), tabName = "eventos_docentes"))
              
     ),
     #download
@@ -95,6 +97,12 @@ setup <- dashboardBody(
                         tabPanel("Trabajos dirigidos/Tutorías",
                                  fluidPage(br(),(DT::dataTableOutput('trabajosd'))
                                  )))),
+    tabItem(tabName = "grReconocidos",
+            tabPanel("Grupos Reconocidos"), fluidPage(br(),(DT::dataTableOutput('grupos_hist'))
+            )),
+    tabItem(tabName = "jistProyectos",
+            tabPanel("Histórico Proyectos"), fluidPage(br(),(DT::dataTableOutput('hist_proyectos'))
+            )),
     tabItem(tabName = "histSemilleros",
             tabPanel("Histórico semilleros"), fluidPage(br(),(DT::dataTableOutput('histSemi'))
             )),
@@ -351,6 +359,47 @@ server <- function(input, output) {
                 colnames = c('Revista', 'ISSN', 'Categoría Publindex',
                              'Categoría Scimago','Cantidad', 'Porcentaje'),
                 class = 'cell-border stripe')
+  })
+  
+  output$grupos_hist <- DT::renderDataTable(server = FALSE,{
+    
+    datatable(grupos_historicos, filter = 'top', extensions = c('Scroller','Buttons'),
+              options = list(dom = 'Bfrtip',
+                             buttons = 
+                               list('copy', list(
+                                 extend = 'collection',
+                                 buttons = c('csv', 'excel', 'pdf'),
+                                 text = 'Download'
+                               )),
+                             deferRender = TRUE,
+                             scrollY = 420,
+                             scroller = TRUE,
+                             scrollX = TRUE),
+              escape = FALSE,
+              rownames = FALSE,
+              class = 'cell-border stripe')
+  })
+  
+  output$hist_proyectos <- DT::renderDataTable(server = FALSE,{
+    
+    # proyectos_historicos <- proyectos_historicos |> 
+    #   filter(FECHA_INICIO >= filtro_fecha_min(),
+    #          FECHA_INICIO <=filtro_fecha_max())
+    datatable(proyectos_historicos, filter = 'top', extensions = c('Scroller','Buttons'),
+              options = list(dom = 'Bfrtip',
+                             buttons = 
+                               list('copy', list(
+                                 extend = 'collection',
+                                 buttons = c('csv', 'excel', 'pdf'),
+                                 text = 'Download'
+                               )),
+                             deferRender = TRUE,
+                             scrollY = 420,
+                             scroller = TRUE,
+                             scrollX = TRUE),
+              escape = FALSE,
+              rownames = FALSE,
+              class = 'cell-border stripe')
   })
   
   output$histSemi <- DT::renderDataTable(server = FALSE,{

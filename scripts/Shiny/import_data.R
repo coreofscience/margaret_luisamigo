@@ -240,6 +240,28 @@ traducciones <-
   read_csv(here("output",
                 "traducciones.csv"))
 
+## Historico categorias grupos
+grupos_historicos <- read_csv("https://docs.google.com/spreadsheets/d/1mAFeuE-Eq6DTSiB6a04uo7jid_LcXt1m/export?format=csv&gid=551509450")
+
+## Historico proyectos
+proyectos_historicos_2017 <- read_csv("https://docs.google.com/spreadsheets/d/1Vq_jnUOiBE-_7AsLEIdZnQyOTOuQqWRf/export?format=csv&gid=743408149")
+proyectos_historicos_2018 <- read_csv("https://docs.google.com/spreadsheets/d/1Vq_jnUOiBE-_7AsLEIdZnQyOTOuQqWRf/export?format=csv&gid=1558798679")
+proyectos_historicos_2019 <- read_csv("https://docs.google.com/spreadsheets/d/1Vq_jnUOiBE-_7AsLEIdZnQyOTOuQqWRf/export?format=csv&gid=1165919349")
+proyectos_historicos_2020 <- read_csv("https://docs.google.com/spreadsheets/d/1Vq_jnUOiBE-_7AsLEIdZnQyOTOuQqWRf/export?format=csv&gid=1371677940")
+proyectos_historicos_2021 <- read_csv("https://docs.google.com/spreadsheets/d/1Vq_jnUOiBE-_7AsLEIdZnQyOTOuQqWRf/export?format=csv&gid=1394335749")
+proyectos_historicos_2022 <- read_csv("https://docs.google.com/spreadsheets/d/1Vq_jnUOiBE-_7AsLEIdZnQyOTOuQqWRf/export?format=csv&gid=825941723")
+
+proyectos_historicos <- merge(proyectos_historicos_2017, proyectos_historicos_2018, all = TRUE)
+proyectos_historicos <- merge(proyectos_historicos, proyectos_historicos_2019, all = TRUE)
+proyectos_historicos <- merge(proyectos_historicos, proyectos_historicos_2020, all = TRUE)
+proyectos_historicos <- merge(proyectos_historicos, proyectos_historicos_2021, all = TRUE)
+proyectos_historicos <- merge(proyectos_historicos, proyectos_historicos_2022, all = TRUE)
+rm(proyectos_historicos_2017, proyectos_historicos_2018, proyectos_historicos_2019,
+   proyectos_historicos_2020, proyectos_historicos_2021, proyectos_historicos_2022)
+
+## Jovenes investigadores
+jovenes_i <- read_csv("https://docs.google.com/spreadsheets/d/1hplBDfYY_eaJx3yU2b_A62JrcQ__UGcY/export?format=csv&gid=794197273")
+
 ## Semilleros
 estudiantes_semilleros <- read_csv("https://docs.google.com/spreadsheets/d/1VJB_5oj_YGIyVHe4VObsgPni72EPMVVd/export?format=csv&gid=858320991")
 
@@ -255,7 +277,6 @@ semilleros_historicos <- merge(semilleros_historicos, semilleros_historicos_2019
 semilleros_historicos <- merge(semilleros_historicos, semilleros_historicos_2020, all = TRUE)
 semilleros_historicos <- merge(semilleros_historicos, semilleros_historicos_2021, all = TRUE)
 semilleros_historicos <- merge(semilleros_historicos, semilleros_historicos_2022, all = TRUE)
-
 rm(semilleros_historicos_2017,semilleros_historicos_2018,semilleros_historicos_2019,semilleros_historicos_2020,
    semilleros_historicos_2021,semilleros_historicos_2022)
 
