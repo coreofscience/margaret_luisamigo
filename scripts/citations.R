@@ -9,4 +9,12 @@ get_citations <- function(){
   
   profile <- get_profile('RGUTAfEAAAAJ&hl')
   publications <- get_publications('RGUTAfEAAAAJ&hl')
+  
+  citations = tibble()
+  row <- get_publications("opg3irUAAAAJ")
+  for(i in researchers$id_scholar){
+    row <- get_publications(i)
+    Sys.sleep(3)
+    citations <- rbind(citations, row)
+  }
 }
