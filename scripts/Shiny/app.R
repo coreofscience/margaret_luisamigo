@@ -108,7 +108,7 @@ setup <- dashboardBody(
                                                                         ),),
                         tabPanel("Histórico Proyectos 2019", fluidPage(br(),(DT::dataTableOutput('hist_proyectos_2019'))
                                                                         ),),
-                        tabPanel("Histórico Proyectos 2020", fluidPage(br(),(DT::dataTableOutput('hist_proyectos,2020'))
+                        tabPanel("Histórico Proyectos 2020", fluidPage(br(),(DT::dataTableOutput('hist_proyectos_2020'))
                                                                         ),),
                         tabPanel("Histórico Proyectos 2021", fluidPage(br(),(DT::dataTableOutput('hist_proyectos_2021'))
                                                                         ),),
