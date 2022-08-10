@@ -101,8 +101,19 @@ setup <- dashboardBody(
             tabPanel("Grupos Reconocidos"), fluidPage(br(),(DT::dataTableOutput('grupos_hist'))
             )),
     tabItem(tabName = "jistProyectos",
-            tabPanel("Histórico Proyectos"), fluidPage(br(),(DT::dataTableOutput('hist_proyectos'))
-            )),
+            tabsetPanel(type = "tabs",
+                        tabPanel("Histórico Proyectos 2017", fluidPage(br(),(DT::dataTableOutput('hist_proyectos_2017'))
+                                                                       ),),
+                        tabPanel("Histórico Proyectos 2018", fluidPage(br(),(DT::dataTableOutput('hist_proyectos_2018'))
+                                                                        ),),
+                        tabPanel("Histórico Proyectos 2019", fluidPage(br(),(DT::dataTableOutput('hist_proyectos_2019'))
+                                                                        ),),
+                        tabPanel("Histórico Proyectos 2020", fluidPage(br(),(DT::dataTableOutput('hist_proyectos,2020'))
+                                                                        ),),
+                        tabPanel("Histórico Proyectos 2021", fluidPage(br(),(DT::dataTableOutput('hist_proyectos_2021'))
+                                                                        ),),
+                        tabPanel("Histórico Proyectos 2022", fluidPage(br(),(DT::dataTableOutput('hist_proyectos_2022'))
+                                                                        )))),
     tabItem(tabName = "histSemilleros",
             tabPanel("Histórico semilleros"), fluidPage(br(),(DT::dataTableOutput('histSemi'))
             )),
@@ -114,6 +125,12 @@ setup <- dashboardBody(
             )),
     tabItem(tabName = "trabjosGrado",
             tabPanel("Trabajos de grado:Auxiliares"), fluidPage(br(),(DT::dataTableOutput('tgA'))
+            )),
+    tabItem(tabName = "eventos_estudiantes",
+            tabPanel("Estudiantes"), fluidPage(br(),(DT::dataTableOutput('eva_estudiantes'))
+            )),
+    tabItem(tabName = "eventos_docentes",
+            tabPanel("Docentes"), fluidPage(br(),(DT::dataTableOutput('eva_docentes'))
             )),
     tabItem(tabName = "clasi_grupos",
             fluidPage(plotlyOutput("graf1"))),
@@ -386,27 +403,119 @@ server <- function(input, output) {
               class = 'cell-border stripe')
   })
   
-  # output$hist_proyectos <- DT::renderDataTable(server = FALSE,{
-  #   
-  #   proyectos_historicos <- proyectos_historicos |>
-  #     filter(Ano >= filtro_fecha_min(),
-  #            Ano <=filtro_fecha_max())
-  #   datatable(proyectos_historicos, filter = 'top', extensions = c('Scroller','Buttons'),
-  #             options = list(dom = 'Bfrtip',
-  #                            buttons = 
-  #                              list('copy', list(
-  #                                extend = 'collection',
-  #                                buttons = c('csv', 'excel', 'pdf'),
-  #                                text = 'Download'
-  #                              )),
-  #                            deferRender = TRUE,
-  #                            scrollY = 420,
-  #                            scroller = TRUE,
-  #                            scrollX = TRUE),
-  #             escape = FALSE,
-  #             rownames = FALSE,
-  #             class = 'cell-border stripe')
-  # })
+  output$hist_proyectos_2017 <- DT::renderDataTable(server = FALSE,{
+    
+    datatable(proyectos_historicos_2017, filter = 'top', extensions = c('Scroller','Buttons'),
+              options = list(dom = 'Bfrtip',
+                             buttons =
+                               list('copy', list(
+                                 extend = 'collection',
+                                 buttons = c('csv', 'excel', 'pdf'),
+                                 text = 'Download'
+                               )),
+                             deferRender = TRUE,
+                             scrollY = 420,
+                             scroller = TRUE,
+                             scrollX = TRUE),
+              escape = FALSE,
+              rownames = FALSE,
+              class = 'cell-border stripe')
+  })
+  
+  output$hist_proyectos_2018 <- DT::renderDataTable(server = FALSE,{
+    
+    datatable(proyectos_historicos_2018, filter = 'top', extensions = c('Scroller','Buttons'),
+              options = list(dom = 'Bfrtip',
+                             buttons =
+                               list('copy', list(
+                                 extend = 'collection',
+                                 buttons = c('csv', 'excel', 'pdf'),
+                                 text = 'Download'
+                               )),
+                             deferRender = TRUE,
+                             scrollY = 420,
+                             scroller = TRUE,
+                             scrollX = TRUE),
+              escape = FALSE,
+              rownames = FALSE,
+              class = 'cell-border stripe')
+  })
+  
+  output$hist_proyectos_2019 <- DT::renderDataTable(server = FALSE,{
+    
+    datatable(proyectos_historicos_2019, filter = 'top', extensions = c('Scroller','Buttons'),
+              options = list(dom = 'Bfrtip',
+                             buttons =
+                               list('copy', list(
+                                 extend = 'collection',
+                                 buttons = c('csv', 'excel', 'pdf'),
+                                 text = 'Download'
+                               )),
+                             deferRender = TRUE,
+                             scrollY = 420,
+                             scroller = TRUE,
+                             scrollX = TRUE),
+              escape = FALSE,
+              rownames = FALSE,
+              class = 'cell-border stripe')
+  })
+  
+  output$hist_proyectos_2020 <- DT::renderDataTable(server = FALSE,{
+    
+    datatable(proyectos_historicos_2020, filter = 'top', extensions = c('Scroller','Buttons'),
+              options = list(dom = 'Bfrtip',
+                             buttons =
+                               list('copy', list(
+                                 extend = 'collection',
+                                 buttons = c('csv', 'excel', 'pdf'),
+                                 text = 'Download'
+                               )),
+                             deferRender = TRUE,
+                             scrollY = 420,
+                             scroller = TRUE,
+                             scrollX = TRUE),
+              escape = FALSE,
+              rownames = FALSE,
+              class = 'cell-border stripe')
+  })
+  
+  output$hist_proyectos_2021 <- DT::renderDataTable(server = FALSE,{
+    
+    datatable(proyectos_historicos_2021, filter = 'top', extensions = c('Scroller','Buttons'),
+              options = list(dom = 'Bfrtip',
+                             buttons =
+                               list('copy', list(
+                                 extend = 'collection',
+                                 buttons = c('csv', 'excel', 'pdf'),
+                                 text = 'Download'
+                               )),
+                             deferRender = TRUE,
+                             scrollY = 420,
+                             scroller = TRUE,
+                             scrollX = TRUE),
+              escape = FALSE,
+              rownames = FALSE,
+              class = 'cell-border stripe')
+  })
+  
+  output$hist_proyectos_2022 <- DT::renderDataTable(server = FALSE,{
+    
+    datatable(proyectos_historicos_2022, filter = 'top', extensions = c('Scroller','Buttons'),
+              options = list(dom = 'Bfrtip',
+                             buttons =
+                               list('copy', list(
+                                 extend = 'collection',
+                                 buttons = c('csv', 'excel', 'pdf'),
+                                 text = 'Download'
+                               )),
+                             deferRender = TRUE,
+                             scrollY = 420,
+                             scroller = TRUE,
+                             scrollX = TRUE),
+              escape = FALSE,
+              rownames = FALSE,
+              class = 'cell-border stripe')
+  })
   
   output$histSemi <- DT::renderDataTable(server = FALSE,{
     
@@ -484,6 +593,50 @@ server <- function(input, output) {
              Ano <=filtro_fecha_max()) 
     tg <- tg |> select(-'Cédula', -'N', -'Documento Identidad', -'Fecha de Ingreso', -'Modalidad')
     datatable(tg, filter = 'top', extensions = c('Scroller','Buttons'),
+              options = list(dom = 'Bfrtip',
+                             buttons = 
+                               list('copy', list(
+                                 extend = 'collection',
+                                 buttons = c('csv', 'excel', 'pdf'),
+                                 text = 'Download'
+                               )),
+                             deferRender = TRUE,
+                             scrollY = 420,
+                             scroller = TRUE,
+                             scrollX = TRUE),
+              escape = FALSE,
+              rownames = FALSE,
+              class = 'cell-border stripe')
+  })
+  
+  output$eva_estudiantes <- DT::renderDataTable(server = FALSE,{
+    
+    eva_estudiantes <- eva_estudiantes |> 
+      filter(Año >= filtro_fecha_min(),
+             Año <=filtro_fecha_max()) 
+    datatable(eva_estudiantes, filter = 'top', extensions = c('Scroller','Buttons'),
+              options = list(dom = 'Bfrtip',
+                             buttons = 
+                               list('copy', list(
+                                 extend = 'collection',
+                                 buttons = c('csv', 'excel', 'pdf'),
+                                 text = 'Download'
+                               )),
+                             deferRender = TRUE,
+                             scrollY = 420,
+                             scroller = TRUE,
+                             scrollX = TRUE),
+              escape = FALSE,
+              rownames = FALSE,
+              class = 'cell-border stripe')
+  })
+  
+  output$eva_docentes <- DT::renderDataTable(server = FALSE,{
+    
+    eva_docentes <- eva_docentes |> 
+      filter(Año >= filtro_fecha_min(),
+             Año <=filtro_fecha_max()) 
+    datatable(eva_docentes, filter = 'top', extensions = c('Scroller','Buttons'),
               options = list(dom = 'Bfrtip',
                              buttons = 
                                list('copy', list(
