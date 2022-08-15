@@ -48,7 +48,13 @@ sidebar <- dashboardSidebar(
     ),
     menuItem("Procesos Institucionales", icon = icon("folder-plus",verify_fa = FALSE),        
              menuSubItem("Grupos Reconocidos", icon = icon("boxes"), tabName = "grReconocidos"),
-             menuSubItem("Histórico Proyectos", icon = icon("arrow-circle-left"), tabName = "jistProyectos"),
+             menuItem("Histórico Proyectos", icon = icon("arrow-circle-left"),
+                      menuSubItem("2017", icon = icon("book"), tabName = "jistProyectos_2017"),
+                      menuSubItem("2018", icon = icon("book"), tabName = "jistProyectos_2018"),
+                      menuSubItem("2019", icon = icon("book"), tabName = "jistProyectos_2019"),
+                      menuSubItem("2020", icon = icon("book"), tabName = "jistProyectos_2020"),
+                      menuSubItem("2021", icon = icon("book"), tabName = "jistProyectos_2021"),
+                      menuSubItem("2022", icon = icon("book"), tabName = "jistProyectos_2022")),
              menuItem("Semilleros", icon = icon("microscope"),
              menuSubItem("Histórico Semilleros", icon = icon("history"), tabName = "histSemilleros"),
              menuSubItem("Estudiantes inscritos", icon = icon("users"), tabName = "estudiantesInscritos")),
@@ -102,20 +108,24 @@ setup <- dashboardBody(
     tabItem(tabName = "grReconocidos",
             tabPanel("Grupos Reconocidos"), fluidPage(br(),(DT::dataTableOutput('grupos_hist'))
             )),
-    tabItem(tabName = "jistProyectos",
-            tabsetPanel(type = "tabs",
-                        tabPanel("Histórico Proyectos 2017", fluidPage(br(),(DT::dataTableOutput('hist_proyectos_2017'))
-                                                                       ),),
-                        tabPanel("Histórico Proyectos 2018", fluidPage(br(),(DT::dataTableOutput('hist_proyectos_2018'))
-                                                                        ),),
-                        tabPanel("Histórico Proyectos 2019", fluidPage(br(),(DT::dataTableOutput('hist_proyectos_2019'))
-                                                                        ),),
-                        tabPanel("Histórico Proyectos 2020", fluidPage(br(),(DT::dataTableOutput('hist_proyectos_2020'))
-                                                                        ),),
-                        tabPanel("Histórico Proyectos 2021", fluidPage(br(),(DT::dataTableOutput('hist_proyectos_2021'))
-                                                                        ),),
-                        tabPanel("Histórico Proyectos 2022", fluidPage(br(),(DT::dataTableOutput('hist_proyectos_2022'))
-                                                                        )))),
+    tabItem(tabName = "jistProyectos_2017",
+            tabPanel("2017"), fluidPage(br(),(DT::dataTableOutput('hist_proyectos_2017'))
+            )),
+    tabItem(tabName = "jistProyectos_2018",
+            tabPanel("2018"), fluidPage(br(),(DT::dataTableOutput('hist_proyectos_2018'))
+            )),
+    tabItem(tabName = "jistProyectos_2019",
+            tabPanel("2019"), fluidPage(br(),(DT::dataTableOutput('hist_proyectos_2019'))
+            )),
+    tabItem(tabName = "jistProyectos_2020",
+            tabPanel("2020"), fluidPage(br(),(DT::dataTableOutput('hist_proyectos_2020'))
+            )),
+    tabItem(tabName = "jistProyectos_2021",
+            tabPanel("2021"), fluidPage(br(),(DT::dataTableOutput('hist_proyectos_2021'))
+            )),
+    tabItem(tabName = "jistProyectos_2022",
+            tabPanel("2022"), fluidPage(br(),(DT::dataTableOutput('hist_proyectos_2022'))
+            )),
     tabItem(tabName = "histSemilleros",
             tabPanel("Histórico semilleros"), fluidPage(br(),(DT::dataTableOutput('histSemi'))
             )),
