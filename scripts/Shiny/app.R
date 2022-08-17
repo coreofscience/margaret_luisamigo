@@ -328,7 +328,8 @@ sidebar <- dashboardSidebar(
     #download
     menuItem("Descargar",icon = icon("fas fa-download"), downloadButton("download", "Download full results")),
     span(),
-    tags$h5("Última actualización: 21 de Julio 2022", align = "center")
+    tags$h5("Última actualización:", align = "center"),
+    tags$h6("17 de Agosto 2022", align = "center")
     ),
   mainPanel(
     textOutput("grupos_input")
