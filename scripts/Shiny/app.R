@@ -26,6 +26,14 @@ articulos_unicos_2016_2020 <-
   mutate(SJR_Q = ifelse(SJR_Q == '-', "Sin categoria",
                         SJR_Q))
 
+articulos_2016_2020 <- 
+  read_csv(here("output",
+                "articulos.csv")) |> 
+  mutate(categoria_revista = ifelse(categoria_revista == "Sin categorÃ­a",
+                                    "Sin Categoría", ifelse(categoria_revista == "Sin informaciÃ³n", 'Sin Información', categoria_revista)),
+         SJR_Q = ifelse(SJR_Q == "Sin categorÃ­a",
+                        "Sin Categoría", ifelse(SJR_Q == "Sin informaciÃ³n", 'Sin Información', SJR_Q)))
+
 investigadores_general <- 
   read_csv(here("output",
                 "investigadores.csv")) 
