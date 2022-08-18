@@ -531,10 +531,9 @@ server <- function(input, output) {
   
   output$histSemi <- DT::renderDataTable(server = FALSE,{
     
-    semilleros_historicos <- semilleros_historicos |> 
-      rename('AÑO' = 'ANO') |> 
-      filter(AÑO >= filtro_fecha_min(),
-             AÑO <=filtro_fecha_max()) 
+    semilleros_historicos <- semilleros_historicos |>
+      filter(ANO >= filtro_fecha_min(),
+             ANO <=filtro_fecha_max()) 
     datatable(semilleros_historicos, filter = 'top', extensions = c('Scroller','Buttons'),
               options = list(dom = 'Bfrtip',
                              buttons = 
@@ -554,10 +553,9 @@ server <- function(input, output) {
   
   output$estudiantesInscri <- DT::renderDataTable(server = FALSE,{
     
-    estudiantes_semilleros <- estudiantes_semilleros |> 
-      rename('AÑO' = 'ANO') |> 
-      filter(AÑO >= filtro_fecha_min(),
-             AÑO <=filtro_fecha_max())
+    estudiantes_semilleros <- estudiantes_semilleros |>
+      filter(ANO >= filtro_fecha_min(),
+             ANO <=filtro_fecha_max())
     datatable(estudiantes_semilleros, filter = 'top', extensions = c('Scroller','Buttons'),
               options = list(dom = 'Bfrtip',
                              buttons = 
@@ -578,10 +576,9 @@ server <- function(input, output) {
   output$jovenesI <- DT::renderDataTable(server = FALSE,{
     
     jovenes_i <- jovenes_i |> 
-      rename('Año' = 'ANO') |> 
-      filter(Año >= filtro_fecha_min(),
-             Año <=filtro_fecha_max())  |> 
-      select(-'CÉDULA') 
+      filter(ANO >= filtro_fecha_min(),
+             ANO <=filtro_fecha_max())  |> 
+      select(-'CEDULA') 
     
     datatable(jovenes_i, filter = 'top', extensions = c('Scroller','Buttons'),
               options = list(dom = 'Bfrtip',
@@ -603,10 +600,9 @@ server <- function(input, output) {
   output$tgA <- DT::renderDataTable(server = FALSE,{
     
     tg <- tg |>
-      rename('Año' = 'Ano') |> 
-      filter(Año >= filtro_fecha_min(),
-             Año <=filtro_fecha_max()) 
-    tg <- tg |> select(-'Cédula', -'N', -'Documento Identidad', -'Fecha de Ingreso', -'Modalidad')
+      filter(Ano >= filtro_fecha_min(),
+             Ano <=filtro_fecha_max()) 
+    tg <- tg |> select(-'Cedula', -'N', -'Documento Identidad', -'Fecha de Ingreso', -'Modalidad')
     datatable(tg, filter = 'top', extensions = c('Scroller','Buttons'),
               options = list(dom = 'Bfrtip',
                              buttons = 
@@ -627,9 +623,8 @@ server <- function(input, output) {
   output$eva_estudiantes <- DT::renderDataTable(server = FALSE,{
     
     eva_estudiantes <- eva_estudiantes |> 
-      rename('Año' = 'Ano') |> 
-      filter(Año >= filtro_fecha_min(),
-             Año <=filtro_fecha_max()) 
+      filter(Ano >= filtro_fecha_min(),
+             Ano <=filtro_fecha_max()) 
     datatable(eva_estudiantes, filter = 'top', extensions = c('Scroller','Buttons'),
               options = list(dom = 'Bfrtip',
                              buttons = 
@@ -650,9 +645,8 @@ server <- function(input, output) {
   output$eva_docentes <- DT::renderDataTable(server = FALSE,{
     
     eva_docentes <- eva_docentes |> 
-      rename('Año' = 'Ano') |> 
-      filter(Año >= filtro_fecha_min(),
-             Año <=filtro_fecha_max()) 
+      filter(Ano >= filtro_fecha_min(),
+             Ano <=filtro_fecha_max()) 
     datatable(eva_docentes, filter = 'top', extensions = c('Scroller','Buttons'),
               options = list(dom = 'Bfrtip',
                              buttons = 
