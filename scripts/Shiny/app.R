@@ -10,33 +10,25 @@ library(stringi)
 library(shinydashboard)
 library(writexl)
 
-# articulos_unicos_2016_2020 <- 
-#   read_csv(here("output",
-#                 "articulos.csv")) |> 
-#   mutate(SJR_Q = ifelse(SJR_Q == '-', "Sin categoria",
-#          SJR_Q))
+# source(here("Upload",
+#             "import_data.R"))
+# library(tidyverse)
+# library(here)
+# library(stringi)
+# library(plotly)
+
+# source(here("scripts",
+#             "citations.R"))
 
 articulos_unicos_2016_2020 <- 
   read_csv(here("output",
-                "articulos.csv")) |> 
-  mutate(categoria_revista = ifelse(categoria_revista == "Sin categorÃ­a",
-         "Sin Categoría", ifelse(categoria_revista == "Sin informaciÃ³n", 'Sin Información', categoria_revista)),
-         SJR_Q = ifelse(SJR_Q == "Sin categorÃ­a",
-                        "Sin Categoría", ifelse(SJR_Q == "Sin informaciÃ³n", 'Sin Información', SJR_Q)))
-
-articulos_2016_2020 <- 
-  read_csv(here("output",
-                "articulos.csv")) |> 
-  mutate(categoria_revista = ifelse(categoria_revista == "Sin categorÃ­a",
-                                    "Sin Categoría", ifelse(categoria_revista == "Sin informaciÃ³n", 'Sin Información', categoria_revista)),
-         SJR_Q = ifelse(SJR_Q == "Sin categorÃ­a",
-                        "Sin Categoría", ifelse(SJR_Q == "Sin informaciÃ³n", 'Sin Información', SJR_Q)))
-
+                "articulos.csv")) |>
+  mutate(SJR_Q = ifelse(SJR_Q == '-', "Sin categoria",
+                        SJR_Q))
 
 investigadores_general <- 
   read_csv(here("output",
                 "investigadores.csv")) 
-
 grupos_general <- 
   read_csv(here("output",
                 "grupos_general.csv")) 
@@ -262,6 +254,75 @@ traducciones <-
   read_csv(here("output",
                 "traducciones.csv"))
 
+## Historico categorias grupos
+grupos_historicos <- read_csv("https://docs.google.com/spreadsheets/d/1mAFeuE-Eq6DTSiB6a04uo7jid_LcXt1m/export?format=csv&gid=551509450")
+
+## Historico proyectos
+proyectos_historicos_2017 <- read_csv("https://docs.google.com/spreadsheets/d/1Vq_jnUOiBE-_7AsLEIdZnQyOTOuQqWRf/export?format=csv&gid=267659160")
+
+proyectos_historicos_2018 <- read_csv("https://docs.google.com/spreadsheets/d/1Vq_jnUOiBE-_7AsLEIdZnQyOTOuQqWRf/export?format=csv&gid=1864593933")
+
+proyectos_historicos_2019 <- read_csv("https://docs.google.com/spreadsheets/d/1Vq_jnUOiBE-_7AsLEIdZnQyOTOuQqWRf/export?format=csv&gid=298346709")
+
+proyectos_historicos_2020 <- read_csv("https://docs.google.com/spreadsheets/d/1Vq_jnUOiBE-_7AsLEIdZnQyOTOuQqWRf/export?format=csv&gid=466825271")
+
+proyectos_historicos_2021 <- read_csv("https://docs.google.com/spreadsheets/d/1Vq_jnUOiBE-_7AsLEIdZnQyOTOuQqWRf/export?format=csv&gid=1317016133")
+
+proyectos_historicos_2022 <- read_csv("https://docs.google.com/spreadsheets/d/1Vq_jnUOiBE-_7AsLEIdZnQyOTOuQqWRf/export?format=csv&gid=1766552935") 
+
+## Jovenes investigadores
+jovenes_i <- read_csv("https://docs.google.com/spreadsheets/d/1hplBDfYY_eaJx3yU2b_A62JrcQ__UGcY/export?format=csv&gid=428920444")
+
+jovenes_i <- na.omit(jovenes_i)
+
+## Semilleros
+estudiantes_semilleros <- read_csv("https://docs.google.com/spreadsheets/d/1VJB_5oj_YGIyVHe4VObsgPni72EPMVVd/export?format=csv&gid=858320991")
+
+semilleros_historicos_2017 <- read_csv("https://docs.google.com/spreadsheets/d/1lyybfY6EZPjFdw7ZWF8p1L7kaS6dBajQ/export?format=csv&gid=771049243")
+semilleros_historicos_2018 <- read_csv("https://docs.google.com/spreadsheets/d/1lyybfY6EZPjFdw7ZWF8p1L7kaS6dBajQ/export?format=csv&gid=1134238589")
+semilleros_historicos_2019 <- read_csv("https://docs.google.com/spreadsheets/d/1lyybfY6EZPjFdw7ZWF8p1L7kaS6dBajQ/export?format=csv&gid=1127688177")
+semilleros_historicos_2020 <- read_csv("https://docs.google.com/spreadsheets/d/1lyybfY6EZPjFdw7ZWF8p1L7kaS6dBajQ/export?format=csv&gid=1152962755")
+semilleros_historicos_2021 <- read_csv("https://docs.google.com/spreadsheets/d/1lyybfY6EZPjFdw7ZWF8p1L7kaS6dBajQ/export?format=csv&gid=1291737582")
+semilleros_historicos_2022 <- read_csv("https://docs.google.com/spreadsheets/d/1lyybfY6EZPjFdw7ZWF8p1L7kaS6dBajQ/export?format=csv&gid=92570379")
+
+semilleros_historicos <- merge(semilleros_historicos_2017, semilleros_historicos_2018, all = TRUE)
+semilleros_historicos <- merge(semilleros_historicos, semilleros_historicos_2019, all = TRUE)
+semilleros_historicos <- merge(semilleros_historicos, semilleros_historicos_2020, all = TRUE)
+semilleros_historicos <- merge(semilleros_historicos, semilleros_historicos_2021, all = TRUE)
+semilleros_historicos <- merge(semilleros_historicos, semilleros_historicos_2022, all = TRUE)
+rm(semilleros_historicos_2017,semilleros_historicos_2018,semilleros_historicos_2019,semilleros_historicos_2020,
+   semilleros_historicos_2021,semilleros_historicos_2022)
+
+## Trabajos de grado
+tg_2016 <- read_csv("https://docs.google.com/spreadsheets/d/1dlci5TT6Raqj6IKPMz3CiCu_W5K_y8QJ/export?format=csv&gid=1553280182") |>
+  mutate('Ano' = 2016)
+tg_2017 <- read_csv("https://docs.google.com/spreadsheets/d/1dlci5TT6Raqj6IKPMz3CiCu_W5K_y8QJ/export?format=csv&gid=1462223049") |> 
+  mutate('Ano' = 2017)
+tg_2018 <- read_csv("https://docs.google.com/spreadsheets/d/1dlci5TT6Raqj6IKPMz3CiCu_W5K_y8QJ/export?format=csv&gid=2137854493") |> 
+  mutate('Ano' = 2018)
+tg_2019 <- read_csv("https://docs.google.com/spreadsheets/d/1dlci5TT6Raqj6IKPMz3CiCu_W5K_y8QJ/export?format=csv&gid=183846486") |> 
+  mutate('Ano' = 2019)
+tg_2020 <- read_csv("https://docs.google.com/spreadsheets/d/1dlci5TT6Raqj6IKPMz3CiCu_W5K_y8QJ/export?format=csv&gid=627163141") |> 
+  mutate('Ano' = 2019)
+tg_2021 <- read_csv("https://docs.google.com/spreadsheets/d/1dlci5TT6Raqj6IKPMz3CiCu_W5K_y8QJ/export?format=csv&gid=1179613430") |> 
+  mutate('Ano' = 2021)
+tg_2022 <- read_csv("https://docs.google.com/spreadsheets/d/1dlci5TT6Raqj6IKPMz3CiCu_W5K_y8QJ/export?format=csv&gid=1963658115") |> 
+  mutate('Ano' = 2022)
+
+tg <- merge(tg_2016, tg_2017, all = TRUE)
+tg <- merge(tg, tg_2018, all = TRUE)
+tg <- merge(tg, tg_2019, all = TRUE)
+tg <- merge(tg, tg_2020, all = TRUE)
+tg <- merge(tg, tg_2021, all = TRUE)
+tg <- merge(tg, tg_2022, all = TRUE)
+rm(tg_2016, tg_2017, tg_2018, tg_2019, tg_2020, tg_2021, tg_2022)
+
+## Eventos academicos
+eva_estudiantes <- read_csv("https://docs.google.com/spreadsheets/d/14EGepMiiewyb2PJ3rvEhu2i1sSi5NIwj/export?format=csv&gid=1384748556")
+
+eva_docentes <- read_csv("https://docs.google.com/spreadsheets/d/14EGepMiiewyb2PJ3rvEhu2i1sSi5NIwj/export?format=csv&gid=1055913532")
+
+### Fin lectura
 margaret <- list("grupos_general"=grupos_general,"investigadores"=investigadores_general,"articulos"=articulos_unicos_2016_2020,
                  "actividades_evaluador"=actividades_evaluador,"actividades_formacion"=actividades_formacion,
                  "apropiacion_social_conocimiento"=apropiacion_social,
@@ -301,36 +362,50 @@ filterside <- selectInput("grupos_input","Grupos:",
                           c('General'= FALSE, grupos$grupo),
                           selectize = FALSE)
 
-#butonside <- actionButton("aplicar_input", "Aplicar")
-
 sliderside <- sliderInput("fechas_input", "Años:", min = 2014, max = 2022, value = c(2016,2022), sep = "")
 
 sidebar <- dashboardSidebar(
   filterside,
   sliderside,
-  #butonside,
   sidebarMenu(
              menuItem("Datos", tabName = "general_datos", icon = icon("atlas")),
     
     menuItem("Producción cientifica", icon = icon("book"), tabName = ("produccion")),
     
     
-    menuItem("Grupos en cifras", icon = icon("bar-chart-o"),
+    menuItem("Grupos en cifras", icon = icon("bar-chart-o",verify_fa = FALSE),
              menuSubItem("Clasificación grupos", tabName = "clasi_grupos"),
              menuSubItem("Clasificación investigadores", tabName = "clasi_inves"),
              menuSubItem("Categoría revistas", tabName = "cate_revista"),
              menuSubItem("Evolución temporal", tabName = "evolu_articulos"),
              menuSubItem("Formación investigadores", tabName = "forma_inves")
     ),
-    menuItem("Rpubs", icon = icon("file-code-o"),
-             href = "https://rpubs.com/srobledog/margaret"
+    menuItem("Procesos Institucionales", icon = icon("folder-plus",verify_fa = FALSE),        
+             menuSubItem("Grupos Reconocidos", icon = icon("boxes"), tabName = "grReconocidos"),
+             menuItem("Histórico Proyectos", icon = icon("arrow-circle-left"),
+                      menuSubItem("2017", icon = icon("book"), tabName = "jistProyectos_2017"),
+                      menuSubItem("2018", icon = icon("book"), tabName = "jistProyectos_2018"),
+                      menuSubItem("2019", icon = icon("book"), tabName = "jistProyectos_2019"),
+                      menuSubItem("2020", icon = icon("book"), tabName = "jistProyectos_2020"),
+                      menuSubItem("2021", icon = icon("book"), tabName = "jistProyectos_2021"),
+                      menuSubItem("2022", icon = icon("book"), tabName = "jistProyectos_2022")),
+             menuItem("Semilleros", icon = icon("microscope"),
+             menuSubItem("Histórico Semilleros", icon = icon("history"), tabName = "histSemilleros"),
+             menuSubItem("Estudiantes inscritos", icon = icon("users"), tabName = "estudiantesInscritos")),
+             menuSubItem("Jovenes Investigadores", icon = icon("search"), tabName = "jovenesInvestigadores"),
+             menuSubItem("Trabajos de grado: Auxiliares", icon = icon("graduation-cap"), tabName = "trabjosGrado"),
+             menuItem("Eventos Académicos", icon = icon("calendar-alt"),
+             menuSubItem("Estudiantes", icon = icon("users"), tabName = "eventos_estudiantes"),
+             menuSubItem("Docentes", icon = icon("users"), tabName = "eventos_docentes"))
+             
     ),
     #download
     menuItem("Descargar",icon = icon("fas fa-download"), downloadButton("download", "Download full results")),
     span(),
     tags$h5("Última actualización:", align = "center"),
-    tags$h6("17 de Agosto 2022", align = "center")
+    tags$h6("18 de Agosto 2022", align = "center")
     ),
+
   mainPanel(
     textOutput("grupos_input")
   )
@@ -366,6 +441,45 @@ setup <- dashboardBody(
                         tabPanel("Trabajos dirigidos/Tutorías",
                                  fluidPage(br(),(DT::dataTableOutput('trabajosd'))
                                  )))),
+    tabItem(tabName = "grReconocidos",
+            tabPanel("Grupos Reconocidos"), fluidPage(br(),(DT::dataTableOutput('grupos_hist'))
+            )),
+    tabItem(tabName = "jistProyectos_2017",
+            tabPanel("2017"), fluidPage(br(),(DT::dataTableOutput('hist_proyectos_2017'))
+            )),
+    tabItem(tabName = "jistProyectos_2018",
+            tabPanel("2018"), fluidPage(br(),(DT::dataTableOutput('hist_proyectos_2018'))
+            )),
+    tabItem(tabName = "jistProyectos_2019",
+            tabPanel("2019"), fluidPage(br(),(DT::dataTableOutput('hist_proyectos_2019'))
+            )),
+    tabItem(tabName = "jistProyectos_2020",
+            tabPanel("2020"), fluidPage(br(),(DT::dataTableOutput('hist_proyectos_2020'))
+            )),
+    tabItem(tabName = "jistProyectos_2021",
+            tabPanel("2021"), fluidPage(br(),(DT::dataTableOutput('hist_proyectos_2021'))
+            )),
+    tabItem(tabName = "jistProyectos_2022",
+            tabPanel("2022"), fluidPage(br(),(DT::dataTableOutput('hist_proyectos_2022'))
+            )),
+    tabItem(tabName = "histSemilleros",
+            tabPanel("Histórico semilleros"), fluidPage(br(),(DT::dataTableOutput('histSemi'))
+            )),
+    tabItem(tabName = "estudiantesInscritos",
+            tabPanel("Estudiantes inscritos"), fluidPage(br(),(DT::dataTableOutput('estudiantesInscri'))
+            )),
+    tabItem(tabName = "jovenesInvestigadores",
+            tabPanel("Jovenes Investigadores"), fluidPage(br(),(DT::dataTableOutput('jovenesI'))
+            )),
+    tabItem(tabName = "trabjosGrado",
+            tabPanel("Trabajos de grado:Auxiliares"), fluidPage(br(),(DT::dataTableOutput('tgA'))
+            )),
+    tabItem(tabName = "eventos_estudiantes",
+            tabPanel("Estudiantes"), fluidPage(br(),(DT::dataTableOutput('eva_estudiantes'))
+            )),
+    tabItem(tabName = "eventos_docentes",
+            tabPanel("Docentes"), fluidPage(br(),(DT::dataTableOutput('eva_docentes'))
+            )),
     tabItem(tabName = "clasi_grupos",
             fluidPage(plotlyOutput("graf1"))),
     
@@ -616,6 +730,274 @@ server <- function(input, output) {
                 colnames = c('Revista', 'ISSN', 'Categoría Publindex',
                              'Categoría Scimago','Cantidad', 'Porcentaje'),
                 class = 'cell-border stripe')
+  })
+  
+  output$grupos_hist <- DT::renderDataTable(server = FALSE,{
+    
+    datatable(grupos_historicos, filter = 'top', extensions = c('Scroller','Buttons'),
+              options = list(dom = 'Bfrtip',
+                             buttons = 
+                               list('copy', list(
+                                 extend = 'collection',
+                                 buttons = c('csv', 'excel', 'pdf'),
+                                 text = 'Download'
+                               )),
+                             deferRender = TRUE,
+                             scrollY = 420,
+                             scroller = TRUE,
+                             scrollX = TRUE),
+              escape = FALSE,
+              rownames = FALSE,
+              class = 'cell-border stripe')
+  })
+  
+  output$hist_proyectos_2017 <- DT::renderDataTable(server = FALSE,{
+    
+    datatable(proyectos_historicos_2017, filter = 'top', extensions = c('Scroller','Buttons'),
+              options = list(dom = 'Bfrtip',
+                             buttons =
+                               list('copy', list(
+                                 extend = 'collection',
+                                 buttons = c('csv', 'excel', 'pdf'),
+                                 text = 'Download'
+                               )),
+                             deferRender = TRUE,
+                             scrollY = 420,
+                             scroller = TRUE,
+                             scrollX = TRUE),
+              escape = FALSE,
+              rownames = FALSE,
+              class = 'cell-border stripe')
+  })
+  
+  output$hist_proyectos_2018 <- DT::renderDataTable(server = FALSE,{
+    
+    datatable(proyectos_historicos_2018, filter = 'top', extensions = c('Scroller','Buttons'),
+              options = list(dom = 'Bfrtip',
+                             buttons =
+                               list('copy', list(
+                                 extend = 'collection',
+                                 buttons = c('csv', 'excel', 'pdf'),
+                                 text = 'Download'
+                               )),
+                             deferRender = TRUE,
+                             scrollY = 420,
+                             scroller = TRUE,
+                             scrollX = TRUE),
+              escape = FALSE,
+              rownames = FALSE,
+              class = 'cell-border stripe')
+  })
+  
+  output$hist_proyectos_2019 <- DT::renderDataTable(server = FALSE,{
+    
+    datatable(proyectos_historicos_2019, filter = 'top', extensions = c('Scroller','Buttons'),
+              options = list(dom = 'Bfrtip',
+                             buttons =
+                               list('copy', list(
+                                 extend = 'collection',
+                                 buttons = c('csv', 'excel', 'pdf'),
+                                 text = 'Download'
+                               )),
+                             deferRender = TRUE,
+                             scrollY = 420,
+                             scroller = TRUE,
+                             scrollX = TRUE),
+              escape = FALSE,
+              rownames = FALSE,
+              class = 'cell-border stripe')
+  })
+  
+  output$hist_proyectos_2020 <- DT::renderDataTable(server = FALSE,{
+    
+    datatable(proyectos_historicos_2020, filter = 'top', extensions = c('Scroller','Buttons'),
+              options = list(dom = 'Bfrtip',
+                             buttons =
+                               list('copy', list(
+                                 extend = 'collection',
+                                 buttons = c('csv', 'excel', 'pdf'),
+                                 text = 'Download'
+                               )),
+                             deferRender = TRUE,
+                             scrollY = 420,
+                             scroller = TRUE,
+                             scrollX = TRUE),
+              escape = FALSE,
+              rownames = FALSE,
+              class = 'cell-border stripe')
+  })
+  
+  output$hist_proyectos_2021 <- DT::renderDataTable(server = FALSE,{
+    
+    datatable(proyectos_historicos_2021, filter = 'top', extensions = c('Scroller','Buttons'),
+              options = list(dom = 'Bfrtip',
+                             buttons =
+                               list('copy', list(
+                                 extend = 'collection',
+                                 buttons = c('csv', 'excel', 'pdf'),
+                                 text = 'Download'
+                               )),
+                             deferRender = TRUE,
+                             scrollY = 420,
+                             scroller = TRUE,
+                             scrollX = TRUE),
+              escape = FALSE,
+              rownames = FALSE,
+              class = 'cell-border stripe')
+  })
+  
+  output$hist_proyectos_2022 <- DT::renderDataTable(server = FALSE,{
+    
+    datatable(proyectos_historicos_2022, filter = 'top', extensions = c('Scroller','Buttons'),
+              options = list(dom = 'Bfrtip',
+                             buttons =
+                               list('copy', list(
+                                 extend = 'collection',
+                                 buttons = c('csv', 'excel', 'pdf'),
+                                 text = 'Download'
+                               )),
+                             deferRender = TRUE,
+                             scrollY = 420,
+                             scroller = TRUE,
+                             scrollX = TRUE),
+              escape = FALSE,
+              rownames = FALSE,
+              class = 'cell-border stripe')
+  })
+  
+  output$histSemi <- DT::renderDataTable(server = FALSE,{
+    
+    semilleros_historicos <- semilleros_historicos |>
+      filter(ANO >= filtro_fecha_min(),
+             ANO <=filtro_fecha_max()) 
+    datatable(semilleros_historicos, filter = 'top', extensions = c('Scroller','Buttons'),
+              options = list(dom = 'Bfrtip',
+                             buttons = 
+                               list('copy', list(
+                                 extend = 'collection',
+                                 buttons = c('csv', 'excel', 'pdf'),
+                                 text = 'Download'
+                               )),
+                             deferRender = TRUE,
+                             scrollY = 420,
+                             scroller = TRUE,
+                             scrollX = TRUE),
+              escape = FALSE,
+              rownames = FALSE,
+              class = 'cell-border stripe')
+  })
+  
+  output$estudiantesInscri <- DT::renderDataTable(server = FALSE,{
+    
+    estudiantes_semilleros <- estudiantes_semilleros |>
+      filter(ANO >= filtro_fecha_min(),
+             ANO <=filtro_fecha_max())
+    datatable(estudiantes_semilleros, filter = 'top', extensions = c('Scroller','Buttons'),
+              options = list(dom = 'Bfrtip',
+                             buttons = 
+                               list('copy', list(
+                                 extend = 'collection',
+                                 buttons = c('csv', 'excel', 'pdf'),
+                                 text = 'Download'
+                               )),
+                             deferRender = TRUE,
+                             scrollY = 420,
+                             scroller = TRUE,
+                             scrollX = TRUE),
+              escape = FALSE,
+              rownames = FALSE,
+              class = 'cell-border stripe')
+  })
+  
+  output$jovenesI <- DT::renderDataTable(server = FALSE,{
+    
+    jovenes_i <- jovenes_i |> 
+      filter(ANO >= filtro_fecha_min(),
+             ANO <=filtro_fecha_max())  |> 
+      select(-'CEDULA') 
+    
+    datatable(jovenes_i, filter = 'top', extensions = c('Scroller','Buttons'),
+              options = list(dom = 'Bfrtip',
+                             buttons = 
+                               list('copy', list(
+                                 extend = 'collection',
+                                 buttons = c('csv', 'excel', 'pdf'),
+                                 text = 'Download'
+                               )),
+                             deferRender = TRUE,
+                             scrollY = 420,
+                             scroller = TRUE,
+                             scrollX = TRUE),
+              escape = FALSE,
+              rownames = FALSE,
+              class = 'cell-border stripe')
+  })
+  
+  output$tgA <- DT::renderDataTable(server = FALSE,{
+    
+    tg <- tg |>
+      filter(Ano >= filtro_fecha_min(),
+             Ano <=filtro_fecha_max()) 
+    tg <- tg |> select(-'Cedula', -'N', -'Documento Identidad', -'Fecha de Ingreso', -'Modalidad')
+    datatable(tg, filter = 'top', extensions = c('Scroller','Buttons'),
+              options = list(dom = 'Bfrtip',
+                             buttons = 
+                               list('copy', list(
+                                 extend = 'collection',
+                                 buttons = c('csv', 'excel', 'pdf'),
+                                 text = 'Download'
+                               )),
+                             deferRender = TRUE,
+                             scrollY = 420,
+                             scroller = TRUE,
+                             scrollX = TRUE),
+              escape = FALSE,
+              rownames = FALSE,
+              class = 'cell-border stripe')
+  })
+  
+  output$eva_estudiantes <- DT::renderDataTable(server = FALSE,{
+    
+    eva_estudiantes <- eva_estudiantes |> 
+      filter(Ano >= filtro_fecha_min(),
+             Ano <=filtro_fecha_max()) 
+    datatable(eva_estudiantes, filter = 'top', extensions = c('Scroller','Buttons'),
+              options = list(dom = 'Bfrtip',
+                             buttons = 
+                               list('copy', list(
+                                 extend = 'collection',
+                                 buttons = c('csv', 'excel', 'pdf'),
+                                 text = 'Download'
+                               )),
+                             deferRender = TRUE,
+                             scrollY = 420,
+                             scroller = TRUE,
+                             scrollX = TRUE),
+              escape = FALSE,
+              rownames = FALSE,
+              class = 'cell-border stripe')
+  })
+  
+  output$eva_docentes <- DT::renderDataTable(server = FALSE,{
+    
+    eva_docentes <- eva_docentes |> 
+      filter(Ano >= filtro_fecha_min(),
+             Ano <=filtro_fecha_max()) 
+    datatable(eva_docentes, filter = 'top', extensions = c('Scroller','Buttons'),
+              options = list(dom = 'Bfrtip',
+                             buttons = 
+                               list('copy', list(
+                                 extend = 'collection',
+                                 buttons = c('csv', 'excel', 'pdf'),
+                                 text = 'Download'
+                               )),
+                             deferRender = TRUE,
+                             scrollY = 420,
+                             scroller = TRUE,
+                             scrollX = TRUE),
+              escape = FALSE,
+              rownames = FALSE,
+              class = 'cell-border stripe')
   })
   
   output$articulo <- DT::renderDataTable(server = FALSE,{
@@ -951,15 +1333,15 @@ server <- function(input, output) {
   output$graf1 <- renderPlotly({
     
     datos_clasi <- grupos_general |> 
-      count(grupo, clasificacion) |> 
-      arrange(desc(clasificacion))
+      count(clasificacion)
+    
+    datos_clasi$clasificacion = factor(datos_clasi$clasificacion,
+                                       levels = c("A1","A","B","C"))
     
     if(filtro()==FALSE)
     {
-      datos_clasi1 <- grupos_general |> 
-        count(clasificacion) |> 
-        arrange(desc(clasificacion)) |> 
-        plot_ly(x = ~clasificacion, y = ~n, type = 'bar') |> 
+      datos_clasi |> 
+        plot_ly(x = datos_clasi$clasificacion, y = datos_clasi$n, type = 'bar') |> 
           layout(title = 'Clasificación Grupos de investigación',
                  xaxis = list(title = ""),
                  yaxis = list(title = ""))
