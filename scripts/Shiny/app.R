@@ -41,9 +41,6 @@ revistas_actuales <-
   read_csv(here("output", 
                 "current_journals.csv")) 
 
-articulos_2016_2020 <- 
-  read_csv(here("output",
-                "articulos.csv")) 
 
 capitulos_2016_2020 <- 
   read_csv(here("output",
@@ -405,8 +402,10 @@ sidebar <- dashboardSidebar(
     #download
     menuItem("Descargar",icon = icon("fas fa-download"), downloadButton("download", "Download full results")),
     span(),
-    tags$h5("Última actualización: 11 de Agosto 2022", align = "center")
-  ),
+    tags$h5("Última actualización:", align = "center"),
+    tags$h6("18 de Agosto 2022", align = "center")
+    ),
+
   mainPanel(
     textOutput("grupos_input")
   )
@@ -1385,7 +1384,10 @@ server <- function(input, output) {
   })
   
   output$graf3 <- renderPlotly({
-     datos_revista <- articulos_unicos_2016_2020 |> count(grupo ,categoria_revista) |>
+     datos_revista <- articulos_unicos_2016_2020 |> 
+       filter(ano >= filtro_fecha_min(),
+              ano <=filtro_fecha_max()) |> 
+       count(grupo ,categoria_revista) |>
        arrange(desc(categoria_revista)) |> 
        mutate(categoria_revista = ifelse(is.na(categoria_revista),"N/A",categoria_revista))
     
@@ -1409,7 +1411,10 @@ server <- function(input, output) {
   })
   
   output$graf3_1 <- renderPlotly({
-    datos_revista <- articulos_unicos_2016_2020 |> count(grupo ,SJR_Q) |>
+    datos_revista <- articulos_unicos_2016_2020 |> 
+      filter(ano >= filtro_fecha_min(),
+             ano <=filtro_fecha_max()) |> 
+      count(grupo ,SJR_Q) |>
       arrange(desc(SJR_Q)) |> 
       mutate(SJR_Q = ifelse(is.na(SJR_Q),"N/A",SJR_Q))
     
@@ -1434,16 +1439,16 @@ server <- function(input, output) {
   
   output$graf4 <- renderPlotly({
      datos_produccion <- articulos_unicos_2016_2020 |> 
-       select(categoria.x, ano, grupo) |> 
+       select(ano, grupo) |> 
        count(grupo ,ano, sort = FALSE, name = "producciones")
      
      if(filtro()==FALSE)
      {
        datos_produccion1 <- articulos_unicos_2016_2020 |> 
-         select(categoria.x, ano, grupo) |> 
+         select(ano, grupo) |> 
          count(ano, sort = FALSE, name = "producciones") |> 
        plot_ly(x = ~ano, y = ~producciones, type = 'scatter', mode = 'lines') |> 
-         layout(title = "Producción articulos",
+         layout(title = "Producción artículos",
                 xaxis = list(title = "Año"),
                 yaxis = list(title = "Producción"))
      }
