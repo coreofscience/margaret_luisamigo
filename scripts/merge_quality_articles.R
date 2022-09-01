@@ -54,7 +54,8 @@ merge_quality_articles_ucla <- function(articulos_unicos){
                              SJR_Q =="A2" ~ "Q2",
                              SJR_Q =="B" ~ "Q3",
                              SJR_Q =="C" ~ "Q4",
-                             TRUE ~ SJR_Q))
+                             TRUE ~ SJR_Q)) |> 
+    unique()
   
   return(articulos)
 }
