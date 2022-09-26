@@ -22,13 +22,13 @@ library(writexl)
 
 articulos_unicos_2016_2020 <- 
   read_csv(here("output",
-                "articulos.csv")) |>
+                "articulos_citaciones.csv")) |>
   mutate(SJR_Q = ifelse(SJR_Q == '-', "Sin categoria",
                         SJR_Q))
 
 articulos_2016_2020 <- 
   read_csv(here("output",
-                "articulos.csv")) |> 
+                "articulos_citaciones.csv")) |> 
   mutate(categoria_revista = ifelse(categoria_revista == "Sin categorÃ­a",
                                     "Sin Categoría", ifelse(categoria_revista == "Sin informaciÃ³n", 'Sin Información', categoria_revista)),
          SJR_Q = ifelse(SJR_Q == "Sin categorÃ­a",
@@ -1038,7 +1038,7 @@ server <- function(input, output) {
                 class = ('cell-border stripe'),
                 colnames = c("Grupo", "Categoría", "Tipo producto",
                              "Título", "País revista", "Revista", 
-                             "ISSN","Categoría Publindex", "Categoría Scimago", "Año", "Volumen",
+                             "ISSN","Categoría Publindex", "Categoría Scimago","Citaciones", "Año", "Volumen",
                              "Fasc","Paginas", "Enlace artículo", "Autores"))
     }
     else
@@ -1061,7 +1061,7 @@ server <- function(input, output) {
                   class = ('cell-border stripe'),
                   colnames = c("Grupo", "Categoría", "Tipo producto",
                                "Título", "País revista", "Revista", 
-                               "ISSN","Categoría Publindex", "Categoría Scimago", "Año", "Volumen",
+                               "ISSN","Categoría Publindex", "Categoría Scimago", "Citaciones", "Año", "Volumen",
                                "Fasc","Paginas", "Enlace artículo", "Autores"))
     }
   })

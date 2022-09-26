@@ -4,7 +4,8 @@ getting_scholar_h_index <- function(data_scholar) {
     data_scholar |> 
     mutate(h_index = map(id_scholar, get_profile)) |> 
     unnest_wider(h_index) |> 
-    select(integrantes, id_scholar, h_index)
+    select(researcher, id_scholar, h_index) |> 
+    mutate(h_index = if_else(is.na(h_index), 0, h_index))
   
   return(scholar_index)
 }
