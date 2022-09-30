@@ -53,7 +53,7 @@ produccion_actualizada[[2]][["articulos"]] <- merge_quality_articles_ucla(produc
 shiny_data <- data_analysis_descriptive_ucla(produccion_actualizada)
 
 shiny_data[[3]] <- researcher_information_ucla(shiny_data)
-
+shiny_data[[3]] <- getting_orcid(shiny_data)
 export_csv(shiny_data)
 
 # Current Journals categories for flex_dashboard
