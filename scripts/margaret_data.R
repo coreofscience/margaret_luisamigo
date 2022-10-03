@@ -17,6 +17,8 @@ source(here("scripts",
             "merge_quality_articles.R"))
 source(here("scripts",
             "researcher_information.R"))
+source(here("scripts",
+            "orcid.R"))
 
 eval(parse(here("scripts/functions.R"), encoding = "UTF-8"))
 # Data outside
@@ -38,25 +40,22 @@ researchers <- read_csv("https://docs.google.com/spreadsheets/d/1gBaXHFp1NTUTeXo
   mutate(h_index = if_else(is.na(h_index), 0, h_index))
 
 
+#nuevo <- getting_scholar_h_index(researchers |> select(researcher,id_scholar))
+
 grupo_df <- data_getting_ucla(grupos)
 produccion_grupos <- data_cleaning_ucla(grupo_df)
 
-source(here("scripts",
-            "report.R"))
+# source(here("scripts",
+#             "report.R"))
 
-articulos_unicos <- data_tidying_ucla(produccion_grupos)
+produccion_actualizada <- data_tidying_ucla(produccion_grupos)
 
-articulos_unicos <- merge_quality_articles_ucla(articulos_unicos) 
-
-produccion_actualizada <- produccion_grupos
-produccion_actualizada[[2]][["articulos"]]<- articulos_unicos
-produccion_actualizada[[2]][["Eliminados_por_grupo"]] <- df_eliminados_total
-produccion_actualizada[[2]][["Similares_entre_grupo"]] <- df_similares_total_grupos
+produccion_actualizada[[2]][["articulos"]] <- merge_quality_articles_ucla(produccion_actualizada[[2]][["articulos"]]) 
 
 shiny_data <- data_analysis_descriptive_ucla(produccion_actualizada)
 
 shiny_data[[3]] <- researcher_information_ucla(shiny_data)
-
+shiny_data[[3]] <- getting_orcid(shiny_data)
 export_csv(shiny_data)
 
 # Current Journals categories for flex_dashboard

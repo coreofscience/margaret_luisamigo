@@ -13,11 +13,18 @@ library(igraph)
 
 data_tidying_ucla <- function(produccion_grupos) {
   
+  categorias <- data.frame(cat = c("articulos","capitulos","libros","softwares","innovaciones_gestion","trabajos_dirigidos"),
+                           titulo = c("titulo","titulo_capitulo","Titulo","titulo","titulo","titulo"))
+  
+  for(j in categorias$cat){
+  
   df <- tibble(id = numeric())
   
   grupo_df_articulos <- # create an id
-    produccion_grupos[[2]][["articulos"]] %>%
-    mutate(id = 1:length(produccion_grupos[[2]][["articulos"]][["grupo"]]))
+    produccion_grupos[[2]][[j]] %>%
+    mutate(id = 1:length(produccion_grupos[[2]][[j]][["grupo"]]))
+  
+  titulonuevo <- categorias |> filter(cat == j) |> select(titulo)
   
   grupos <- 
     grupo_df_articulos %>% 
@@ -30,12 +37,12 @@ data_tidying_ucla <- function(produccion_grupos) {
       grupo_df_articulos %>% 
       filter(grupo == i) %>% 
       select(id, 
-             titulo)
+             titulonuevo$titulo)
     
     df_2 <- 
       df_1 %>% 
       unnest_tokens(output = "words",
-                    input = titulo,
+                    input = titulonuevo$titulo,
                     token = "words") %>% 
       count(id, words) %>% 
       pairwise_similarity(item = id, 
@@ -62,7 +69,7 @@ data_tidying_ucla <- function(produccion_grupos) {
     df_5 <- 
       df_1 %>% 
       anti_join(df_4) %>% 
-      select(-titulo)
+      select(-titulonuevo$titulo)
     
     df <- 
       df %>% 
@@ -75,6 +82,10 @@ data_tidying_ucla <- function(produccion_grupos) {
     grupo_df_articulos %>% 
     inner_join(df)
   
-  return(grupo_df_articulos_unicos)
+  produccion_grupos[[2]][[j]] <- grupo_df_articulos_unicos
+  
+  }
+  
+  return(produccion_grupos)
   
 }
