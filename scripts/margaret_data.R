@@ -17,6 +17,8 @@ source(here("scripts",
             "merge_quality_articles.R"))
 source(here("scripts",
             "researcher_information.R"))
+source(here("scripts",
+            "orcid.R"))
 
 eval(parse(here("scripts/functions.R"), encoding = "UTF-8"))
 # Data outside

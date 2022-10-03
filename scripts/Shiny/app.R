@@ -22,13 +22,13 @@ library(writexl)
 
 articulos_unicos_2016_2020 <- 
   read_csv(here("output",
-                "articulos_citaciones.csv")) |>
+                "articulos.csv")) |>
   mutate(SJR_Q = ifelse(SJR_Q == '-', "Sin categoria",
                         SJR_Q))
 
 articulos_2016_2020 <- 
   read_csv(here("output",
-                "articulos_citaciones.csv")) |> 
+                "articulos.csv")) |> 
   mutate(categoria_revista = ifelse(categoria_revista == "Sin categorÃ­a",
                                     "Sin Categoría", ifelse(categoria_revista == "Sin informaciÃ³n", 'Sin Información', categoria_revista)),
          SJR_Q = ifelse(SJR_Q == "Sin categorÃ­a",
@@ -411,7 +411,7 @@ sidebar <- dashboardSidebar(
     menuItem("Descargar",icon = icon("fas fa-download"), downloadButton("download", "Download full results")),
     span(),
     tags$h5("Última actualización:", align = "center"),
-    tags$h6("30 de Agosto 2022", align = "center")
+    tags$h6("03 de Octubre 2022", align = "center")
     ),
 
   mainPanel(
@@ -558,10 +558,10 @@ server <- function(input, output) {
   
   output$ex1 <- DT::renderDataTable(server = FALSE,{
     grupos_general <- grupos_general |> 
-      select(grupo, clasificacion, sum_papers, departamento , url,
+      select(grupo, clasificacion, sum_papers, departamento , url.x,
              fecha_creacion,lider, email, area_conocimiento_1) |> 
-      mutate(url= str_c('<a href="',
-                        url,
+      mutate(url.x= str_c('<a href="',
+                        url.x,
                         '" target="_blank">Link</a>'))
     if (filtro()==FALSE)
     {
@@ -614,13 +614,18 @@ server <- function(input, output) {
   output$ex2 <- DT::renderDataTable(server = FALSE,{
     
     investigadores_general <- investigadores_general |> 
+      filter(!is.na(grupo)) |> 
       mutate(url = str_c('<a href="',
                          url,
                          '" target="_blank">Link</a>'),
              scholar = str_c("<a href=","\"",
                              "https://scholar.google.com/citations?user=",
                              id_scholar,
-                             '" target="_blank">Scholar</a>')) |>
+                             '" target="_blank">Scholar</a>'),
+             ORCID = str_c("<a href=","\"",
+                           "https://orcid.org/",
+                           ORCID,
+                           '" target="_blank">ORCID</a>')) |>
       select(-vinculacion,
              -fin_vinculacion) |> 
       rename(Investigador = integrantes,
@@ -645,6 +650,7 @@ server <- function(input, output) {
              Formacion,
              Inicio,
              CvLAC,
+             ORCID,
              scholar) 
     if (filtro()==FALSE)
     {
@@ -665,7 +671,7 @@ server <- function(input, output) {
                 colnames = c("Investigador", "Grupo","Unidad","Programa" , "Artículos", "Capítulos", 
                              "Libros", "Softwares", "Trabajos Dirigidos", 
                              "Innovaciones", "H index", "Categoría",
-                             "Formación","Inicio", "CvLAC", "Scholar"),
+                             "Formación","Inicio", "CvLAC","ORCID", "Scholar"),
                 class = 'cell-border stripe')
     }
     else 
@@ -689,7 +695,7 @@ server <- function(input, output) {
                   colnames = c("Investigador", "Grupo","Unidad","Programa" , "Artículos", "Capítulos", 
                                "Libros", "Softwares", "Trabajos Dirigidos", 
                                "Innovaciones", "H index", "Categoría",
-                               "Formación","Inicio", "CvLAC", "Scholar"),
+                               "Formación","Inicio", "CvLAC","ORCID", "Scholar"),
                   class = 'cell-border stripe')
     }
   })

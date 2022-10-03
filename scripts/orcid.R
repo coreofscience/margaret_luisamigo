@@ -13,10 +13,10 @@ getting_orcid <- function(shiny_data){
   
   orcid_wido <- read_csv("https://docs.google.com/spreadsheets/d/1L5C5P620MsOHVEAfv8MWWlP7V7P5XG1C/export?format=csv&gid=1998435805") |> 
     unique() |> 
-    filter(!is.na(ORCID)) |> 
     mutate(INVESTIGADOR = str_to_upper(INVESTIGADOR),
            INVESTIGADOR = stri_trans_general(str = INVESTIGADOR,
                                            id = "Latin-ASCII"),
+           INVESTIGADOR = str_replace(INVESTIGADOR, "  ", " "),
            ID = 1:length(INVESTIGADOR),
            ID = str_c("1-",ID)) |> 
     select(-2)
@@ -24,10 +24,10 @@ getting_orcid <- function(shiny_data){
   orcid_plumx <- read_csv("https://docs.google.com/spreadsheets/d/1eBAvKT4CDCb1sc2RTeByOuNPy68Jgvlw/export?format=csv&gid=1331860699") |> 
     unique() |>
     select(3,6) |> 
-    filter(!is.na(ORCID)) |> 
     mutate(INVESTIGADOR = str_to_upper(INVESTIGADOR),
            INVESTIGADOR = stri_trans_general(str = INVESTIGADOR,
                                              id = "Latin-ASCII"),
+           INVESTIGADOR = str_replace(INVESTIGADOR, "  ", " "),
            ID = 1:length(INVESTIGADOR),
            ID = str_c("2-",ID))
   
@@ -42,35 +42,34 @@ getting_orcid <- function(shiny_data){
     pairwise_similarity(item = ID, 
                         feature = words, 
                         value = n)
-  df_3 <- 
-    df_2 %>% 
-    filter(similarity >= 0.70) %>% 
-    rename(Source = "item1",
-           Target = "item2",
-           weight = "similarity") %>% 
-    graph_from_data_frame(directed = FALSE) %>% 
-    simplify()
-  
-  df_4 <- 
-    cbind(get.edgelist(df_3),
-          E(df_3)$weight/2) %>% 
-    as.data.frame() %>% 
-    select(V2) %>% 
-    rename(ID = "V2")
   
   df_5 <- 
-    df_1 %>% 
-    anti_join(df_4)
+    df_2 |>  
+    filter(similarity >= 0.70)
   
-  orcid <- df_5 |> select(1,2)
+  df_6 <- 
+    df_5 |> full_join(orcid_wido, by = c("item1" = "ID")) |> 
+    full_join(orcid_plumx, by = c("item2" = "ID")) |> 
+    mutate(INVESTIGADOR.x = ifelse(is.na(INVESTIGADOR.x),INVESTIGADOR.y, INVESTIGADOR.x),
+           ORCID.x = ifelse(is.na(ORCID.x),ORCID.y,ORCID.x)) |> 
+    filter(!is.na(INVESTIGADOR.x)) |> 
+    select(4,5) |> 
+    filter(!duplicated(INVESTIGADOR.x)) |> 
+    rename(INVESTIGADOR = 1,
+           ORCID = 2) |> 
+    mutate(ID = 1:length(INVESTIGADOR),
+           ID = str_c("1-",ID))
   
-  #reseaecher <- data.frame(shiny_data[[3]])
-  researcher <- read_csv(here("output","investigadores.csv"))
-  researcher2 <- researcher |> select(1) |> 
-    mutate(ORCID = "NA") |> 
+  orcid <- df_6 |> select(1,3)
+  
+  researcher <- data.frame(shiny_data[[3]]) |> 
+    mutate(ID = 1:length(integrantes),
+           ID = str_c("2-",ID))
+  
+  researcher2 <- researcher |> select(integrantes, ID) |> 
     rename(INVESTIGADOR = 1)
-  data <- rbind(orcid,researcher2) |> 
-    mutate(ID = 1:length(INVESTIGADOR))
+  
+  data <- rbind(orcid, researcher2)
   
   df_2d <-
     data |> 
@@ -81,24 +80,20 @@ getting_orcid <- function(shiny_data){
     pairwise_similarity(item = ID, 
                         feature = words, 
                         value = n)
-  df_3d <- 
-    df_2d %>% 
-    filter(similarity >= 0.70) %>% 
-    rename(Source = "item1",
-           Target = "item2",
-           weight = "similarity") %>% 
-    graph_from_data_frame(directed = FALSE) %>% 
-    simplify()
-  
-  df_4d <- 
-    cbind(get.edgelist(df_3d),
-          E(df_3d)$weight/2) %>% 
-    as.data.frame() %>% 
-    select(V2) %>% 
-    rename(ID = "V2") |> 
-    mutate(ID = as.numeric(ID))
   
   df_5d <- 
-    data %>% 
-    anti_join(df_4d)
+    df_2d |>  
+    filter(similarity >= 0.70)
+    
+  new_data <- df_5d |> full_join(df_6, by = c("item1" = "ID")) |> 
+    full_join(researcher, by = c("item2" = "ID")) |> 
+    mutate(integrantes = ifelse(is.na(integrantes),INVESTIGADOR,integrantes)) |> 
+    filter(!is.na(integrantes)) |> 
+    select(5:24) |> 
+    select(2,1,3:20) |> 
+    arrange(grupo)
+  
+  #write.xlsx(new_data, "researchers.xlsx")
+  
+ return(new_data)
 }

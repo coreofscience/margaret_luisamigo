@@ -2332,12 +2332,12 @@ export_csv <- function(shiny_data) {
   write_csv(shiny_data[[2]][["divulgacion_publica_contenidos_transmedia"]],
             here("output", 
                  "divulgacion_publica_contenidos_transmedia.csv"))
-  write_csv(shiny_data[[2]][["Eliminados_por_grupo"]],
-            here("output", 
-                 "Eliminados_por_grupo.csv"))
-  write_csv(shiny_data[[2]][["Similares_entre_grupo"]],
-            here("output", 
-                 "Similares_entre_grupo.csv"))
+  # write_csv(shiny_data[[2]][["Eliminados_por_grupo"]],
+  #           here("output", 
+  #                "Eliminados_por_grupo.csv"))
+  # write_csv(shiny_data[[2]][["Similares_entre_grupo"]],
+  #           here("output", 
+  #                "Similares_entre_grupo.csv"))
   write_csv(shiny_data[[3]],
             here("output", 
                  "investigadores.csv"))
