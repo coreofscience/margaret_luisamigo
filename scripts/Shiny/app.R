@@ -36,7 +36,9 @@ articulos_2016_2020 <-
 
 investigadores_general <- 
   read_csv(here("output",
-                "investigadores.csv")) 
+                "investigadores.csv")) |> 
+  filter(!is.na(grupo))
+
 grupos_general <- 
   read_csv(here("output",
                 "grupos_general.csv")) 
@@ -613,8 +615,7 @@ server <- function(input, output) {
   
   output$ex2 <- DT::renderDataTable(server = FALSE,{
     
-    investigadores_general <- investigadores_general |> 
-      filter(!is.na(grupo)) |> 
+    investigadores_general <- investigadores_general |>
       mutate(url = str_c('<a href="',
                          url,
                          '" target="_blank">Link</a>'),
@@ -1044,7 +1045,7 @@ server <- function(input, output) {
                 class = ('cell-border stripe'),
                 colnames = c("Grupo", "Categoría", "Tipo producto",
                              "Título", "País revista", "Revista", 
-                             "ISSN","Categoría Publindex", "Categoría Scimago","Citaciones", "Año", "Volumen",
+                             "ISSN","Categoría Publindex", "Categoría Scimago", "Año", "Volumen",
                              "Fasc","Paginas", "Enlace artículo", "Autores"))
     }
     else
