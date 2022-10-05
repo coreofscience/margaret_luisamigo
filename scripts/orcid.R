@@ -8,7 +8,7 @@ library(widyr)
 library(tidytext)
 library(igraph)
 
-getting_orcid <- function(shiny_data){
+getting_orcid_first_time <- function(shiny_data){
   
   
   orcid_wido <- read_csv("https://docs.google.com/spreadsheets/d/1L5C5P620MsOHVEAfv8MWWlP7V7P5XG1C/export?format=csv&gid=1998435805") |> 
@@ -96,4 +96,22 @@ getting_orcid <- function(shiny_data){
   #write.xlsx(new_data, "researchers.xlsx")
   
  return(new_data)
+}
+
+getting_orcid <- function(shiny_data){
+ 
+  researcher <- data.frame(shiny_data[[3]])
+  
+  orcid <- read_csv("https://docs.google.com/spreadsheets/d/1gBaXHFp1NTUTeXodb4JyHqY-P-AWV5yN5-p4L1O09gk/export?format=csv&gid=1846176083") |> 
+    select(1,2,3) |> 
+    unique() |> 
+    mutate(researcher = str_to_upper(researcher),
+           researcher = stri_trans_general(str = researcher,
+                                           id = "Latin-ASCII"))
+  
+  new_data <- left_join(researcher, orcid) |> 
+    select(-researcher) |> 
+    select(1:13,20,14:19)
+  return(new_data)
+   
 }

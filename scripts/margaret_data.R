@@ -18,7 +18,7 @@ source(here("scripts",
 source(here("scripts",
             "researcher_information.R"))
 source(here("scripts",
-            "orcid.R"))
+           "orcid.R"))
 
 eval(parse(here("scripts/functions.R"), encoding = "UTF-8"))
 # Data outside
@@ -28,7 +28,8 @@ grupos <- read_csv("https://docs.google.com/spreadsheets/d/1gBaXHFp1NTUTeXodb4Jy
          grupo = stri_trans_general(str = grupo,
                                     id = "Latin-ASCII"))
 
-researchers <- read_csv("https://docs.google.com/spreadsheets/d/1gBaXHFp1NTUTeXodb4JyHqY-P-AWV5yN5-p4L1O09gk/export?format=csv&gid=347194763") |> 
+researchers <- read_csv("https://docs.google.com/spreadsheets/d/1gBaXHFp1NTUTeXodb4JyHqY-P-AWV5yN5-p4L1O09gk/export?format=csv&gid=1846176083") |> 
+  select(1,2) |> 
   unique() |> 
   mutate(researcher = str_to_upper(researcher),
          researcher = stri_trans_general(str = researcher,
