@@ -413,7 +413,7 @@ sidebar <- dashboardSidebar(
     menuItem("Descargar",icon = icon("fas fa-download"), downloadButton("download", "Download full results")),
     span(),
     tags$h5("Última actualización:", align = "center"),
-    tags$h6("03 de Octubre 2022", align = "center")
+    tags$h6("08 de Noviembre 2022", align = "center")
     ),
 
   mainPanel(
@@ -623,9 +623,9 @@ server <- function(input, output) {
                              "https://scholar.google.com/citations?user=",
                              id_scholar,
                              '" target="_blank">Scholar</a>'),
-             ORCID = str_c("<a href=","\"",
+             orcid = str_c("<a href=","\"",
                            "https://orcid.org/",
-                           ORCID,
+                           orcid,
                            '" target="_blank">ORCID</a>')) |>
       select(-vinculacion,
              -fin_vinculacion) |> 
@@ -651,7 +651,7 @@ server <- function(input, output) {
              Formacion,
              Inicio,
              CvLAC,
-             ORCID,
+             orcid,
              scholar) 
     if (filtro()==FALSE)
     {
@@ -953,7 +953,7 @@ server <- function(input, output) {
     tg <- tg |>
       filter(Ano >= filtro_fecha_min(),
              Ano <=filtro_fecha_max()) 
-    tg <- tg |> select(-'Cedula', -'N', -'Documento Identidad', -'Fecha de Ingreso', -'Modalidad')
+    tg <- tg |> select(-'Año', -11,-'Modalidad', -13)
     datatable(tg, filter = 'top', extensions = c('Scroller','Buttons'),
               options = list(dom = 'Bfrtip',
                              buttons = 
@@ -1078,7 +1078,7 @@ server <- function(input, output) {
     capitulos_2016_2020 <- capitulos_2016_2020 |> 
       filter(ano >= filtro_fecha_min(),
              ano <=filtro_fecha_max()) |> 
-      select(-vol, -tipo_producto)
+      select(-vol, -tipo_producto, -id)
     if(filtro()==FALSE)
     {
       datatable(capitulos_2016_2020 ,filter = 'top',extensions = c('Scroller','Buttons'),
@@ -1132,7 +1132,7 @@ server <- function(input, output) {
     libros_2016_2020 <- libros_2016_2020 |> 
       filter(Ano >= filtro_fecha_min(),
              Ano <=filtro_fecha_max()) |> 
-      select(-Tipo_producto)  
+      select(-Tipo_producto, -id)  
     if (filtro()==FALSE)
     {
       datatable(libros_2016_2020 ,filter = 'top', extensions = c('Scroller','Buttons'),
@@ -1184,7 +1184,7 @@ server <- function(input, output) {
     software_2016_2020 <- software_2016_2020 |> 
       filter(ano >= filtro_fecha_min(),
              ano <=filtro_fecha_max()) |> 
-      select(-nombre_proyecto, -tipo_producto) |> 
+      select(-nombre_proyecto, -tipo_producto, -id) |> 
       mutate(sitio_web= str_c("<a href=",
                               sitio_web,
                               '" target="_blank">Link</a>')) 
@@ -1240,7 +1240,8 @@ server <- function(input, output) {
     
     innovacion_2016_2020 <- innovacion_2016_2020 |> 
       filter(ano >= filtro_fecha_min(),
-             ano <=filtro_fecha_max())
+             ano <=filtro_fecha_max()) |> 
+      select(-id)
     if (filtro()==FALSE)
     {
       datatable(innovacion_2016_2020 ,filter = 'top',extensions = c('Scroller','Buttons'),
@@ -1295,7 +1296,8 @@ server <- function(input, output) {
              desde = str_remove(desde, "\\d.* "),
              desde = str_trim(desde)) |> 
       filter(desde >= filtro_fecha_min(),
-             hasta <= filtro_fecha_max()) 
+             hasta <= filtro_fecha_max()) |> 
+      select(-id)
     if (filtro()==FALSE)
     {
       datatable(trabajo_2016_2020 ,filter = 'top', extensions = c('Scroller','Buttons'),
