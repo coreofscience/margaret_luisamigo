@@ -48,7 +48,9 @@ data_cleaning_researcher <- function(grupo_df) {
            horas_dedicacion = paste0(horas_dedicacion, 
                                      collapse = "; "),
            inicio_vinculacion = paste0(inicio_vinculacion, 
-                                       collapse = "; ")) |>
+                                       collapse = "; "),
+           fin_vinculacion = paste0(fin_vinculacion, 
+                                    collapse = "; ")) |>
     unique()
   
   return(grupo_researcher_cleaned_2)
@@ -415,11 +417,11 @@ eventos_cientificos_ucla <- function(grupo_df) {
            info_4= str_remove(info_4, ".*Tipos de participación:"),
            tipo_participacion=str_remove(info_4,"Nombre de la institución.*"),
            info_4= str_extract(info_4, "Nombre de la institución.*"),
-           nombre_Institución= str_remove(info_4, ".*Nombre de la institución:")) %>% 
+           nombre_Institucion= str_remove(info_4, ".*Nombre de la institución:")) %>% 
     select(-info_4) %>% 
-    mutate(tipo_vinculación = str_remove(info_5,"Nombre.*"),
-           tipo_vinculación = str_remove(tipo_vinculación,"Ámbito.*"),
-           tipo_vinculación = str_trim(tipo_vinculación)) %>% 
+    mutate(tipo_vinculacion = str_remove(info_5,"Nombre.*"),
+           tipo_vinculacion = str_remove(tipo_vinculacion,"Ámbito.*"),
+           tipo_vinculacion = str_trim(tipo_vinculacion)) %>% 
     select(-info_5)
   
   return(grupo_df_EventosCientificos)
@@ -2645,7 +2647,7 @@ researcher_product <- function(produccion_actualizada){
   
   researcher_general <-
     produccion_actualizada[[3]] |> 
-    separate_rows(grupo, sep = "; ") |> 
+    separate_rows(c(grupo, horas_dedicacion, inicio_vinculacion), sep = "; ") |> 
     left_join(articulos_author,
               by = c("integrantes" = "autores", 
                      "grupo" = "grupo")) |> 
@@ -2671,7 +2673,7 @@ researcher_product <- function(produccion_actualizada){
            softwares = replace_na(softwares, "0"),
            trabajos_dirigidos = replace_na(trabajos_dirigidos,"0"),
            innovaciones = replace_na(innovaciones, "0")) |> 
-    group_by(integrantes) |> 
+    group_by(integrantes, grupo) |> 
     mutate(grupo = paste0(grupo, collapse = "; "),
            articulos = paste0(articulos, collapse = "; "),
            capitulos = paste0(capitulos, collapse = "; "),

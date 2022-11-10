@@ -76,10 +76,10 @@ revistas_actuales <-
 
 ```{r}
 grupos_general |> 
-  select(grupo, clasificacion, sum_papers, departamento , url.x,
+  select(grupo, clasificacion, sum_papers, departamento , url,
          fecha_creacion,lider, email, area_conocimiento_1) |> 
-  mutate(url.x= str_c("<a href=",
-                     url.x,
+  mutate(url= str_c("<a href=",
+                     url,
                      ">Link</a>")) |> 
   datatable(options = list(pageLength = 15),
             escape = FALSE,
@@ -149,14 +149,14 @@ paises |>
             colnames = c('País revista', 'Cantidad', 'Porcentajes')) 
 ```
 
-### Revistas
-```{r}
-revistas_actuales |>
-  mutate(porcentaje = str_c(porcentaje," %")) |>  
-  datatable(options = list(pageLength = 20), 
-            colnames = c('Revista', 'ISSN', 'Categoría Publindex',
-                         'Categoría Scimago','Cantidad', 'Porcentaje'))
-```
+<!-- ### Revistas -->
+<!-- ```{r} -->
+<!-- revistas_actuales |> -->
+<!--   mutate(porcentaje = str_c(porcentaje," %")) |>   -->
+<!--   datatable(options = list(pageLength = 20),  -->
+<!--             colnames = c('Revista', 'ISSN', 'Categoría Publindex', -->
+<!--                          'Categoría Scimago','Cantidad', 'Porcentaje')) -->
+<!-- ``` -->
 
 # Producción científica
 
