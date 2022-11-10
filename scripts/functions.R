@@ -2647,7 +2647,7 @@ researcher_product <- function(produccion_actualizada){
   
   researcher_general <-
     produccion_actualizada[[3]] |> 
-    separate_rows(c(grupo, horas_dedicacion, inicio_vinculacion), sep = "; ") |> 
+    separate_rows(c(grupo, horas_dedicacion, inicio_vinculacion, fin_vinculacion), sep = "; ") |> 
     left_join(articulos_author,
               by = c("integrantes" = "autores", 
                      "grupo" = "grupo")) |> 
@@ -2673,7 +2673,7 @@ researcher_product <- function(produccion_actualizada){
            softwares = replace_na(softwares, "0"),
            trabajos_dirigidos = replace_na(trabajos_dirigidos,"0"),
            innovaciones = replace_na(innovaciones, "0")) |> 
-    group_by(integrantes, grupo) |> 
+    group_by(integrantes) |> 
     mutate(grupo = paste0(grupo, collapse = "; "),
            articulos = paste0(articulos, collapse = "; "),
            capitulos = paste0(capitulos, collapse = "; "),
@@ -2681,7 +2681,9 @@ researcher_product <- function(produccion_actualizada){
            softwares = paste0(softwares, collapse = "; "),
            trabajos_dirigidos = paste0(trabajos_dirigidos, collapse = "; "),
            innovaciones = paste0(innovaciones, collapse = "; "),
-           horas_dedicacion = paste0(horas_dedicacion, collapse = "; ")) |> 
+           horas_dedicacion = paste0(horas_dedicacion, collapse = "; "),
+           inicio_vinculacion = paste0(inicio_vinculacion, collapse = "; "),
+           fin_vinculacion = paste0(fin_vinculacion, collapse = "; ")) |> 
     unique() |> 
     filter(!duplicated(integrantes))
   
