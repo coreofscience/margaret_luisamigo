@@ -953,8 +953,10 @@ server <- function(input, output) {
     tg <- tg |>
       filter(Ano >= filtro_fecha_min(),
              Ano <=filtro_fecha_max()) 
-    tg <- tg |> select(-'Año', -11,-'Modalidad', -13)
     datatable(tg, filter = 'top', extensions = c('Scroller','Buttons'),
+              colnames = c("Nombre proyecto Investigación", "Centro regional",
+                           "Programa académico","Nombres" , "Docente", "Año", 
+                           "Grupo de investigación", "Facultad"),
               options = list(dom = 'Bfrtip',
                              buttons = 
                                list('copy', list(
