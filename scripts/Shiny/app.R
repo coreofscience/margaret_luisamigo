@@ -313,7 +313,7 @@ tg_2018 <- read_csv("https://docs.google.com/spreadsheets/d/1dlci5TT6Raqj6IKPMz3
 tg_2019 <- read_csv("https://docs.google.com/spreadsheets/d/1dlci5TT6Raqj6IKPMz3CiCu_W5K_y8QJ/export?format=csv&gid=183846486") |> 
   mutate('Ano' = 2019)
 tg_2020 <- read_csv("https://docs.google.com/spreadsheets/d/1dlci5TT6Raqj6IKPMz3CiCu_W5K_y8QJ/export?format=csv&gid=627163141") |> 
-  mutate('Ano' = 2019)
+  mutate('Ano' = 2020)
 tg_2021 <- read_csv("https://docs.google.com/spreadsheets/d/1dlci5TT6Raqj6IKPMz3CiCu_W5K_y8QJ/export?format=csv&gid=1179613430") |> 
   mutate('Ano' = 2021)
 tg_2022 <- read_csv("https://docs.google.com/spreadsheets/d/1dlci5TT6Raqj6IKPMz3CiCu_W5K_y8QJ/export?format=csv&gid=1963658115") |> 
