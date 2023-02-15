@@ -7,7 +7,9 @@ merge_quality_articles_ucla <- function(articulos_unicos){
     mutate(i1 = substr(ISSN, 1,4),
            i2 = substr(ISSN, 5,8),
            ISSN = str_trim(ISSN)) |>
-    unite(ISSN, c("i1","i2"), sep = "-", remove = TRUE)
+    unite(ISSN, c("i1","i2"), sep = "-", remove = TRUE) |> 
+    mutate(ano = ifelse(ano=="2022","2022,2023", ano)) |> 
+    separate_rows(ano, sep = ",")
   
   ## homologadas publindex
   publindex_h <- read.csv(here('data','homologadas_publindex.csv')) |> 
@@ -16,14 +18,18 @@ merge_quality_articles_ucla <- function(articulos_unicos){
            ISSN = str_trim(ISSN)) |> 
     separate_rows(ISSN, sep = ',') |> 
     select(1,4,3,2) |> 
-    rename(categoria_h = 2)
+    rename(categoria_h = 2) |> 
+    mutate(ano = ifelse(ano=="2022","2022,2023", ano)) |> 
+    separate_rows(ano, sep = ",")
  
   ## National publindex
   publindex_n <- read.csv(here('data','national_publindex.csv')) |> 
     select(-1)|> 
     mutate(ano = as.character(ano),
            ISSN = str_trim(ISSN)) |> 
-    rename(categoria_n = 2)
+    rename(categoria_n = 2) |> 
+    mutate(ano = ifelse(ano=="2022","2022,2023", ano)) |> 
+    separate_rows(ano, sep = ",")
   
   scimago_data_merge <- scimago |>
     full_join(publindex_h, by=c("ISSN","ano")) |>

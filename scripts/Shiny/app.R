@@ -372,7 +372,7 @@ filterside <- selectInput("grupos_input","Grupos:",
                           c('General'= FALSE, grupos$grupo),
                           selectize = FALSE)
 
-sliderside <- sliderInput("fechas_input", "Años:", min = 2014, max = 2022, value = c(2016,2022), sep = "")
+sliderside <- sliderInput("fechas_input", "Años:", min = 2014, max = 2023, value = c(2016,2023), sep = "")
 
 sidebar <- dashboardSidebar(
   filterside,
@@ -413,7 +413,7 @@ sidebar <- dashboardSidebar(
     menuItem("Descargar",icon = icon("fas fa-download"), downloadButton("download", "Download full results")),
     span(),
     tags$h5("Última actualización:", align = "center"),
-    tags$h6("28 de Noviembre 2022", align = "center")
+    tags$h6("14 de Febrero 2023", align = "center")
     ),
 
   mainPanel(
