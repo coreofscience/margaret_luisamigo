@@ -1352,10 +1352,10 @@ server <- function(input, output) {
   output$graf1 <- renderPlotly({
     
     datos_clasi <- grupos_general |> 
-      count(clasificacion)
+      count(clasificacion, grupo)
     
-    datos_clasi$clasificacion = factor(datos_clasi$clasificacion,
-                                       levels = c("A1","A","B","C"))
+    # datos_clasi$clasificacion = factor(datos_clasi$clasificacion,
+                                       # levels = c("A1","A","B","C"))
     
     if(filtro()==FALSE)
     {
